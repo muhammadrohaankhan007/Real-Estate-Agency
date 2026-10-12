@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" fill="#0a0a0a"/>
+  <!-- Outer Gold Border -->
+  <rect x="3" y="3" width="58" height="58" fill="none" stroke="#D4AF37" stroke-width="1.5"/>
+  <!-- Inner Subtle Accent Border -->
+  <rect x="7" y="7" width="50" height="50" fill="none" stroke="#D4AF37" stroke-width="0.5" stroke-opacity="0.5"/>
+  <!-- Corner Geometric Notches -->
+  <line x1="3" y1="12" x2="12" y2="3" stroke="#D4AF37" stroke-width="1"/>
+  <line x1="52" y1="3" x2="61" y2="12" stroke="#D4AF37" stroke-width="1"/>
+  <line x1="3" y1="52" x2="12" y2="61" stroke="#D4AF37" stroke-width="1"/>
+  <line x1="52" y1="61" x2="61" y2="52" stroke="#D4AF37" stroke-width="1"/>
+  <!-- Monogram PT in luxury serif typography -->
+  <text x="32" y="39" font-family="'Cinzel', 'Cormorant Garamond', Georgia, serif" font-size="24" font-weight="600" fill="#D4AF37" text-anchor="middle" letter-spacing="1">PT</text>
+  <!-- Small Bottom Star / Diamond Motif -->
+  <polygon points="32,46 34,48 32,50 30,48" fill="#D4AF37"/>
+</svg>

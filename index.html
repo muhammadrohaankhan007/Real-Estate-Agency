@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRIME TIME | The DHA Phase 8 Collection | Karachi's Finest Estates</title>
-  <meta name="description" content="Discover the DHA Phase 8 Collection by PRIME TIME. A curated portfolio of Karachi's finest luxury waterfront and architectural estates.">
+  <title>Real Property Prime Time | Karachi Luxury Real Estate & Advisory | Est. 1998</title>
+  <meta name="description" content="Established in 1998, Real Property Prime Time is Karachi’s trusted luxury real estate advisory led by Nadeem Sulemani. Curated residential masterpieces in DHA Phase 8, Emaar Crescent Bay, and confidential off-market acquisitions.">
+  <link rel="icon" href="public/favicon.svg" type="image/svg+xml">
 
   <!-- Google Fonts: Cormorant Garamond (Serif), Cinzel (Display Serif), Plus Jakarta Sans (Clean Modern Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,8 +35,8 @@
               muted: '#B39750',
             },
             noir: {
-              DEFAULT: '#09090B',
-              surface: '#121215',
+              DEFAULT: '#0a0a0a',
+              surface: '#121214',
               elevated: '#18181C',
             }
           },
@@ -50,21 +51,11 @@
           },
           animation: {
             'subtle-zoom': 'slowZoom 28s ease-in-out infinite alternate',
-            'shimmer': 'shimmer 3s ease-in-out infinite',
-            'fade-up': 'fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
           },
           keyframes: {
             slowZoom: {
               '0%': { transform: 'scale(1)' },
-              '100%': { transform: 'scale(1.08)' },
-            },
-            shimmer: {
-              '0%, 100%': { opacity: '0.4' },
-              '50%': { opacity: '0.9' },
-            },
-            fadeUp: {
-              '0%': { opacity: '0', transform: 'translateY(24px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
+              '100%': { transform: 'scale(1.06)' },
             }
           }
         }
@@ -73,16 +64,18 @@
   </script>
 
   <style>
-    /* Custom Scrollbar & Luxury Touches */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
     ::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: #09090B;
+      background: #0a0a0a;
     }
     ::-webkit-scrollbar-thumb {
-      background: #2a2a30;
-      border-radius: 9999px;
+      background: #232328;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: #D4AF37;
@@ -94,78 +87,67 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .gold-glow {
-      box-shadow: 0 0 35px -5px rgba(212, 175, 55, 0.35);
-    }
-
-    .gold-glow-subtle {
-      box-shadow: 0 4px 20px -2px rgba(212, 175, 55, 0.2);
-    }
-
-    /* Glassmorphism subtle borders */
     .glass-panel {
-      background: rgba(14, 14, 18, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(212, 175, 55, 0.12);
+      background: rgba(14, 14, 18, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.2);
     }
   </style>
 </head>
 <body class="bg-noir text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-gold selection:text-black">
 
-  <!-- ==================== FIXED GLASSMORPHIC NAVBAR ==================== -->
-  <header id="main-header" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 backdrop-blur-md bg-black/50 border-b border-white/[0.08]">
+  <!-- ==================== FIXED NAVBAR ==================== -->
+  <header id="main-header" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-black/75 border-b border-white/[0.08]">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 h-20 sm:h-24 flex items-center justify-between relative">
       
       <!-- Left Navigation Links (Desktop) -->
       <nav id="nav-links-left" class="hidden lg:flex items-center space-x-9 flex-1">
-        <a href="#home" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-300 relative py-1 group">
+        <a href="#hero-section" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
           Home
-          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full"></span>
+          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
         </a>
-        <a href="#off-plan" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-300 relative py-1 group">
-          Off-Plan Projects
-          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full"></span>
+        <a href="#portfolio-overview" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
+          Off-Plan & Waterfront
+          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
         </a>
-        <a href="#navigation" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-300 relative py-1 group">
-          Navigation
-          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full"></span>
+        <a href="#portfolio-overview" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
+          Signature Estates
+          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
         </a>
       </nav>
 
-      <!-- Center Wordmark (Sleek Serif Wordmark in warm metallic gold #D4AF37) -->
+      <!-- Center Clickable Brand Wordmark -->
       <div class="flex-shrink-0 flex items-center justify-center lg:px-6">
-        <a href="#" id="brand-logo" class="group flex flex-col items-center text-center">
-          <span class="font-cinzel text-xl sm:text-2xl md:text-[26px] font-semibold tracking-[0.32em] text-[#D4AF37] transition-all duration-300 group-hover:brightness-125">
-            PRIME TIME
+        <a href="#hero-section" id="brand-logo" aria-label="Real Property Prime Time Homepage" class="group flex flex-col items-center text-center">
+          <span class="font-cinzel text-xl sm:text-2xl md:text-[24px] font-semibold tracking-[0.28em] text-[#D4AF37] transition-all duration-200 group-hover:brightness-125">
+            REAL PROPERTY PRIME TIME
           </span>
-          <span class="text-[9px] uppercase tracking-[0.45em] text-zinc-400 font-sans mt-0.5 opacity-80 group-hover:text-gold-200 transition-colors">
-            Privé Brokerage
+          <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-400 font-sans mt-0.5 opacity-80 group-hover:text-gold-200 transition-colors">
+            Est. 1998 • Karachi Luxury Advisory
           </span>
         </a>
       </div>
 
       <!-- Right Navigation Links & Quick Action (Desktop) -->
       <nav id="nav-links-right" class="hidden lg:flex items-center justify-end space-x-9 flex-1">
-        <a href="#about" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-300 relative py-1 group">
-          About Us
-          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full"></span>
+        <a href="#portfolio-overview" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
+          Advisory Desk
+          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
         </a>
-        <a href="#contact" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-300 relative py-1 group">
+        <a href="mailto:realpropertyprimetime@gmail.com" class="nav-link text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
           Contact
-          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full"></span>
+          <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
         </a>
 
-        <!-- Concierge Status Indicator -->
-        <button id="btn-header-access" onclick="openAccessModal()" class="inline-flex items-center space-x-2 text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D4AF37] border border-[#D4AF37]/35 hover:border-[#D4AF37] px-4 py-2 rounded-full transition-all duration-300 hover:bg-[#D4AF37]/10">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse"></span>
+        <!-- Concierge Status Indicator (Sharp architectural styling) -->
+        <button id="btn-header-access" onclick="openAccessModal()" class="inline-flex items-center space-x-2 text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D4AF37] border border-[#D4AF37]/50 hover:border-[#D4AF37] px-4 py-2 rounded-none transition-all duration-200 hover:bg-[#D4AF37]/10">
+          <span class="w-1.5 h-1.5 bg-[#D4AF37]"></span>
           <span>Access VIP</span>
         </button>
       </nav>
 
       <!-- Mobile Hamburger Button -->
       <div class="flex lg:hidden items-center">
-        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu" class="p-2.5 rounded-lg text-zinc-300 hover:text-[#D4AF37] hover:bg-white/5 transition-all">
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu" class="p-2.5 text-zinc-300 hover:text-[#D4AF37] transition-all">
           <svg id="hamburger-icon" class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"/>
           </svg>
@@ -178,19 +160,18 @@
     </div>
 
     <!-- Mobile Drawer Navigation -->
-    <div id="mobile-drawer" class="lg:hidden hidden border-t border-white/10 bg-black/95 backdrop-blur-2xl px-6 py-8 transition-all duration-300">
+    <div id="mobile-drawer" class="lg:hidden hidden border-t border-white/10 bg-black/95 backdrop-blur-2xl px-6 py-8 transition-all duration-200">
       <div class="flex flex-col space-y-5 text-center">
-        <a href="#home" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Home</a>
-        <a href="#off-plan" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Off-Plan Projects</a>
-        <a href="#navigation" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Navigation</a>
-        <a href="#about" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">About Us</a>
-        <a href="#contact" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Contact</a>
+        <a href="#hero-section" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Home</a>
+        <a href="#portfolio-overview" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Off-Plan & Waterfront</a>
+        <a href="#portfolio-overview" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Signature Estates</a>
+        <a href="mailto:realpropertyprimetime@gmail.com" onclick="toggleMobileMenu()" class="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2 transition-colors">Contact Advisor</a>
         
         <div class="pt-4 border-t border-white/10 flex flex-col space-y-3">
-          <button onclick="toggleMobileMenu(); openEnquireModal();" class="w-full py-3 rounded-full bg-[#D4AF37] text-black font-semibold text-xs tracking-wider uppercase">
-            Enquire Now
+          <button onclick="toggleMobileMenu(); openEnquireModal();" class="w-full py-3 bg-[#D4AF37] text-black font-semibold text-xs tracking-wider uppercase rounded-none">
+            Request Dossier
           </button>
-          <button onclick="toggleMobileMenu(); openAccessModal();" class="w-full py-3 rounded-full border border-white/30 text-white font-medium text-xs tracking-wider uppercase">
+          <button onclick="toggleMobileMenu(); openAccessModal();" class="w-full py-3 border border-white/30 text-white font-medium text-xs tracking-wider uppercase rounded-none">
             Request Private Access
           </button>
         </div>
@@ -202,72 +183,58 @@
   <!-- ==================== HERO SECTION ==================== -->
   <section id="hero-section" class="relative min-h-screen w-full flex items-end justify-start overflow-hidden bg-black">
     
-    <!-- Hero Background Image Container with Ken-Burns subtle zoom effect -->
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
       <img
         id="hero-bg-image"
-        src="assets/hero-mansion.jpg"
+        src="public/images/hero-mansion.jpg"
         alt="Modern luxury beachfront mansion in DHA Phase 8 at dusk with infinity pool and panoramic ocean view"
-        class="w-full h-full object-cover object-center animate-subtle-zoom scale-100 will-change-transform filter brightness-95"
+        class="w-full h-full object-cover object-center animate-subtle-zoom scale-100 will-change-transform filter brightness-90"
       />
 
-      <!-- Dark Gradient Overlay: Black at the bottom fading up so text is impeccably legible -->
       <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30"></div>
-
-      <!-- Top Vignette for Navbar Contrast -->
       <div class="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-black/80 via-black/30 to-transparent"></div>
-
-      <!-- Left Atmospheric Shadow for Text Clarity -->
-      <div class="absolute inset-y-0 left-0 w-full md:w-3/4 bg-gradient-to-r from-black/75 via-black/40 to-transparent"></div>
+      <div class="absolute inset-y-0 left-0 w-full md:w-3/4 bg-gradient-to-r from-black/85 via-black/45 to-transparent"></div>
     </div>
 
-    <!-- Hero Content (Bottom-Left Aligned as Specified) -->
     <div class="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-16 sm:pb-20 lg:pb-24 pt-36 flex flex-col justify-end">
       
-      <div class="max-w-4xl space-y-6 sm:space-y-8 animate-fade-up">
+      <div class="max-w-4xl space-y-6 sm:space-y-8">
 
-        <!-- Top Prestige Badge -->
-        <div class="inline-flex items-center space-x-3.5 bg-black/40 border border-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs text-zinc-300">
-          <span class="inline-block w-2 h-2 rounded-full bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]"></span>
+        <div class="inline-flex items-center space-x-3.5 bg-black/80 border border-white/15 px-4 py-2 text-xs text-zinc-300 rounded-none">
+          <span class="inline-block w-2 h-2 bg-[#D4AF37]"></span>
           <span class="font-medium tracking-[0.2em] uppercase text-[11px] text-zinc-300">Off-Market Waterfront Portfolio</span>
           <span class="text-zinc-600">|</span>
-          <span class="font-mono text-[10px] text-zinc-400">Karachi Coastline • 24°46'N</span>
+          <span class="font-mono text-[10px] text-zinc-400">DHA Phase 8 Karachi</span>
         </div>
 
-        <!-- The Hero Copy -->
         <div class="space-y-3 sm:space-y-4">
-          <!-- Massive, Elegant Serif Headline -->
-          <h1 id="hero-headline" class="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[84px] font-light leading-[1.05] tracking-tight text-white drop-shadow-2xl">
-            The DHA Phase 8 <br class="hidden sm:inline" />
-            <span class="italic font-normal gold-gradient-text">Collection.</span>
+          <h1 id="hero-headline" class="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-[76px] font-light leading-[1.08] tracking-tight text-white drop-shadow-2xl">
+            The Definitive Portfolio of Architectural Estates Across <br class="hidden sm:inline" />
+            <span className="italic font-normal gold-gradient-text">DHA Phase 8 and Karachi Coastline</span>
           </h1>
 
-          <!-- Subtle Sans-Serif Subheadline -->
           <p id="hero-subheadline" class="font-sans text-base sm:text-lg md:text-xl text-zinc-300 font-light tracking-wide max-w-2xl leading-relaxed">
-            A Curated Portfolio of Karachi's Finest Estates.
+            Direct principal representation for Karachi’s finest 500 & 1,000 square yard residential estates.
           </p>
         </div>
 
-        <!-- The CTA Buttons -->
         <div id="hero-cta-group" class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-5">
           
-          <!-- 1. Solid Gold/Sand Pill Button: "Enquire" -->
           <button
             id="btn-enquire"
             onclick="openEnquireModal()"
-            class="group relative inline-flex items-center justify-center px-8 sm:px-10 py-4 rounded-full bg-[#D4AF37] text-neutral-950 font-semibold text-xs sm:text-sm tracking-[0.18em] uppercase transition-all duration-300 hover:bg-[#e0be49] hover:shadow-[0_0_30px_rgba(212,175,55,0.45)] hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 focus:ring-offset-black"
+            class="group relative inline-flex items-center justify-center px-8 sm:px-10 py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs sm:text-sm tracking-[0.18em] uppercase transition-all duration-200 hover:bg-[#e0be49] rounded-none"
           >
-            <span>Enquire</span>
-            <svg class="ml-2.5 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span>Request Architectural Dossier</span>
+            <svg class="ml-2.5 w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </button>
 
-          <!-- 2. Transparent Outline Button: "Request Private Access" -->
           <button
             id="btn-request-access"
             onclick="openAccessModal()"
-            class="group inline-flex items-center justify-center px-8 sm:px-10 py-4 rounded-full border border-white/30 text-white font-medium text-xs sm:text-sm tracking-[0.18em] uppercase backdrop-blur-sm bg-black/20 transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37] hover:bg-black/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black"
+            class="group inline-flex items-center justify-center px-8 sm:px-10 py-4 border border-white/30 text-white font-medium text-xs sm:text-sm tracking-[0.18em] uppercase bg-black/40 transition-all duration-200 hover:border-[#D4AF37] hover:text-[#D4AF37] rounded-none"
           >
             <svg class="mr-2.5 w-4 h-4 text-zinc-400 group-hover:text-[#D4AF37] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -279,23 +246,22 @@
 
       </div>
 
-      <!-- Bottom Quick Specs Bar (Subtle Luxury Metrics) -->
       <div class="mt-14 pt-8 border-t border-white/[0.12] grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
         <div>
-          <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Acres of Coastline</span>
-          <span class="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">42+ Premier Plots</span>
+          <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Market Provenance</span>
+          <span class="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">Est. 1998 (27+ Yrs)</span>
         </div>
         <div>
           <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Starting Valuation</span>
-          <span class="font-serif text-xl sm:text-2xl text-[#D4AF37] font-normal mt-1 block">PKR 450 Million</span>
+          <span class="font-serif text-xl sm:text-2xl text-[#D4AF37] font-normal mt-1 block">PKR 145 Million</span>
         </div>
         <div>
           <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Architecture</span>
           <span class="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">Custom Contemporary</span>
         </div>
         <div>
-          <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Discretion</span>
-          <span class="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">100% Confidential</span>
+          <span class="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Confidentiality</span>
+          <span class="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">Bilateral NDA Terms</span>
         </div>
       </div>
 
@@ -303,54 +269,53 @@
 
     <!-- Scroll Indicator -->
     <a href="#portfolio-overview" class="hidden md:flex absolute bottom-8 right-12 z-20 items-center space-x-3 text-zinc-400 hover:text-[#D4AF37] transition-colors text-[11px] uppercase tracking-[0.25em]">
-      <span>Explore Collection</span>
-      <div class="w-5 h-9 rounded-full border border-white/20 flex items-start justify-center p-1.5">
-        <div class="w-1 h-2 rounded-full bg-[#D4AF37] animate-bounce"></div>
+      <span>Explore Portfolio</span>
+      <div class="w-4 h-8 border border-white/20 flex items-start justify-center p-1">
+        <div class="w-1 h-2 bg-[#D4AF37]"></div>
       </div>
     </a>
   </section>
 
 
-  <!-- ==================== INTERACTIVE PREVIEW SECTION (PORTFOLIO OVERVIEW) ==================== -->
+  <!-- ==================== PORTFOLIO OVERVIEW SECTION ==================== -->
   <section id="portfolio-overview" class="relative bg-noir-surface py-28 px-6 sm:px-8 lg:px-12 border-t border-white/10">
     <div class="max-w-7xl mx-auto">
       
-      <!-- Section Header -->
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
         <div>
           <span class="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#D4AF37] block mb-3">Architectural Highlights</span>
           <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-light text-white tracking-tight">
-            Curated Waterfront Living
+            Curated Waterfront Living in DHA Phase 8
           </h2>
         </div>
         <p class="text-zinc-400 text-sm max-w-md font-light leading-relaxed">
-          Each residence in the DHA Phase 8 Collection offers unmatched security, cantilevered infinity horizons, and bespoke bespoke smart amenities.
+          Each residence under our mandate features verified DHA sub-lease documentation, clear demarcation, and direct owner terms.
         </p>
       </div>
 
-      <!-- Feature Grid -->
+      <!-- Feature Grid (Sharp architectural cards, no circle icons) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         <!-- Card 1 -->
-        <div class="glass-panel rounded-2xl p-8 hover:border-[#D4AF37]/40 transition-all duration-300 group">
-          <div class="w-12 h-12 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center text-[#D4AF37] mb-6 group-hover:scale-110 transition-transform">
+        <div class="glass-panel p-8 border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-200 group rounded-none">
+          <div class="w-10 h-10 border border-[#D4AF37]/40 bg-black flex items-center justify-center text-[#D4AF37] mb-6 rounded-none">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
           </div>
           <h3 class="font-serif text-2xl text-white font-medium mb-3">Zone A Marina Estates</h3>
           <p class="text-zinc-400 text-sm leading-relaxed mb-6 font-light">
-            Panoramic Arabian Gulf vistas, private boat slip access, and ultra-wide frontage spanning over 2,000 square yards.
+            Panoramic Arabian Gulf vistas, direct boulevard access, and ultra-wide frontage spanning over 1,000 square yards.
           </p>
           <button onclick="openEnquireModal('Zone A Marina Estates')" class="inline-flex items-center text-xs tracking-[0.2em] uppercase text-[#D4AF37] hover:underline font-medium">
-            <span>View Dossier</span>
+            <span>Request Dossier</span>
             <span class="ml-2">→</span>
           </button>
         </div>
 
         <!-- Card 2 -->
-        <div class="glass-panel rounded-2xl p-8 hover:border-[#D4AF37]/40 transition-all duration-300 group">
-          <div class="w-12 h-12 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center text-[#D4AF37] mb-6 group-hover:scale-110 transition-transform">
+        <div class="glass-panel p-8 border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-200 group rounded-none">
+          <div class="w-10 h-10 border border-[#D4AF37]/40 bg-black flex items-center justify-center text-[#D4AF37] mb-6 rounded-none">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
@@ -366,15 +331,15 @@
         </div>
 
         <!-- Card 3 -->
-        <div class="glass-panel rounded-2xl p-8 hover:border-[#D4AF37]/40 transition-all duration-300 group">
-          <div class="w-12 h-12 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25 flex items-center justify-center text-[#D4AF37] mb-6 group-hover:scale-110 transition-transform">
+        <div class="glass-panel p-8 border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-200 group rounded-none">
+          <div class="w-10 h-10 border border-[#D4AF37]/40 bg-black flex items-center justify-center text-[#D4AF37] mb-6 rounded-none">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
           </div>
-          <h3 class="font-serif text-2xl text-white font-medium mb-3">Architectural Concierge</h3>
+          <h3 class="font-serif text-2xl text-white font-medium mb-3">Advisory Concierge</h3>
           <p class="text-zinc-400 text-sm leading-relaxed mb-6 font-light">
-            Full-service advisory partnering with international architectural firms, interior decorators, and structural engineers.
+            Full-service advisory partnering with leading architects, legal counsel, and structural engineering desks in Karachi.
           </p>
           <button onclick="openEnquireModal('Architectural Concierge')" class="inline-flex items-center text-xs tracking-[0.2em] uppercase text-[#D4AF37] hover:underline font-medium">
             <span>Consult Advisory</span>
@@ -389,48 +354,45 @@
 
 
   <!-- ==================== MODAL 1: ENQUIRE MODAL ==================== -->
-  <div id="modal-enquire" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300">
-    <div class="relative w-full max-w-lg glass-panel bg-noir-elevated rounded-3xl p-8 sm:p-10 border border-[#D4AF37]/30 shadow-2xl">
+  <div id="modal-enquire" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="relative w-full max-w-lg glass-panel bg-noir-elevated p-8 sm:p-10 border border-[#D4AF37]/40 shadow-2xl rounded-none">
       
-      <!-- Close Button -->
-      <button onclick="closeModals()" class="absolute top-6 right-6 text-zinc-400 hover:text-white p-2">
+      <button onclick="closeModals()" class="absolute top-6 right-6 text-zinc-400 hover:text-white p-2" aria-label="Close modal">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
-      <!-- Modal Header -->
       <div class="mb-6">
-        <span class="text-[10px] tracking-[0.3em] uppercase text-[#D4AF37] font-semibold">PRIME TIME Private Brokerage</span>
+        <span class="text-[10px] tracking-[0.3em] uppercase text-[#D4AF37] font-semibold">Private Advisory Desk</span>
         <h3 class="font-serif text-3xl text-white font-light mt-1">Acquisition Enquiry</h3>
-        <p class="text-zinc-400 text-xs mt-1">Please provide your details to receive the DHA Phase 8 Collection brochure and floor plans.</p>
+        <p class="text-zinc-400 text-xs mt-1">Submit your details to receive the architectural dossier and verified floor plans.</p>
       </div>
 
-      <!-- Form -->
       <form id="enquire-form" onsubmit="handleEnquirySubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Full Legal Name</label>
-          <input type="text" required placeholder="e.g. Tariq Mansoor" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Full Legal Name *</label>
+          <input type="text" required placeholder="e.g. Tariq Mansoor" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none" />
         </div>
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Private Email</label>
-          <input type="email" required placeholder="name@domain.com" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Private Email *</label>
+          <input type="email" required placeholder="name@domain.com" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none" />
         </div>
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Phone / WhatsApp</label>
-          <input type="tel" required placeholder="+92 300 0000000" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Phone / WhatsApp *</label>
+          <input type="tel" required placeholder="+92 300 0000000" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none font-mono" />
         </div>
         <div>
           <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Interest Category</label>
-          <select id="enquiry-interest-select" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors">
-            <option value="DHA Phase 8 Waterfront Villa">DHA Phase 8 Waterfront Villa (Ready)</option>
+          <select id="enquiry-interest-select" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none">
+            <option value="DHA Phase 8 Waterfront Villa">DHA Phase 8 Waterfront Villa</option>
+            <option value="EMAAR Pearl Tower Residence">EMAAR Pearl Tower Residence</option>
             <option value="DHA Phase 8 Plot (1,000 - 2,000 sq yds)">DHA Phase 8 Plot (1,000 - 2,000 sq yds)</option>
-            <option value="Off-Plan Architectural Concept">Off-Plan Architectural Concept</option>
             <option value="Private Off-Market Dossier">Private Off-Market Dossier</option>
           </select>
         </div>
 
-        <button type="submit" class="w-full mt-4 py-4 rounded-full bg-[#D4AF37] text-black font-semibold text-xs uppercase tracking-[0.2em] hover:bg-[#e0be49] transition-all">
+        <button type="submit" class="w-full mt-4 py-4 bg-[#D4AF37] text-black font-semibold text-xs uppercase tracking-[0.2em] hover:bg-[#e0be49] transition-all rounded-none">
           Submit Confidential Enquiry
         </button>
       </form>
@@ -439,57 +401,54 @@
 
 
   <!-- ==================== MODAL 2: REQUEST PRIVATE ACCESS MODAL ==================== -->
-  <div id="modal-access" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-opacity duration-300">
-    <div class="relative w-full max-w-lg glass-panel bg-noir-elevated rounded-3xl p-8 sm:p-10 border border-[#D4AF37]/30 shadow-2xl">
+  <div id="modal-access" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="relative w-full max-w-lg glass-panel bg-noir-elevated p-8 sm:p-10 border border-[#D4AF37]/40 shadow-2xl rounded-none">
       
-      <!-- Close Button -->
-      <button onclick="closeModals()" class="absolute top-6 right-6 text-zinc-400 hover:text-white p-2">
+      <button onclick="closeModals()" class="absolute top-6 right-6 text-zinc-400 hover:text-white p-2" aria-label="Close modal">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
-      <!-- Modal Header -->
       <div class="mb-6">
-        <div class="w-10 h-10 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-3">
+        <div class="w-10 h-10 border border-[#D4AF37]/40 bg-black flex items-center justify-center text-[#D4AF37] mb-3 rounded-none">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <span class="text-[10px] tracking-[0.3em] uppercase text-[#D4AF37] font-semibold">Vetted Client Portal</span>
+        <span class="text-[10px] tracking-[0.3em] uppercase text-[#D4AF37] font-semibold">Verified Principal Registry</span>
         <h3 class="font-serif text-3xl text-white font-light mt-1">Request Private Access</h3>
         <p class="text-zinc-400 text-xs mt-1">Access off-market listings, unlisted coastal estates, and direct owner pricing upon verification.</p>
       </div>
 
-      <!-- Form -->
       <form id="access-form" onsubmit="handleAccessSubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Representative / Principal Name</label>
-          <input type="text" required placeholder="Your full name" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Representative / Principal Name *</label>
+          <input type="text" required placeholder="Your full name" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none" />
         </div>
         <div>
           <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Corporate or Private Office</label>
-          <input type="text" placeholder="Family Office / Enterprise (Optional)" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+          <input type="text" placeholder="Family Office / Enterprise (Optional)" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Phone</label>
-            <input type="tel" required placeholder="+92 ..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+            <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Phone *</label>
+            <input type="tel" required placeholder="+92 ..." class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none font-mono" />
           </div>
           <div>
-            <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Email</label>
-            <input type="email" required placeholder="vip@..." class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
+            <label class="block text-[11px] uppercase tracking-wider text-zinc-400 mb-1">Email *</label>
+            <input type="email" required placeholder="vip@domain.com" class="w-full bg-black/70 border border-white/15 px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37] rounded-none" />
           </div>
         </div>
 
         <div class="pt-2">
           <label class="flex items-start space-x-2 text-[11px] text-zinc-400 cursor-pointer">
-            <input type="checkbox" required class="mt-0.5 rounded bg-black/40 border-white/20 text-[#D4AF37] focus:ring-0" />
+            <input type="checkbox" required class="mt-0.5 rounded-none bg-black border-white/20 text-[#D4AF37] focus:ring-0" />
             <span>I acknowledge this private registry operates under strict non-disclosure obligations.</span>
           </label>
         </div>
 
-        <button type="submit" class="w-full mt-4 py-4 rounded-full border border-[#D4AF37] bg-[#D4AF37]/15 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all">
+        <button type="submit" class="w-full mt-4 py-4 border border-[#D4AF37] bg-[#D4AF37] text-neutral-950 hover:bg-[#e0be49] font-semibold text-xs uppercase tracking-[0.2em] transition-all rounded-none">
           Authorize & Request Keycode
         </button>
       </form>
@@ -498,24 +457,37 @@
 
 
   <!-- ==================== TOAST NOTIFICATION ==================== -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-500 pointer-events-none">
-    <div class="glass-panel bg-noir-elevated text-white px-6 py-4 rounded-2xl border border-[#D4AF37] flex items-center space-x-3 shadow-2xl">
-      <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-ping"></span>
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glass-panel bg-noir-elevated text-white px-6 py-4 border border-[#D4AF37] flex items-center space-x-3 shadow-2xl rounded-none">
+      <span class="w-2 h-2 bg-[#D4AF37]"></span>
       <p id="toast-message" class="text-xs tracking-wider uppercase font-medium">Request Sent Successfully</p>
     </div>
   </div>
 
 
   <!-- ==================== LUXURY FOOTER ==================== -->
-  <footer class="bg-black py-12 px-6 border-t border-white/5 text-center text-zinc-500 text-xs">
+  <footer class="bg-black py-12 px-6 border-t border-white/10 text-center text-zinc-400 text-xs">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-center space-x-3">
-        <span class="font-cinzel text-base tracking-[0.25em] text-[#D4AF37]">PRIME TIME</span>
+        <a href="#hero-section" class="font-cinzel text-base tracking-[0.25em] text-[#D4AF37] hover:brightness-125 transition-all">
+          REAL PROPERTY PRIME TIME
+        </a>
         <span class="text-zinc-600">|</span>
-        <span class="text-zinc-400 text-[11px]">DHA Phase 8 Signature Collection</span>
+        <span class="text-zinc-400 text-[11px]">Est. 1998 • Karachi Luxury Advisory</span>
       </div>
+
+      <div class="flex items-center space-x-4">
+        <a href="mailto:realpropertyprimetime@gmail.com" class="text-[#D4AF37] hover:underline">
+          realpropertyprimetime@gmail.com
+        </a>
+        <span class="text-zinc-600">•</span>
+        <a href="tel:+923008286662" class="font-mono hover:text-[#D4AF37]">
+          +92 300 8286662
+        </a>
+      </div>
+
       <p class="text-[11px] tracking-widest text-zinc-500">
-        © 2026 PRIME TIME REAL ESTATE. ALL RIGHTS RESERVED. PRIVATE BROKERAGE KARACHI.
+        © 2026 Real Property Prime Time. All Rights Reserved.
       </p>
     </div>
   </footer>
@@ -523,15 +495,15 @@
 
   <!-- ==================== SCRIPT ==================== -->
   <script>
-    // Header Scroll Glassmorphic Elevation
+    // Header Scroll Elevation
     window.addEventListener('scroll', () => {
       const header = document.getElementById('main-header');
       if (window.scrollY > 40) {
-        header.classList.add('bg-black/85', 'shadow-2xl', 'border-white/10');
-        header.classList.remove('bg-black/50');
+        header.classList.add('bg-black/95', 'shadow-2xl', 'border-white/10');
+        header.classList.remove('bg-black/75');
       } else {
-        header.classList.remove('bg-black/85', 'shadow-2xl');
-        header.classList.add('bg-black/50');
+        header.classList.remove('bg-black/95', 'shadow-2xl');
+        header.classList.add('bg-black/75');
       }
     });
 
@@ -583,7 +555,6 @@
       });
     }
 
-    // Close on outside click or ESC key
     window.addEventListener('click', (e) => {
       const modalEnquire = document.getElementById('modal-enquire');
       const modalAccess = document.getElementById('modal-access');
