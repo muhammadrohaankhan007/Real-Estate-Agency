@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { 
   Building2, 
   Compass, 
@@ -13,49 +14,63 @@ import {
   Bath, 
   Maximize2, 
   MapPin, 
-  ChevronRight,
-  ChevronDown,
-  Menu,
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  Phone,
-  Mail,
-  Send,
-  Calendar,
-  FileCheck2,
-  ExternalLink,
-  MessageSquare,
-  Lock,
-  Layers,
-  Award
+  ChevronRight, 
+  ChevronDown, 
+  Menu, 
+  CheckCircle2, 
+  AlertCircle, 
+  ArrowRight, 
+  Phone, 
+  Mail, 
+  Send, 
+  Calendar, 
+  FileCheck2, 
+  ExternalLink, 
+  MessageSquare, 
+  Lock, 
+  Layers, 
+  Award,
+  Camera
 } from 'lucide-react';
 
-interface Property {
-  id: string;
+export interface Property {
+  id: number | string;
   title: string;
+  slug?: string;
+  demand?: string;
+  price?: string;
   location: string;
-  price: string;
-  specs: {
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  size?: string | null;
+  description?: string | null;
+  image_urls?: string[];
+  imageUrl?: string;
+  specs?: {
     area: string;
     beds: number;
     baths: number;
     views: string;
-    parking: string;
+    parking?: string;
   };
-  category: 'dha8' | 'waterfront' | 'dha67' | 'offplan';
-  features: string[];
-  imageUrl: string;
-  isFeature: boolean;
-  tag: string;
+  category?: 'dha8' | 'waterfront' | 'dha67' | 'offplan' | string;
+  features?: string[];
+  isFeature?: boolean;
+  tag?: string;
   badge?: string;
+  created_at?: string;
 }
 
 export default function Home() {
+  const [isMounted, setIsMounted] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   // Modals state
   const [enquireModalOpen, setEnquireModalOpen] = useState(false);
@@ -97,14 +112,71 @@ export default function Home() {
   const [isValuationSubmitting, setIsValuationSubmitting] = useState(false);
   const [isBriefingSubmitting, setIsBriefingSubmitting] = useState(false);
 
-  // Load properties from API
+  // Load properties from API with zero-cache enforcement
   useEffect(() => {
     async function loadProperties() {
       try {
-        const res = await fetch('/api/properties');
+        const res = await fetch(`/api/properties?_t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+          },
+        });
+        if (!res.ok) {
+          throw new Error(`Properties request failed: ${res.status}`);
+        }
         const json = await res.json();
-        if (json.success && json.data) {
-          setProperties(json.data);
+        const rawList: any[] = Array.isArray(json) ? json : (json.data || []);
+        if (rawList.length > 0) {
+          const mapped: Property[] = rawList.map((item: any, index: number) => {
+            const primaryImage = (item.image_urls && item.image_urls.length > 0) 
+              ? item.image_urls[0] 
+              : (item.imageUrl || '/images/hero-mansion.jpg');
+            
+            const displayPrice = item.demand
+              ? (item.demand.toString().toLowerCase().includes('pkr') ? item.demand : `PKR ${item.demand}`)
+              : (item.price || 'Price on Application');
+
+            // Category detection based on location/title
+            let category: string = item.category || 'dha8';
+            const loc = (item.location || '').toLowerCase();
+            const tit = (item.title || '').toLowerCase();
+            if (loc.includes('waterfront') || loc.includes('emaar') || loc.includes('crescent') || tit.includes('waterfront') || tit.includes('emaar')) {
+              category = 'waterfront';
+            } else if (loc.includes('phase 6') || loc.includes('phase 7') || tit.includes('phase 6') || tit.includes('phase 7')) {
+              category = 'dha67';
+            }
+
+            return {
+              id: item.id,
+              title: item.title,
+              slug: item.slug || String(item.id),
+              demand: item.demand,
+              price: displayPrice,
+              location: item.location,
+              bedrooms: item.bedrooms,
+              bathrooms: item.bathrooms,
+              size: item.size,
+              description: item.description,
+              image_urls: item.image_urls || [primaryImage],
+              imageUrl: primaryImage,
+              specs: {
+                area: item.size || item.specs?.area || 'Prime Yardage',
+                beds: item.bedrooms ?? item.specs?.beds ?? 0,
+                baths: item.bathrooms ?? item.specs?.baths ?? 0,
+                views: item.specs?.views || 'Prime Coastal & Urban Views',
+                parking: item.specs?.parking || 'Covered Bays',
+              },
+              category: category as any,
+              features: item.features || [],
+              isFeature: item.isFeature ?? (index === 0),
+              tag: item.tag || 'Flagship Residence',
+              badge: item.badge || 'Verified Mandate',
+              created_at: item.created_at,
+            };
+          });
+          setProperties(mapped);
         }
       } catch (err) {
         console.error('Failed to fetch from properties API:', err);
@@ -345,10 +417,11 @@ export default function Home() {
   
   const filteredProperties = activeCategory === 'all' 
     ? displayList 
-    : displayList.filter(p => p.category === activeCategory || (activeCategory === 'waterfront' && p.id.includes('emaar')));
+    : displayList.filter(p => p.category === activeCategory || (activeCategory === 'waterfront' && String(p.id).toLowerCase().includes('emaar')));
 
-  const featureProperty = displayList.find(p => p.isFeature) || displayList[0] || defaultFeature;
-  const secondaryProperties = displayList.filter(p => p.id !== featureProperty.id);
+  const activeList = filteredProperties.length > 0 ? filteredProperties : displayList;
+  const featureProperty = activeList.find(p => p.isFeature) || activeList[0] || defaultFeature;
+  const secondaryProperties = activeList.filter(p => p.id !== featureProperty.id);
 
   // Substantive FAQ questions addressing genuine Karachi legal, title, and tax realities
   const faqs = [
@@ -427,6 +500,14 @@ export default function Home() {
 
           {/* Action Hub (Sharp architectural buttons, no soft bubbly corners) */}
           <div className="hidden lg:flex items-center space-x-3">
+            <Link
+              href="/admin"
+              className="inline-flex items-center space-x-1.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-amber-400 border border-amber-500/50 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500 hover:text-black px-3.5 py-2 rounded-none transition-all duration-200 shadow-sm"
+              title="Secure Property Management Portal"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>ADMIN COMMAND</span>
+            </Link>
             <a
               href="#valuation"
               className="text-[11px] font-medium tracking-[0.18em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors px-3 py-2"
@@ -467,6 +548,14 @@ export default function Home() {
               <a href="#valuation" onClick={() => setMobileMenuOpen(false)} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Contact Us</a>
               
               <div className="pt-4 border-t border-white/10 flex flex-col space-y-3">
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500 hover:text-black text-amber-400 font-semibold text-xs tracking-wider uppercase text-center rounded-none transition-colors flex items-center justify-center space-x-2"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>ADMIN COMMAND</span>
+                </Link>
                 <a 
                   href="#valuation"
                   onClick={() => setMobileMenuOpen(false)}
@@ -642,18 +731,18 @@ export default function Home() {
           {/* ==================== ASYMMETRICAL SHOWCASE GRID ==================== */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
-            {/* Left Side (Col 7): Massive Vertical Feature Card */}
-            <div className="lg:col-span-7 flex flex-col">
-              <div 
-                onClick={() => openEnquiryFor(featureProperty.title)}
-                className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden cursor-pointer border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-2xl rounded-none"
+            {/* Left Side: Massive Vertical Feature Card */}
+            <div className={`${secondaryProperties.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col`}>
+              <Link 
+                href={`/properties/${featureProperty.slug || featureProperty.id}`}
+                className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-2xl rounded-none"
               >
                 <Image
-                  src={featureProperty.imageUrl}
+                  src={featureProperty.image_urls?.[0] || featureProperty.imageUrl || '/images/hero-mansion.jpg'}
                   alt={featureProperty.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="object-cover object-center transform transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
                 />
 
                 {/* Dark Gradient Overlay */}
@@ -661,10 +750,16 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/85 opacity-90"></div>
 
                 {/* Top Badges */}
-                <div className="absolute top-6 left-6 z-10 flex items-center space-x-2">
+                <div className="absolute top-6 left-6 z-10 flex flex-wrap items-center gap-2">
                   <span className="px-3.5 py-1.5 bg-black/80 border border-[#D4AF37]/50 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
-                    {featureProperty.badge || featureProperty.tag}
+                    {featureProperty.badge || featureProperty.tag || 'Verified Mandate'}
                   </span>
+                  {featureProperty.image_urls && featureProperty.image_urls.length > 1 && (
+                    <span className="px-3 py-1.5 bg-black/90 border border-amber-500/40 text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1.5 shadow-md">
+                      <Camera className="w-3 h-3 text-amber-400" />
+                      <span>{featureProperty.image_urls.length} PHOTOS</span>
+                    </span>
+                  )}
                   <span className="px-3 py-1.5 bg-white/10 border border-white/20 text-[10px] tracking-wider uppercase text-zinc-300 rounded-none">
                     Est. 1998 Verified
                   </span>
@@ -683,7 +778,7 @@ export default function Home() {
                       {featureProperty.location}
                     </span>
                     <span className="font-serif text-2xl sm:text-3xl text-[#D4AF37] font-normal">
-                      {featureProperty.price}
+                      {featureProperty.demand ? (featureProperty.demand.toLowerCase().includes('pkr') ? featureProperty.demand : `PKR ${featureProperty.demand}`) : (featureProperty.price || 'Price on Application')}
                     </span>
                   </div>
 
@@ -695,39 +790,41 @@ export default function Home() {
                   <div className="pt-3 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-white/10">
                     <span className="flex items-center space-x-1.5">
                       <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.specs.area}</span>
+                      <span>{featureProperty.size || featureProperty.specs?.area || 'Prime Area'}</span>
                     </span>
                     <span className="flex items-center space-x-1.5">
                       <Bed className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.specs.beds} Bedrooms</span>
+                      <span>{featureProperty.bedrooms ?? featureProperty.specs?.beds ?? 0} Bedrooms</span>
                     </span>
                     <span className="flex items-center space-x-1.5">
                       <Bath className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.specs.baths} Bathrooms</span>
+                      <span>{featureProperty.bathrooms ?? featureProperty.specs?.baths ?? 0} Bathrooms</span>
                     </span>
-                    <span className="text-zinc-400">• {featureProperty.specs.views}</span>
+                    <span className="text-zinc-400">• {featureProperty.specs?.views || 'Curated Panorama'}</span>
                   </div>
 
                   {/* Interactive Buttons */}
-                  <div className="pt-2 flex flex-wrap items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={() => openEnquiryFor(featureProperty.title)}
-                      className="px-5 py-2.5 bg-[#D4AF37] text-neutral-950 text-xs font-semibold tracking-wider uppercase hover:bg-white transition-colors rounded-none"
+                  <div className="pt-2 flex flex-wrap items-center gap-3">
+                    <span
+                      className="px-5 py-2.5 bg-[#D4AF37] text-neutral-950 text-xs font-semibold tracking-wider uppercase group-hover:bg-white transition-colors rounded-none inline-flex items-center gap-1.5"
                     >
-                      Request Architectural Dossier
-                    </button>
+                      <span>Explore Property Dossier</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </span>
                     <a
                       href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(featureProperty.title)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2.5 border border-emerald-500/40 text-emerald-400 text-xs font-medium tracking-wider uppercase hover:bg-emerald-950/30 transition-colors flex items-center space-x-1.5 rounded-none"
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-4 py-2.5 border border-emerald-500/40 text-emerald-400 text-xs font-medium tracking-wider uppercase hover:bg-emerald-950/30 transition-colors flex items-center space-x-1.5 rounded-none z-20"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>WhatsApp Concierge</span>
                     </a>
                     <a
                       href="tel:+923008286662"
-                      className="px-4 py-2.5 border border-white/20 text-zinc-300 text-xs font-medium tracking-wider uppercase hover:text-white hover:border-white/40 transition-colors flex items-center space-x-1.5 rounded-none"
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-4 py-2.5 border border-white/20 text-zinc-300 text-xs font-medium tracking-wider uppercase hover:text-white hover:border-white/40 transition-colors flex items-center space-x-1.5 rounded-none z-20"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>Call Principal Advisor</span>
@@ -735,144 +832,157 @@ export default function Home() {
                   </div>
 
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* Right Side (Col 5): Two Stacked Horizontal Showcase Cards */}
-            <div className="lg:col-span-5 flex flex-col justify-between gap-8">
-              
-              {secondaryProperties.slice(0, 2).map((property) => (
-                <div 
-                  key={property.id}
-                  onClick={() => openEnquiryFor(property.title)}
-                  className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden cursor-pointer border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-xl rounded-none"
-                >
-                  <Image
-                    src={property.imageUrl}
-                    alt={property.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 42vw"
-                    className="object-cover object-center transform transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/85 opacity-90"></div>
+            {secondaryProperties.length > 0 && (
+              <div className="lg:col-span-5 flex flex-col justify-between gap-8">
+                
+                {secondaryProperties.slice(0, 2).map((property) => (
+                  <Link 
+                    key={property.id}
+                    href={`/properties/${property.slug || property.id}`}
+                    className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-xl rounded-none"
+                  >
+                    <Image
+                      src={property.image_urls?.[0] || property.imageUrl || '/images/hero-mansion.jpg'}
+                      alt={property.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 42vw"
+                      className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/85 opacity-90"></div>
 
-                  {/* Badge */}
-                  <div className="absolute top-5 left-5 z-10 flex items-center space-x-2">
-                    <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
-                      {property.badge || property.tag}
-                    </span>
-                  </div>
-
-                  <div className="absolute top-5 right-5 z-10 w-9 h-9 bg-black/70 border border-white/15 flex items-center justify-center text-white group-hover:text-black group-hover:bg-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-200">
-                    <ArrowUpRight className="w-4 h-4" />
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="absolute bottom-0 inset-x-0 p-6 sm:p-7 z-10 space-y-2.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-zinc-400 flex items-center text-[11px]">
-                        <MapPin className="w-3 h-3 mr-1 text-[#D4AF37]" />
-                        {property.location}
+                    {/* Badges */}
+                    <div className="absolute top-5 left-5 z-10 flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
+                        {property.badge || property.tag || 'Verified Mandate'}
                       </span>
-                      <span className="font-serif text-xl sm:text-2xl text-[#D4AF37]">
-                        {property.price}
-                      </span>
+                      {property.image_urls && property.image_urls.length > 1 && (
+                        <span className="px-2.5 py-1 bg-black/90 border border-amber-500/40 text-[9px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1 shadow-md">
+                          <Camera className="w-3 h-3 text-amber-400" />
+                          <span>{property.image_urls.length} PHOTOS</span>
+                        </span>
+                      )}
                     </div>
 
-                    <h3 className="font-serif text-xl sm:text-2xl font-light text-white leading-snug group-hover:text-amber-100 transition-colors">
-                      {property.title}
-                    </h3>
-
-                    <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-zinc-300 border-t border-white/10">
-                      <span className="flex items-center space-x-1">
-                        <Maximize2 className="w-3.5 h-3.5 text-[#D4AF37]" />
-                        <span>{property.specs.area}</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <Bed className="w-3.5 h-3.5 text-[#D4AF37]" />
-                        <span>{property.specs.beds} Beds</span>
-                      </span>
-                      <span className="text-zinc-400">• {property.specs.views}</span>
+                    <div className="absolute top-5 right-5 z-10 w-9 h-9 bg-black/70 border border-white/15 flex items-center justify-center text-white group-hover:text-black group-hover:bg-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-200">
+                      <ArrowUpRight className="w-4 h-4" />
                     </div>
 
-                    <div className="pt-2 flex items-center space-x-4" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => openEnquiryFor(property.title)}
-                        className="text-[11px] uppercase tracking-wider text-[#D4AF37] hover:underline font-medium"
-                      >
-                        Request Details →
-                      </button>
-                      <span className="text-zinc-600">|</span>
-                      <a
-                        href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] uppercase tracking-wider text-emerald-400 hover:underline font-medium"
-                      >
-                        WhatsApp Desk
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                    {/* Card Content */}
+                    <div className="absolute bottom-0 inset-x-0 p-6 sm:p-7 z-10 space-y-2.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-zinc-400 flex items-center text-[11px]">
+                          <MapPin className="w-3 h-3 mr-1 text-[#D4AF37]" />
+                          {property.location}
+                        </span>
+                        <span className="font-serif text-xl sm:text-2xl text-[#D4AF37]">
+                          {property.demand ? (property.demand.toLowerCase().includes('pkr') ? property.demand : `PKR ${property.demand}`) : (property.price || 'Price on Application')}
+                        </span>
+                      </div>
 
-            </div>
+                      <h3 className="font-serif text-xl sm:text-2xl font-light text-white leading-snug group-hover:text-amber-100 transition-colors">
+                        {property.title}
+                      </h3>
+
+                      <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-zinc-300 border-t border-white/10">
+                        <span className="flex items-center space-x-1">
+                          <Maximize2 className="w-3.5 h-3.5 text-[#D4AF37]" />
+                          <span>{property.size || property.specs?.area || 'Prime Area'}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                          <Bed className="w-3.5 h-3.5 text-[#D4AF37]" />
+                          <span>{property.bedrooms ?? property.specs?.beds ?? 0} Beds</span>
+                        </span>
+                        <span className="text-zinc-400">• {property.specs?.views || 'Prime View'}</span>
+                      </div>
+
+                      <div className="pt-2 flex items-center space-x-4">
+                        <span className="text-[11px] uppercase tracking-wider text-[#D4AF37] group-hover:underline font-medium inline-flex items-center gap-1">
+                          <span>View Full Dossier →</span>
+                        </span>
+                        <span className="text-zinc-600">|</span>
+                        <a
+                          href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-[11px] uppercase tracking-wider text-emerald-400 hover:underline font-medium z-20"
+                        >
+                          WhatsApp Desk
+                        </a>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+
+              </div>
+            )}
 
           </div>
 
-          {/* Full Grid of Remaining Properties (Fixing broken buttons) */}
-          {filteredProperties.length > 3 && (
+          {/* Full Grid of Remaining Properties */}
+          {activeList.length > 3 && (
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProperties.slice(3).map((prop) => (
-                <div
+              {activeList.slice(3).map((prop) => (
+                <Link
                   key={prop.id}
-                  onClick={() => openEnquiryFor(prop.title)}
-                  className="group overflow-hidden border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-all duration-200 cursor-pointer shadow-lg rounded-none"
+                  href={`/properties/${prop.slug || prop.id}`}
+                  className="group overflow-hidden block border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-all duration-200 shadow-lg rounded-none"
                 >
                   <div className="relative h-60 w-full overflow-hidden">
                     <Image
-                      src={prop.imageUrl}
+                      src={prop.image_urls?.[0] || prop.imageUrl || '/images/hero-mansion.jpg'}
                       alt={prop.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                    <span className="absolute top-4 left-4 px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] uppercase tracking-wider text-[#D4AF37] font-semibold rounded-none">
-                      {prop.badge || prop.tag}
-                    </span>
+                    <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] uppercase tracking-wider text-[#D4AF37] font-semibold rounded-none">
+                        {prop.badge || prop.tag || 'Verified Mandate'}
+                      </span>
+                      {prop.image_urls && prop.image_urls.length > 1 && (
+                        <span className="px-2 py-0.5 bg-black/90 border border-amber-500/40 text-[9px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1 shadow-md">
+                          <Camera className="w-3 h-3 text-amber-400" />
+                          <span>{prop.image_urls.length} PHOTOS</span>
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="p-6 space-y-3">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-zinc-400">{prop.location}</span>
-                      <span className="font-serif text-lg text-[#D4AF37]">{prop.price}</span>
+                      <span className="font-serif text-lg text-[#D4AF37]">
+                        {prop.demand ? (prop.demand.toLowerCase().includes('pkr') ? prop.demand : `PKR ${prop.demand}`) : (prop.price || 'Price on Application')}
+                      </span>
                     </div>
                     <h4 className="font-serif text-lg text-white font-light line-clamp-1">{prop.title}</h4>
                     <div className="flex items-center gap-3 text-xs text-zinc-400 border-t border-white/10 pt-3">
-                      <span>{prop.specs.area}</span>
-                      <span>• {prop.specs.beds} Beds</span>
-                      <span>• {prop.specs.baths} Baths</span>
+                      <span>{prop.size || prop.specs?.area || 'Prime Area'}</span>
+                      <span>• {prop.bedrooms ?? prop.specs?.beds ?? 0} Beds</span>
+                      <span>• {prop.bathrooms ?? prop.specs?.baths ?? 0} Baths</span>
                     </div>
-                    <div className="pt-2 flex justify-between items-center" onClick={(e) => e.stopPropagation()}>
-                      {/* Fixed clickable button */}
-                      <button 
-                        onClick={() => openEnquiryFor(prop.title)}
-                        className="text-xs uppercase tracking-wider text-[#D4AF37] hover:underline font-medium"
-                      >
-                        Request Dossier
-                      </button>
+                    <div className="pt-2 flex justify-between items-center">
+                      <span className="text-xs uppercase tracking-wider text-[#D4AF37] group-hover:underline font-medium">
+                        View Dossier →
+                      </span>
                       <a
                         href={`https://wa.me/923008286662?text=Inquiry%20for%20${encodeURIComponent(prop.title)}`}
-                        className="text-xs text-emerald-400 hover:underline"
+                        className="text-xs text-emerald-400 hover:underline z-20"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         WhatsApp Desk
                       </a>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
