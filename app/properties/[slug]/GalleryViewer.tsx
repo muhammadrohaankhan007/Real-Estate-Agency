@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { Camera, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
 
@@ -19,55 +19,101 @@ export default function GalleryViewer({ images, title }: GalleryViewerProps) {
     setIsMounted(true);
   }, []);
 
-  // Automated 4.5-second cross-fade slideshow engine
+  const totalImages = images?.length || 0;
+
+  // Memoized navigation handlers to prevent unnecessary re-render propagation
+  const nextImage = useCallback(() => {
+    if (totalImages <= 1) return;
+    setActiveIndex((prev) => (prev + 1) % totalImages);
+  }, [totalImages]);
+
+  const prevImage = useCallback(() => {
+    if (totalImages <= 1) return;
+    setActiveIndex((prev) => (prev - 1 + totalImages) % totalImages);
+  }, [totalImages]);
+
+  const selectImage = useCallback((idx: number) => {
+    setActiveIndex(idx);
+  }, []);
+
+  const toggleSlideshow = useCallback(() => {
+    setIsPlaying((prev) => !prev);
+  }, []);
+
+  // Automated 4.5-second cross-fade slideshow engine with RAF-friendly interval
   useEffect(() => {
-    if (!isMounted || !isPlaying || images.length <= 1) return;
+    if (!isMounted || !isPlaying || totalImages <= 1) return;
 
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % images.length);
+      setActiveIndex((prev) => (prev + 1) % totalImages);
     }, 4500);
 
     return () => clearInterval(interval);
-  }, [isMounted, isPlaying, images.length]);
+  }, [isMounted, isPlaying, totalImages]);
 
-  const nextImage = () => {
-    setActiveIndex((prev) => (prev + 1) % images.length);
-  };
+  // Keyboard navigation for power users (Left / Right arrow keys)
+  useEffect(() => {
+    if (!isMounted || totalImages <= 1) return;
 
-  const prevImage = () => {
-    setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        prevImage();
+      } else if (e.key === "ArrowRight") {
+        nextImage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isMounted, totalImages, nextImage, prevImage]);
+
+  if (!images || totalImages === 0) {
+    return null;
+  }
 
   return (
     <div className="space-y-4">
-      {/* Primary Showroom Stage with Layered Opacity Cross-Fade Transitions */}
-      <div className="relative w-full h-[440px] sm:h-[560px] md:h-[680px] overflow-hidden bg-black border border-white/10 group shadow-2xl">
+      {/* Primary Showroom Stage with Fixed Aspect Ratio & GPU Acceleration */}
+      <div 
+        className="relative w-full aspect-[16/10] sm:aspect-[16/9] md:h-[680px] overflow-hidden bg-black border border-white/10 group shadow-2xl"
+        style={{ contain: 'layout paint' }}
+      >
         {images.map((img, idx) => {
           // SSR & pre-mount render index 0 deterministically to prevent hydration drift
           const isActive = isMounted ? idx === activeIndex : idx === 0;
 
           return (
             <div
-              key={idx}
+              key={`gallery-main-${idx}-${img}`}
               className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
                 isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
               }`}
+              style={{
+                transform: "translateZ(0)",
+                willChange: "opacity, transform",
+                backfaceVisibility: "hidden",
+              }}
             >
               <Image
                 src={img}
                 alt={`${title} - Showroom Asset ${idx + 1}`}
                 fill
                 priority={idx === 0}
-                sizes="(max-width: 1280px) 100vw, 1200px"
+                loading={idx === 0 ? "eager" : "lazy"}
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 95vw, 1200px"
                 className="object-cover object-center transform transition-transform duration-1000 ease-out group-hover:scale-105"
+                style={{
+                  transform: "translateZ(0)",
+                  willChange: "transform",
+                }}
               />
             </div>
           );
         })}
 
         {/* Ambient Architectural Vignette Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent pointer-events-none z-10"></div>
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent pointer-events-none z-10" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10" />
 
         {/* HUD Controls Header */}
         <div className="absolute top-6 left-6 z-20 flex flex-wrap items-center gap-2">
@@ -75,14 +121,15 @@ export default function GalleryViewer({ images, title }: GalleryViewerProps) {
           <div className="bg-black/85 backdrop-blur-md border border-[#D4AF37]/50 text-[#D4AF37] px-3.5 py-1.5 text-[10px] tracking-[0.25em] uppercase font-semibold flex items-center gap-2 shadow-lg">
             <Camera className="w-3.5 h-3.5" />
             <span>
-              ASSET {isMounted ? activeIndex + 1 : 1} / {images.length}
+              ASSET {isMounted ? activeIndex + 1 : 1} / {totalImages}
             </span>
           </div>
 
           {/* Slideshow Play / Pause Controls */}
-          {images.length > 1 && (
+          {totalImages > 1 && (
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={toggleSlideshow}
+              type="button"
               aria-label={isPlaying ? "Pause Showroom Slideshow" : "Play Showroom Slideshow"}
               className={`backdrop-blur-md border px-3 py-1.5 text-[10px] tracking-wider uppercase flex items-center gap-1.5 transition-all duration-200 ${
                 isPlaying
@@ -112,19 +159,23 @@ export default function GalleryViewer({ images, title }: GalleryViewerProps) {
         </div>
 
         {/* Next & Previous Navigation Buttons */}
-        {images.length > 1 && (
+        {totalImages > 1 && (
           <>
             <button
               onClick={prevImage}
+              type="button"
               aria-label="Previous Showroom Asset"
               className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/75 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+              style={{ transform: "translateY(-50%) translateZ(0)" }}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextImage}
+              type="button"
               aria-label="Next Showroom Asset"
               className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-black/75 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+              style={{ transform: "translateY(-50%) translateZ(0)" }}
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -133,10 +184,10 @@ export default function GalleryViewer({ images, title }: GalleryViewerProps) {
       </div>
 
       {/* Interactive Thumbnail Ribbon */}
-      {images.length > 1 && (
+      {totalImages > 1 && (
         <div className="space-y-2 pt-2">
           <div className="flex justify-between items-center text-[10px] tracking-widest uppercase text-zinc-400 font-mono">
-            <span>Showroom Gallery Ribbon ({images.length} Total Assets)</span>
+            <span>Showroom Gallery Ribbon ({totalImages} Total Assets)</span>
             <span>Click to Inspect Asset</span>
           </div>
 
@@ -146,23 +197,28 @@ export default function GalleryViewer({ images, title }: GalleryViewerProps) {
 
               return (
                 <button
-                  key={idx}
-                  onClick={() => setActiveIndex(idx)}
+                  key={`gallery-thumb-${idx}-${img}`}
+                  onClick={() => selectImage(idx)}
+                  type="button"
+                  aria-label={`View Asset ${idx + 1}`}
                   className={`group relative h-16 sm:h-20 w-full overflow-hidden border transition-all duration-200 focus:outline-none ${
                     isThumbActive
                       ? "border-[#D4AF37] ring-1 ring-[#D4AF37] brightness-110 shadow-lg shadow-[#D4AF37]/20"
                       : "border-white/10 opacity-55 hover:opacity-100 hover:border-white/40"
                   }`}
+                  style={{ transform: "translateZ(0)" }}
                 >
                   <Image
                     src={img}
                     alt={`Showroom Thumbnail ${idx + 1}`}
                     fill
-                    sizes="120px"
+                    sizes="(max-width: 640px) 25vw, (max-width: 1024px) 16vw, 120px"
+                    loading="lazy"
                     className="object-cover object-center transform group-hover:scale-105 transition-transform duration-300"
+                    style={{ transform: "translateZ(0)" }}
                   />
                   {isThumbActive && (
-                    <div className="absolute inset-0 bg-[#D4AF37]/15 pointer-events-none border border-[#D4AF37]"></div>
+                    <div className="absolute inset-0 bg-[#D4AF37]/15 pointer-events-none border border-[#D4AF37]" />
                   )}
                   <span className="absolute bottom-1 right-1 bg-black/80 text-[8px] font-mono px-1 py-0.5 text-zinc-300 border border-white/10">
                     {idx + 1}

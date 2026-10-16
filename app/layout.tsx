@@ -97,7 +97,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${cinzel.variable} ${jakarta.variable} scroll-smooth`}>
+    <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${cinzel.variable} ${jakarta.variable} scroll-smooth`}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>

@@ -14,6 +14,8 @@ export interface Property {
   description: string | null;
   image_urls: string[];
   created_at: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const supabase = createClient(

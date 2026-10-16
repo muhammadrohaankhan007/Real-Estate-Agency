@@ -18,6 +18,7 @@ import {
   Compass
 } from 'lucide-react';
 import GalleryViewer from './GalleryViewer';
+import PropertyGisMap from '@/components/PropertyGisMap';
 
 // Enforce zero-cache directives
 export const dynamic = 'force-dynamic';
@@ -35,6 +36,8 @@ interface Property {
   description: string | null;
   image_urls: string[];
   created_at: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const supabase = createClient(
@@ -131,10 +134,6 @@ export default async function PropertyDetailPage({
   );
   const waUrl = `https://wa.me/923008286662?text=${waTelemetry}`;
 
-  // Zero-API-key Google Maps embed URL
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
-    property.location
-  )}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-zinc-100 selection:bg-[#D4AF37] selection:text-black">
@@ -271,28 +270,14 @@ export default async function PropertyDetailPage({
               </div>
             </div>
 
-            {/* GIS / Zero-API-Key Live Map Integration */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-serif text-xl sm:text-2xl font-light text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-[#D4AF37]" />
-                  <span>Cadastral GIS & Location Coordinates</span>
-                </h3>
-                <span className="text-[11px] text-zinc-400 uppercase tracking-wider font-mono">
-                  {property.location}
-                </span>
-              </div>
-              <div className="relative w-full h-80 overflow-hidden border border-white/10 bg-black">
-                <iframe
-                  src={mapEmbedUrl}
-                  className="w-full h-full border-0 filter invert-[0.9] hue-rotate-180 contrast-125 brightness-90"
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title={`Location Coordinates for ${property.title}`}
-                />
-              </div>
-            </div>
+            {/* Live Interactive Leaflet Cadastral GIS Map */}
+            <PropertyGisMap
+              latitude={property.latitude}
+              longitude={property.longitude}
+              title={property.title}
+              location={property.location}
+              demand={formattedDemand}
+            />
           </div>
 
           {/* Right Column (Col 5): High-Net-Worth Advisory Hub */}

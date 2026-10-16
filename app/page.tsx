@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -15,6 +15,7 @@ import {
   Maximize2, 
   MapPin, 
   ChevronRight, 
+  ChevronLeft,
   ChevronDown, 
   Menu, 
   CheckCircle2, 
@@ -30,7 +31,11 @@ import {
   Lock, 
   Layers, 
   Award,
-  Camera
+  Camera,
+  Play,
+  Pause,
+  Sparkles,
+  LayoutGrid
 } from 'lucide-react';
 
 export interface Property {
@@ -59,6 +64,8 @@ export interface Property {
   tag?: string;
   badge?: string;
   created_at?: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export default function Home() {
@@ -76,6 +83,11 @@ export default function Home() {
   const [enquireModalOpen, setEnquireModalOpen] = useState(false);
   const [accessModalOpen, setAccessModalOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<string>('The DHA Phase 8 Collection');
+  
+  // Continuous Revolving Portfolio Showcase State
+  const [showcaseMode, setShowcaseMode] = useState<'revolving' | 'grid'>('revolving');
+  const [revolvingIndex, setRevolvingIndex] = useState<number>(0);
+  const [isRevolvingPaused, setIsRevolvingPaused] = useState<boolean>(false);
   
   // Toast notification state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -174,6 +186,8 @@ export default function Home() {
               tag: item.tag || 'Flagship Residence',
               badge: item.badge || 'Verified Mandate',
               created_at: item.created_at,
+              latitude: item.latitude ?? null,
+              longitude: item.longitude ?? null,
             };
           });
           setProperties(mapped);
@@ -185,12 +199,20 @@ export default function Home() {
     loadProperties();
   }, []);
 
-  // Header scroll detection
+  // Header scroll detection optimized with requestAnimationFrame throttling
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 40;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -413,15 +435,58 @@ export default function Home() {
     badge: '1,000 Yds Masterpiece',
   };
 
-  const displayList = properties.length > 0 ? properties : [defaultFeature, defaultEmaar, defaultIttehad];
+  const displayList = useMemo(() => {
+    return properties.length > 0 ? properties : [defaultFeature, defaultEmaar, defaultIttehad];
+  }, [properties]);
   
-  const filteredProperties = activeCategory === 'all' 
-    ? displayList 
-    : displayList.filter(p => p.category === activeCategory || (activeCategory === 'waterfront' && String(p.id).toLowerCase().includes('emaar')));
+  const filteredProperties = useMemo(() => {
+    return activeCategory === 'all' 
+      ? displayList 
+      : displayList.filter(p => p.category === activeCategory || (activeCategory === 'waterfront' && String(p.id).toLowerCase().includes('emaar')));
+  }, [displayList, activeCategory]);
 
-  const activeList = filteredProperties.length > 0 ? filteredProperties : displayList;
-  const featureProperty = activeList.find(p => p.isFeature) || activeList[0] || defaultFeature;
-  const secondaryProperties = activeList.filter(p => p.id !== featureProperty.id);
+  const activeList = useMemo(() => {
+    return filteredProperties.length > 0 ? filteredProperties : displayList;
+  }, [filteredProperties, displayList]);
+
+  const featureProperty = useMemo(() => {
+    return activeList.find(p => p.isFeature) || activeList[0] || defaultFeature;
+  }, [activeList]);
+
+  const secondaryProperties = useMemo(() => {
+    return activeList.filter(p => p.id !== featureProperty.id);
+  }, [activeList, featureProperty.id]);
+
+  // 5-Second Continuous Cross-Fade Revolving Showcase Engine
+  useEffect(() => {
+    if (!isMounted || isRevolvingPaused || showcaseMode !== 'revolving') return;
+    if (!activeList || activeList.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setRevolvingIndex((prev) => (prev + 1) % activeList.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [isMounted, isRevolvingPaused, showcaseMode, activeList]);
+
+  // Reset revolving index when active category filter changes
+  useEffect(() => {
+    setRevolvingIndex(0);
+  }, [activeCategory]);
+
+  const nextRevolvingSlide = useCallback(() => {
+    if (!activeList || activeList.length <= 1) return;
+    setRevolvingIndex((prev) => (prev + 1) % activeList.length);
+  }, [activeList]);
+
+  const prevRevolvingSlide = useCallback(() => {
+    if (!activeList || activeList.length <= 1) return;
+    setRevolvingIndex((prev) => (prev - 1 + activeList.length) % activeList.length);
+  }, [activeList]);
+
+  const goToRevolvingSlide = useCallback((index: number) => {
+    setRevolvingIndex(index);
+  }, []);
 
   // Substantive FAQ questions addressing genuine Karachi legal, title, and tax realities
   const faqs = [
@@ -580,13 +645,15 @@ export default function Home() {
       <section id="home" className="relative min-h-screen w-full flex items-end justify-start overflow-hidden bg-black">
         
         {/* Hero Background Image Container (Edge-to-Edge Optimized Visual) */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ contain: 'paint' }}>
           <Image
             src="/images/hero-mansion.jpg"
             alt="Signature Architectural Mansion in DHA Phase 8 Karachi"
             fill
             priority
+            sizes="100vw"
             className="object-cover object-center animate-subtle-zoom will-change-transform filter brightness-90"
+            style={{ transform: 'translateZ(0)' }}
           />
 
           {/* Dark Architectural Shading */}
@@ -725,265 +792,445 @@ export default function Home() {
                   </button>
                 ))}
               </div>
+
+              {/* Showcase Motion Mode Switcher */}
+              <div className="flex items-center gap-2 pt-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">Showcase Engine:</span>
+                <div className="inline-flex bg-black/80 border border-white/15 p-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowcaseMode('revolving')}
+                    className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                      showcaseMode === 'revolving'
+                        ? 'bg-[#D4AF37] text-black font-bold shadow-md'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Continuous Showroom Motion</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowcaseMode('grid')}
+                    className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                      showcaseMode === 'grid'
+                        ? 'bg-[#D4AF37] text-black font-bold shadow-md'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3 h-3" />
+                    <span>Full Grid View</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* ==================== ASYMMETRICAL SHOWCASE GRID ==================== */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            
-            {/* Left Side: Massive Vertical Feature Card */}
-            <div className={`${secondaryProperties.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col`}>
-              <Link 
-                href={`/properties/${featureProperty.slug || featureProperty.id}`}
-                className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-2xl rounded-none"
+          {/* ==================== 1. CONTINUOUS REVOLVING PORTFOLIO SHOWCASE ==================== */}
+          {showcaseMode === 'revolving' ? (
+            <div className="space-y-6">
+              {/* Main Revolving Showroom Stage */}
+              <div
+                className="relative w-full h-[580px] sm:h-[660px] lg:h-[740px] overflow-hidden bg-black border border-white/10 group shadow-2xl"
+                style={{ contain: 'layout paint' }}
+                onMouseEnter={() => setIsRevolvingPaused(true)}
+                onMouseLeave={() => setIsRevolvingPaused(false)}
               >
-                <Image
-                  src={featureProperty.image_urls?.[0] || featureProperty.imageUrl || '/images/hero-mansion.jpg'}
-                  alt={featureProperty.title}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
-                />
+                {activeList.map((property, idx) => {
+                  const isActive = isMounted ? idx === revolvingIndex : idx === 0;
+                  const displayDemand = property.demand 
+                    ? (property.demand.toLowerCase().includes('pkr') ? property.demand : `PKR ${property.demand}`)
+                    : (property.price || 'Price Upon Application');
 
-                {/* Dark Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/85 opacity-90"></div>
+                  return (
+                    <div
+                      key={`revolving-slide-${property.id}-${idx}`}
+                      className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                        isActive
+                          ? "opacity-100 z-10 scale-100 pointer-events-auto"
+                          : "opacity-0 z-0 scale-[1.03] pointer-events-none"
+                      }`}
+                      style={{
+                        transform: "translateZ(0)",
+                        willChange: "opacity, transform",
+                      }}
+                    >
+                      <Image
+                        src={property.image_urls?.[0] || property.imageUrl || '/images/hero-mansion.jpg'}
+                        alt={property.title}
+                        fill
+                        priority={idx === 0}
+                        sizes="(max-width: 1280px) 100vw, 1400px"
+                        className="object-cover object-center transform transition-transform duration-[8000ms] ease-out group-hover:scale-105"
+                        style={{ transform: "translateZ(0)" }}
+                      />
 
-                {/* Top Badges */}
-                <div className="absolute top-6 left-6 z-10 flex flex-wrap items-center gap-2">
-                  <span className="px-3.5 py-1.5 bg-black/80 border border-[#D4AF37]/50 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
-                    {featureProperty.badge || featureProperty.tag || 'Verified Mandate'}
-                  </span>
-                  {featureProperty.image_urls && featureProperty.image_urls.length > 1 && (
-                    <span className="px-3 py-1.5 bg-black/90 border border-amber-500/40 text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1.5 shadow-md">
-                      <Camera className="w-3 h-3 text-amber-400" />
-                      <span>{featureProperty.image_urls.length} PHOTOS</span>
-                    </span>
-                  )}
-                  <span className="px-3 py-1.5 bg-white/10 border border-white/20 text-[10px] tracking-wider uppercase text-zinc-300 rounded-none">
-                    Est. 1998 Verified
-                  </span>
+                      {/* Ambient Architectural Vignette Overlays */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/85 opacity-90 pointer-events-none" />
+
+                      {/* Top Verification Badges */}
+                      <div className="absolute top-6 left-6 z-20 flex flex-wrap items-center gap-2">
+                        <span className="px-3.5 py-1.5 bg-black/85 border border-[#D4AF37]/50 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
+                          {property.badge || property.tag || 'Verified Mandate'}
+                        </span>
+                        {property.image_urls && property.image_urls.length > 1 && (
+                          <span className="px-3 py-1.5 bg-black/90 border border-amber-500/40 text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1.5 shadow-md">
+                            <Camera className="w-3.5 h-3.5 text-amber-400" />
+                            <span>{property.image_urls.length} PHOTOS</span>
+                          </span>
+                        )}
+                        {typeof property.latitude === 'number' && typeof property.longitude === 'number' ? (
+                          <span className="px-3 py-1.5 bg-black/90 border border-emerald-500/40 text-[10px] tracking-wider uppercase text-emerald-400 font-medium rounded-none flex items-center gap-1.5 shadow-md">
+                            <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>GIS: {property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1.5 bg-white/10 border border-white/20 text-[10px] tracking-wider uppercase text-zinc-300 rounded-none">
+                            Est. 1998 Verified
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Top Right Live Motion HUD */}
+                      <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
+                        <div className="bg-black/90 backdrop-blur-md border border-white/20 px-3.5 py-1.5 text-[10px] tracking-wider font-mono text-zinc-300 flex items-center space-x-2">
+                          <span className="text-[#D4AF37] font-bold">
+                            MANDATE {isMounted ? revolvingIndex + 1 : 1} / {activeList.length}
+                          </span>
+                          <span className="text-zinc-600">|</span>
+                          {isRevolvingPaused ? (
+                            <span className="text-amber-400 flex items-center gap-1 font-medium">
+                              <Pause className="w-3 h-3 text-[#D4AF37]" />
+                              <span>PAUSED ON HOVER</span>
+                            </span>
+                          ) : (
+                            <span className="text-emerald-400 flex items-center gap-1 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                              <span>5.0s MOTION ACTIVE</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIsRevolvingPaused((prev) => !prev);
+                          }}
+                          className="w-8 h-8 bg-black/80 hover:bg-[#D4AF37] hover:text-black border border-white/20 hover:border-[#D4AF37] flex items-center justify-center text-white transition-colors"
+                          title={isRevolvingPaused ? "Resume auto-rotation" : "Pause auto-rotation"}
+                        >
+                          {isRevolvingPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      {/* Bottom Overlay Information */}
+                      <div className="absolute bottom-0 inset-x-0 p-6 sm:p-10 z-20 space-y-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <span className="text-zinc-300 flex items-center text-xs tracking-wider uppercase font-mono">
+                            <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#D4AF37]" />
+                            {property.location}
+                          </span>
+                          <span className="font-serif text-2xl sm:text-4xl text-[#D4AF37] font-normal">
+                            {displayDemand}
+                          </span>
+                        </div>
+
+                        <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-light text-white leading-tight">
+                          {property.title}
+                        </h3>
+
+                        {/* Specs Ribbon */}
+                        <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-white/10">
+                          <span className="flex items-center space-x-1.5">
+                            <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
+                            <span>{property.size || property.specs?.area || 'Prime Yardage'}</span>
+                          </span>
+                          <span className="flex items-center space-x-1.5">
+                            <Bed className="w-4 h-4 text-[#D4AF37]" />
+                            <span>{property.bedrooms ?? property.specs?.beds ?? 0} Bedrooms</span>
+                          </span>
+                          <span className="flex items-center space-x-1.5">
+                            <Bath className="w-4 h-4 text-[#D4AF37]" />
+                            <span>{property.bathrooms ?? property.specs?.baths ?? 0} Bathrooms</span>
+                          </span>
+                          <span className="text-zinc-400">• {property.specs?.views || 'Prime Coastal & Urban Views'}</span>
+                        </div>
+
+                        {/* CTA Buttons */}
+                        <div className="pt-2 flex flex-wrap items-center gap-3">
+                          <Link
+                            href={`/properties/${property.slug || property.id}`}
+                            className="px-6 py-3 bg-[#D4AF37] hover:bg-white text-black text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center gap-1.5 shadow-lg"
+                          >
+                            <span>Explore Property Dossier</span>
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </Link>
+
+                          <a
+                            href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-5 py-3 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            <span>WhatsApp Concierge</span>
+                          </a>
+
+                          <a
+                            href="tel:+923008286662"
+                            className="px-5 py-3 border border-white/20 text-zinc-300 hover:text-white hover:border-white/40 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                            <span>Direct Advisor Call</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Left & Right Chevron Navigation Controls */}
+                {activeList.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={prevRevolvingSlide}
+                      aria-label="Previous property"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={nextRevolvingSlide}
+                      aria-label="Next property"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Active Slide Indicators / Progress Track */}
+              <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center space-x-2">
+                  {activeList.map((prop, idx) => {
+                    const isDotActive = isMounted ? idx === revolvingIndex : idx === 0;
+                    return (
+                      <button
+                        key={`indicator-dot-${prop.id}-${idx}`}
+                        type="button"
+                        onClick={() => goToRevolvingSlide(idx)}
+                        aria-label={`Go to slide ${idx + 1}: ${prop.title}`}
+                        className={`h-2 transition-all duration-300 rounded-none ${
+                          isDotActive
+                            ? "w-8 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
+                            : "w-2.5 bg-white/20 hover:bg-white/50"
+                        }`}
+                      />
+                    );
+                  })}
                 </div>
 
-                {/* Top Right Action Arrow */}
-                <div className="absolute top-6 right-6 z-10 w-10 h-10 bg-black/70 border border-white/15 flex items-center justify-center text-white group-hover:text-black group-hover:bg-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-200">
-                  <ArrowUpRight className="w-4 h-4" />
+                <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">
+                  Auto-Cycles Every 5.0s • Hover to Pause
                 </div>
+              </div>
 
-                {/* Bottom Overlay Info */}
-                <div className="absolute bottom-0 inset-x-0 p-7 sm:p-10 z-10 space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-zinc-300 flex items-center text-xs tracking-wider uppercase">
-                      <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#D4AF37]" />
-                      {featureProperty.location}
-                    </span>
-                    <span className="font-serif text-2xl sm:text-3xl text-[#D4AF37] font-normal">
-                      {featureProperty.demand ? (featureProperty.demand.toLowerCase().includes('pkr') ? featureProperty.demand : `PKR ${featureProperty.demand}`) : (featureProperty.price || 'Price on Application')}
-                    </span>
-                  </div>
-
-                  <h3 className="font-serif text-2xl sm:text-4xl font-light text-white leading-snug group-hover:text-amber-100 transition-colors">
-                    {featureProperty.title}
-                  </h3>
-
-                  {/* Specs */}
-                  <div className="pt-3 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-white/10">
-                    <span className="flex items-center space-x-1.5">
-                      <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.size || featureProperty.specs?.area || 'Prime Area'}</span>
-                    </span>
-                    <span className="flex items-center space-x-1.5">
-                      <Bed className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.bedrooms ?? featureProperty.specs?.beds ?? 0} Bedrooms</span>
-                    </span>
-                    <span className="flex items-center space-x-1.5">
-                      <Bath className="w-4 h-4 text-[#D4AF37]" />
-                      <span>{featureProperty.bathrooms ?? featureProperty.specs?.baths ?? 0} Bathrooms</span>
-                    </span>
-                    <span className="text-zinc-400">• {featureProperty.specs?.views || 'Curated Panorama'}</span>
-                  </div>
-
-                  {/* Interactive Buttons */}
-                  <div className="pt-2 flex flex-wrap items-center gap-3">
-                    <span
-                      className="px-5 py-2.5 bg-[#D4AF37] text-neutral-950 text-xs font-semibold tracking-wider uppercase group-hover:bg-white transition-colors rounded-none inline-flex items-center gap-1.5"
-                    >
-                      <span>Explore Property Dossier</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
-                    <a
-                      href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(featureProperty.title)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="px-4 py-2.5 border border-emerald-500/40 text-emerald-400 text-xs font-medium tracking-wider uppercase hover:bg-emerald-950/30 transition-colors flex items-center space-x-1.5 rounded-none z-20"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span>WhatsApp Concierge</span>
-                    </a>
-                    <a
-                      href="tel:+923008286662"
-                      onClick={(e) => e.stopPropagation()}
-                      className="px-4 py-2.5 border border-white/20 text-zinc-300 text-xs font-medium tracking-wider uppercase hover:text-white hover:border-white/40 transition-colors flex items-center space-x-1.5 rounded-none z-20"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>Call Principal Advisor</span>
-                    </a>
-                  </div>
-
+              {/* Filmstrip Quick Selector Ribbon */}
+              <div className="pt-2">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 mb-2">
+                  Filmstrip Mandate Ribbon ({activeList.length} Estates Loaded):
                 </div>
-              </Link>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {activeList.map((prop, idx) => {
+                    const isCardActive = isMounted ? idx === revolvingIndex : idx === 0;
+                    return (
+                      <button
+                        key={`filmstrip-${prop.id}-${idx}`}
+                        type="button"
+                        onClick={() => goToRevolvingSlide(idx)}
+                        className={`text-left p-2 border transition-all duration-200 group overflow-hidden bg-black/60 ${
+                          isCardActive
+                            ? "border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg shadow-[#D4AF37]/15"
+                            : "border-white/10 hover:border-white/30 opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="relative h-20 w-full overflow-hidden mb-2 bg-zinc-900">
+                          <Image
+                            src={prop.image_urls?.[0] || prop.imageUrl || '/images/hero-mansion.jpg'}
+                            alt={prop.title}
+                            fill
+                            sizes="180px"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {isCardActive && (
+                            <div className="absolute inset-0 bg-[#D4AF37]/20 border border-[#D4AF37] pointer-events-none" />
+                          )}
+                          <span className="absolute bottom-1 right-1 bg-black/80 text-[8px] font-mono px-1 py-0.5 text-zinc-300">
+                            #{idx + 1}
+                          </span>
+                        </div>
+                        <h4 className="font-serif text-xs text-white truncate line-clamp-1">{prop.title}</h4>
+                        <p className="text-[10px] text-[#D4AF37] font-mono mt-0.5 truncate">{prop.demand ? (prop.demand.toLowerCase().includes('pkr') ? prop.demand : `PKR ${prop.demand}`) : 'POA'}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-
-            {/* Right Side (Col 5): Two Stacked Horizontal Showcase Cards */}
-            {secondaryProperties.length > 0 && (
-              <div className="lg:col-span-5 flex flex-col justify-between gap-8">
-                
-                {secondaryProperties.slice(0, 2).map((property) => (
+          ) : (
+            /* ==================== 2. FULL GRID VIEW ==================== */
+            <div>
+              {/* Asymmetrical Showcase Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                {/* Left Side: Feature Card */}
+                <div className={`${secondaryProperties.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col`}>
                   <Link 
-                    key={property.id}
-                    href={`/properties/${property.slug || property.id}`}
-                    className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-xl rounded-none"
+                    href={`/properties/${featureProperty.slug || featureProperty.id}`}
+                    className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-2xl rounded-none"
+                    style={{ transform: 'translateZ(0)' }}
                   >
                     <Image
-                      src={property.image_urls?.[0] || property.imageUrl || '/images/hero-mansion.jpg'}
-                      alt={property.title}
+                      src={featureProperty.image_urls?.[0] || featureProperty.imageUrl || '/images/hero-mansion.jpg'}
+                      alt={featureProperty.title}
                       fill
-                      sizes="(max-width: 1024px) 100vw, 42vw"
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 58vw"
                       className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/85 opacity-90"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/85 opacity-90"></div>
 
-                    {/* Badges */}
-                    <div className="absolute top-5 left-5 z-10 flex flex-wrap items-center gap-2">
-                      <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
-                        {property.badge || property.tag || 'Verified Mandate'}
+                    <div className="absolute top-6 left-6 z-10 flex flex-wrap items-center gap-2">
+                      <span className="px-3.5 py-1.5 bg-black/80 border border-[#D4AF37]/50 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
+                        {featureProperty.badge || featureProperty.tag || 'Verified Mandate'}
                       </span>
-                      {property.image_urls && property.image_urls.length > 1 && (
-                        <span className="px-2.5 py-1 bg-black/90 border border-amber-500/40 text-[9px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1 shadow-md">
+                      {featureProperty.image_urls && featureProperty.image_urls.length > 1 && (
+                        <span className="px-3 py-1.5 bg-black/90 border border-amber-500/40 text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1.5 shadow-md">
                           <Camera className="w-3 h-3 text-amber-400" />
-                          <span>{property.image_urls.length} PHOTOS</span>
+                          <span>{featureProperty.image_urls.length} PHOTOS</span>
                         </span>
                       )}
                     </div>
 
-                    <div className="absolute top-5 right-5 z-10 w-9 h-9 bg-black/70 border border-white/15 flex items-center justify-center text-white group-hover:text-black group-hover:bg-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-200">
+                    <div className="absolute top-6 right-6 z-10 w-10 h-10 bg-black/70 border border-white/15 flex items-center justify-center text-white group-hover:text-black group-hover:bg-[#D4AF37] group-hover:border-[#D4AF37] transition-all duration-200">
                       <ArrowUpRight className="w-4 h-4" />
                     </div>
 
-                    {/* Card Content */}
-                    <div className="absolute bottom-0 inset-x-0 p-6 sm:p-7 z-10 space-y-2.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-zinc-400 flex items-center text-[11px]">
-                          <MapPin className="w-3 h-3 mr-1 text-[#D4AF37]" />
-                          {property.location}
+                    <div className="absolute bottom-0 inset-x-0 p-7 sm:p-10 z-10 space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-zinc-300 flex items-center text-xs tracking-wider uppercase">
+                          <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#D4AF37]" />
+                          {featureProperty.location}
                         </span>
-                        <span className="font-serif text-xl sm:text-2xl text-[#D4AF37]">
-                          {property.demand ? (property.demand.toLowerCase().includes('pkr') ? property.demand : `PKR ${property.demand}`) : (property.price || 'Price on Application')}
+                        <span className="font-serif text-2xl sm:text-3xl text-[#D4AF37] font-normal">
+                          {featureProperty.demand ? (featureProperty.demand.toLowerCase().includes('pkr') ? featureProperty.demand : `PKR ${featureProperty.demand}`) : (featureProperty.price || 'Price on Application')}
                         </span>
                       </div>
 
-                      <h3 className="font-serif text-xl sm:text-2xl font-light text-white leading-snug group-hover:text-amber-100 transition-colors">
-                        {property.title}
+                      <h3 className="font-serif text-2xl sm:text-4xl font-light text-white leading-snug group-hover:text-amber-100 transition-colors">
+                        {featureProperty.title}
                       </h3>
 
-                      <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-zinc-300 border-t border-white/10">
-                        <span className="flex items-center space-x-1">
-                          <Maximize2 className="w-3.5 h-3.5 text-[#D4AF37]" />
-                          <span>{property.size || property.specs?.area || 'Prime Area'}</span>
+                      <div className="pt-3 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-white/10">
+                        <span className="flex items-center space-x-1.5">
+                          <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
+                          <span>{featureProperty.size || featureProperty.specs?.area || 'Prime Area'}</span>
                         </span>
-                        <span className="flex items-center space-x-1">
-                          <Bed className="w-3.5 h-3.5 text-[#D4AF37]" />
-                          <span>{property.bedrooms ?? property.specs?.beds ?? 0} Beds</span>
+                        <span className="flex items-center space-x-1.5">
+                          <Bed className="w-4 h-4 text-[#D4AF37]" />
+                          <span>{featureProperty.bedrooms ?? featureProperty.specs?.beds ?? 0} Bedrooms</span>
                         </span>
-                        <span className="text-zinc-400">• {property.specs?.views || 'Prime View'}</span>
-                      </div>
-
-                      <div className="pt-2 flex items-center space-x-4">
-                        <span className="text-[11px] uppercase tracking-wider text-[#D4AF37] group-hover:underline font-medium inline-flex items-center gap-1">
-                          <span>View Full Dossier →</span>
+                        <span className="flex items-center space-x-1.5">
+                          <Bath className="w-4 h-4 text-[#D4AF37]" />
+                          <span>{featureProperty.bathrooms ?? featureProperty.specs?.baths ?? 0} Bathrooms</span>
                         </span>
-                        <span className="text-zinc-600">|</span>
-                        <a
-                          href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-[11px] uppercase tracking-wider text-emerald-400 hover:underline font-medium z-20"
-                        >
-                          WhatsApp Desk
-                        </a>
                       </div>
                     </div>
                   </Link>
-                ))}
+                </div>
 
-              </div>
-            )}
-
-          </div>
-
-          {/* Full Grid of Remaining Properties */}
-          {activeList.length > 3 && (
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeList.slice(3).map((prop) => (
-                <Link
-                  key={prop.id}
-                  href={`/properties/${prop.slug || prop.id}`}
-                  className="group overflow-hidden block border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-all duration-200 shadow-lg rounded-none"
-                >
-                  <div className="relative h-60 w-full overflow-hidden">
-                    <Image
-                      src={prop.image_urls?.[0] || prop.imageUrl || '/images/hero-mansion.jpg'}
-                      alt={prop.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                    <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-                      <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] uppercase tracking-wider text-[#D4AF37] font-semibold rounded-none">
-                        {prop.badge || prop.tag || 'Verified Mandate'}
-                      </span>
-                      {prop.image_urls && prop.image_urls.length > 1 && (
-                        <span className="px-2 py-0.5 bg-black/90 border border-amber-500/40 text-[9px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1 shadow-md">
-                          <Camera className="w-3 h-3 text-amber-400" />
-                          <span>{prop.image_urls.length} PHOTOS</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-3">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-zinc-400">{prop.location}</span>
-                      <span className="font-serif text-lg text-[#D4AF37]">
-                        {prop.demand ? (prop.demand.toLowerCase().includes('pkr') ? prop.demand : `PKR ${prop.demand}`) : (prop.price || 'Price on Application')}
-                      </span>
-                    </div>
-                    <h4 className="font-serif text-lg text-white font-light line-clamp-1">{prop.title}</h4>
-                    <div className="flex items-center gap-3 text-xs text-zinc-400 border-t border-white/10 pt-3">
-                      <span>{prop.size || prop.specs?.area || 'Prime Area'}</span>
-                      <span>• {prop.bedrooms ?? prop.specs?.beds ?? 0} Beds</span>
-                      <span>• {prop.bathrooms ?? prop.specs?.baths ?? 0} Baths</span>
-                    </div>
-                    <div className="pt-2 flex justify-between items-center">
-                      <span className="text-xs uppercase tracking-wider text-[#D4AF37] group-hover:underline font-medium">
-                        View Dossier →
-                      </span>
-                      <a
-                        href={`https://wa.me/923008286662?text=Inquiry%20for%20${encodeURIComponent(prop.title)}`}
-                        className="text-xs text-emerald-400 hover:underline z-20"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
+                {/* Right Side: Secondary Cards */}
+                {secondaryProperties.length > 0 && (
+                  <div className="lg:col-span-5 flex flex-col justify-between gap-8">
+                    {secondaryProperties.slice(0, 2).map((property) => (
+                      <Link 
+                        key={property.id}
+                        href={`/properties/${property.slug || property.id}`}
+                        className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-xl rounded-none"
+                        style={{ transform: 'translateZ(0)' }}
                       >
-                        WhatsApp Desk
-                      </a>
-                    </div>
+                        <Image
+                          src={property.image_urls?.[0] || property.imageUrl || '/images/hero-mansion.jpg'}
+                          alt={property.title}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 42vw"
+                          className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/85 opacity-90"></div>
+
+                        <div className="absolute top-5 left-5 z-10 flex flex-wrap items-center gap-2">
+                          <span className="px-3 py-1 bg-black/80 border border-[#D4AF37]/40 text-[9px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
+                            {property.badge || property.tag || 'Verified Mandate'}
+                          </span>
+                        </div>
+
+                        <div className="absolute bottom-0 inset-x-0 p-6 sm:p-7 z-10 space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-zinc-400 text-[11px]">{property.location}</span>
+                            <span className="font-serif text-xl sm:text-2xl text-[#D4AF37]">
+                              {property.demand ? (property.demand.toLowerCase().includes('pkr') ? property.demand : `PKR ${property.demand}`) : 'POA'}
+                            </span>
+                          </div>
+                          <h3 className="font-serif text-xl sm:text-2xl font-light text-white leading-snug">{property.title}</h3>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
-                </Link>
-              ))}
+                )}
+              </div>
+
+              {/* Remaining Grid */}
+              {activeList.length > 3 && (
+                <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {activeList.slice(3).map((prop) => (
+                    <Link
+                      key={prop.id}
+                      href={`/properties/${prop.slug || prop.id}`}
+                      className="group overflow-hidden block border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-all duration-200 shadow-lg rounded-none"
+                    >
+                      <div className="relative h-60 w-full overflow-hidden" style={{ transform: 'translateZ(0)' }}>
+                        <Image
+                          src={prop.image_urls?.[0] || prop.imageUrl || '/images/hero-mansion.jpg'}
+                          alt={prop.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                      </div>
+                      <div className="p-6 space-y-3">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-zinc-400">{prop.location}</span>
+                          <span className="font-serif text-lg text-[#D4AF37]">
+                            {prop.demand ? (prop.demand.toLowerCase().includes('pkr') ? prop.demand : `PKR ${prop.demand}`) : 'POA'}
+                          </span>
+                        </div>
+                        <h4 className="font-serif text-lg text-white font-light line-clamp-1">{prop.title}</h4>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -1040,12 +1287,14 @@ export default function Home() {
                 <div className="absolute inset-3 border border-[#D4AF37]/30 pointer-events-none z-20"></div>
 
                 {/* Founder Cutout Photograph */}
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full" style={{ transform: 'translateZ(0)' }}>
                   <Image
                     src="/images/founder-nadeem.png"
                     alt="Nadeem Sulemani — Founder & Principal Advisor of Real Property Prime Time"
                     fill
+                    sizes="(max-width: 1024px) 100vw, 450px"
                     className="object-cover object-top filter brightness-100 contrast-105 transform group-hover:scale-[1.02] transition-transform duration-500"
+                    style={{ transform: 'translateZ(0)' }}
                   />
                 </div>
 
@@ -1167,7 +1416,7 @@ export default function Home() {
               const isOpen = openFaqIndex === idx;
               return (
                 <div 
-                  key={idx} 
+                  key={faq.q || `faq-${idx}`} 
                   className="border border-white/10 bg-black/60 transition-colors duration-200"
                 >
                   <button
