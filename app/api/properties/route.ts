@@ -6,6 +6,8 @@ export interface Property {
   id: number;
   title: string;
   slug: string;
+  category?: string | null;
+  floor_number?: string | null;
   demand: string;
   location: string;
   bedrooms: number | null;

@@ -48,20 +48,20 @@ export default function PropertyGisMap({
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
 
-      // Custom gold GIS luxury pin marker icon
+      // Custom Gold SVG GIS luxury pin marker (#D4AF37) with radial aura glow
       const customGoldIcon = L.divIcon({
         className: "custom-gis-pin-container",
         html: `
-          <div style="position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 36px; height: 36px; border-radius: 50%; background: rgba(212, 175, 55, 0.3); animation: gis-pulse 2s infinite ease-in-out;"></div>
-            <div style="position: relative; width: 28px; height: 28px; border-radius: 50%; background: #D4AF37; border: 2.5px solid #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.85);">
-              <div style="width: 10px; height: 10px; border-radius: 50%; background: #0a0a0a;"></div>
-            </div>
-            <div style="position: absolute; bottom: 0; width: 2px; height: 8px; background: #D4AF37;"></div>
+          <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+            <div style="position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.55) 0%, rgba(212, 175, 55, 0.18) 55%, transparent 75%); animation: gis-pulse 2s infinite ease-in-out;"></div>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.85)); z-index: 2;">
+              <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2Z" fill="#D4AF37" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="9" r="3.2" fill="#0a0a0a" stroke="#ffffff" stroke-width="0.8"/>
+            </svg>
           </div>
         `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
+        iconSize: [44, 44],
+        iconAnchor: [22, 40],
         popupAnchor: [0, -40],
       });
 
@@ -73,37 +73,28 @@ export default function PropertyGisMap({
         scrollWheelZoom: false,
       });
 
-      // Tile Layer with NEXT_PUBLIC_GIS_MAP_API_KEY and CartoDB Dark Matter automatic fallback
-      const gisApiKey = process.env.NEXT_PUBLIC_GIS_MAP_API_KEY;
-      const fallbackTileLayer = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          subdomains: "abcd",
+      // CartoDB Dark Matter Vector Tiles Layer with API Key
+      const cartoApiKey = 
+        process.env.NEXT_PUBLIC_CARTO_API_KEY || 
+        process.env.NEXT_PUBLIC_GIS_MAP_API_KEY || 
+        "cb1_4mfj_1_0978475793745b444425c8cc";
+
+      const tileUrl = cartoApiKey 
+        ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
+        : "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png";
+
+      L.tileLayer(tileUrl, {
+        maxZoom: 20,
+        subdomains: "abcd",
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      }).addTo(map);
+
+      // Force Size Invalidation immediately after initializing L.map()
+      setTimeout(() => {
+        if (map) {
+          map.invalidateSize();
         }
-      );
-
-      if (gisApiKey) {
-        const stadiaTileUrl = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${gisApiKey}`;
-        const stadiaLayer = L.tileLayer(stadiaTileUrl, {
-          maxZoom: 20,
-        });
-
-        let hasFallenBack = false;
-        stadiaLayer.on("tileerror", () => {
-          if (!hasFallenBack) {
-            hasFallenBack = true;
-            if (map.hasLayer(stadiaLayer)) {
-              map.removeLayer(stadiaLayer);
-            }
-            fallbackTileLayer.addTo(map);
-          }
-        });
-
-        stadiaLayer.addTo(map);
-      } else {
-        fallbackTileLayer.addTo(map);
-      }
+      }, 250);
 
       // Marker
       const marker = L.marker([lat, lng], {
@@ -131,8 +122,16 @@ export default function PropertyGisMap({
 
     initMap();
 
+    const handleResize = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
     return () => {
       isSubscribed = false;
+      window.removeEventListener("resize", handleResize);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -147,6 +146,7 @@ export default function PropertyGisMap({
       mapInstanceRef.current.setView([lat, lng], hasExactCoords ? 15 : 13, {
         animate: true,
       });
+      mapInstanceRef.current.invalidateSize();
     }
   };
 
@@ -188,14 +188,17 @@ export default function PropertyGisMap({
       </div>
 
       {/* Leaflet GIS Map Container */}
-      <div className="relative w-full h-80 sm:h-96 overflow-hidden border border-white/10 bg-black shadow-2xl">
+      <div 
+        className="relative z-0 w-full overflow-hidden rounded-xl border border-neutral-800 bg-black shadow-2xl"
+        style={{ height: "350px", width: "100%" }}
+      >
         {!isMounted ? (
           <div className="w-full h-full flex items-center justify-center bg-black/60 font-mono text-xs text-zinc-500">
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse mr-2" />
             <span>INITIALIZING GIS CADASTRAL SATELLITE TILES...</span>
           </div>
         ) : (
-          <div ref={mapContainerRef} className="w-full h-full" />
+          <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
         )}
 
         {/* Cadastral Coordinate Watermark */}

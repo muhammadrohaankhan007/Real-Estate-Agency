@@ -5,7 +5,6 @@ import {
   MapPin, 
   Crosshair, 
   Compass, 
-  Layers, 
   Check, 
   Copy, 
   Navigation,
@@ -21,8 +20,8 @@ interface GisCoordinatePickerProps {
 
 // Karachi Luxury Enclave Cadastral Presets
 const PRESET_ENCLAVES = [
-  { name: "DHA Phase 8 (Zone A / Beachfront)", lat: 24.7836, lng: 67.0622 },
   { name: "Emaar Crescent Bay", lat: 24.7875, lng: 67.0758 },
+  { name: "DHA Phase 8 (Zone A / Beachfront)", lat: 24.7836, lng: 67.0622 },
   { name: "DHA Phase 6 (Ittehad Corridor)", lat: 24.8012, lng: 67.0543 },
   { name: "DHA Phase 5 (Creek Vistas)", lat: 24.8150, lng: 67.0700 },
   { name: "Clifton (Block 2 / 4 Sea View)", lat: 24.8198, lng: 67.0289 },
@@ -53,6 +52,7 @@ export default function GisCoordinatePicker({
   const [mapReady, setMapReady] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
+  // Strict Hydration Guard
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -80,21 +80,21 @@ export default function GisCoordinatePicker({
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
 
-      // Custom gold GIS luxury pin marker icon
+      // Custom Gold SVG Pinpoint Marker (#D4AF37) with Radial Aura Glow
       const customGoldIcon = L.divIcon({
         className: "custom-gis-pin-container",
         html: `
-          <div style="position: relative; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background: rgba(212, 175, 55, 0.25); animation: gis-pulse 2s infinite ease-in-out;"></div>
-            <div style="position: relative; width: 24px; height: 24px; border-radius: 50%; background: #D4AF37; border: 2px solid #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.8);">
-              <div style="width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a;"></div>
-            </div>
-            <div style="position: absolute; bottom: 0; width: 2px; height: 6px; background: #D4AF37;"></div>
+          <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+            <div style="position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.55) 0%, rgba(212, 175, 55, 0.18) 55%, transparent 75%); animation: gis-pulse 2s infinite ease-in-out;"></div>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.85)); z-index: 2;">
+              <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2Z" fill="#D4AF37" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="9" r="3.2" fill="#0a0a0a" stroke="#ffffff" stroke-width="0.8"/>
+            </svg>
           </div>
         `,
-        iconSize: [36, 36],
-        iconAnchor: [18, 36],
-        popupAnchor: [0, -36],
+        iconSize: [44, 44],
+        iconAnchor: [22, 40],
+        popupAnchor: [0, -40],
       });
 
       // Create Leaflet map
@@ -105,37 +105,28 @@ export default function GisCoordinatePicker({
         attributionControl: false,
       });
 
-      // Tile Layer with NEXT_PUBLIC_GIS_MAP_API_KEY and CartoDB Dark Matter automatic fallback
-      const gisApiKey = process.env.NEXT_PUBLIC_GIS_MAP_API_KEY;
-      const fallbackTileLayer = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        {
-          maxZoom: 19,
-          subdomains: "abcd",
+      // CartoDB Dark Matter Vector Tiles Layer with API Key
+      const cartoApiKey = 
+        process.env.NEXT_PUBLIC_CARTO_API_KEY || 
+        process.env.NEXT_PUBLIC_GIS_MAP_API_KEY || 
+        "cb1_4mfj_1_0978475793745b444425c8cc";
+
+      const tileUrl = cartoApiKey 
+        ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
+        : "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png";
+
+      L.tileLayer(tileUrl, {
+        maxZoom: 20,
+        subdomains: "abcd",
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      }).addTo(map);
+
+      // Force Size Invalidation immediately after initializing L.map()
+      setTimeout(() => {
+        if (map) {
+          map.invalidateSize();
         }
-      );
-
-      if (gisApiKey) {
-        const stadiaTileUrl = `https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png?api_key=${gisApiKey}`;
-        const stadiaLayer = L.tileLayer(stadiaTileUrl, {
-          maxZoom: 20,
-        });
-
-        let hasFallenBack = false;
-        stadiaLayer.on("tileerror", () => {
-          if (!hasFallenBack) {
-            hasFallenBack = true;
-            if (map.hasLayer(stadiaLayer)) {
-              map.removeLayer(stadiaLayer);
-            }
-            fallbackTileLayer.addTo(map);
-          }
-        });
-
-        stadiaLayer.addTo(map);
-      } else {
-        fallbackTileLayer.addTo(map);
-      }
+      }, 250);
 
       // Create draggable marker
       const marker = L.marker([currentLat, currentLng], {
@@ -144,28 +135,28 @@ export default function GisCoordinatePicker({
         autoPan: true,
       }).addTo(map);
 
-      // Bind popup
-      marker.bindPopup(
-        `<div style="font-family: inherit; font-size: 11px;">
-          <strong style="color: #D4AF37; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px;">Cadastral GIS Coordinate</strong>
-          <span>${currentLat.toFixed(6)}, ${currentLng.toFixed(6)}</span>
-          <br/><span style="color: #888; font-size: 9px;">Drag pin or click map to reposition</span>
-        </div>`
-      );
+      const updatePopupContent = (latVal: number, lngVal: number) => {
+        marker.setPopupContent(
+          `<div style="font-family: inherit; font-size: 11px;">
+            <strong style="color: #D4AF37; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px;">Cadastral GIS Coordinate</strong>
+            <span>${latVal.toFixed(6)}, ${lngVal.toFixed(6)}</span>
+            <br/><span style="color: #888; font-size: 9px;">Drag pin or click map to reposition</span>
+          </div>`
+        );
+      };
 
-      // Marker drag event
+      // Initial Popup
+      updatePopupContent(currentLat, currentLng);
+
+      // Marker dragend event: update coordinates
       marker.on("dragend", (e: any) => {
         const pos = e.target.getLatLng();
         const lat = parseFloat(pos.lat.toFixed(6));
         const lng = parseFloat(pos.lng.toFixed(6));
         onChange({ lat, lng });
-        marker.setPopupContent(
-          `<div style="font-family: inherit; font-size: 11px;">
-            <strong style="color: #D4AF37; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px;">Cadastral GIS Coordinate</strong>
-            <span>${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
-            <br/><span style="color: #888; font-size: 9px;">Drag pin or click map to reposition</span>
-          </div>`
-        );
+        setInputLat(lat.toFixed(6));
+        setInputLng(lng.toFixed(6));
+        updatePopupContent(lat, lng);
       });
 
       // Map click event: reposition marker to clicked point
@@ -174,13 +165,9 @@ export default function GisCoordinatePicker({
         const lng = parseFloat(e.latlng.lng.toFixed(6));
         marker.setLatLng([lat, lng]);
         onChange({ lat, lng });
-        marker.setPopupContent(
-          `<div style="font-family: inherit; font-size: 11px;">
-            <strong style="color: #D4AF37; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px;">Cadastral GIS Coordinate</strong>
-            <span>${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
-            <br/><span style="color: #888; font-size: 9px;">Drag pin or click map to reposition</span>
-          </div>`
-        );
+        setInputLat(lat.toFixed(6));
+        setInputLng(lng.toFixed(6));
+        updatePopupContent(lat, lng);
       });
 
       mapInstanceRef.current = map;
@@ -190,15 +177,34 @@ export default function GisCoordinatePicker({
 
     initMap();
 
+    // Resize event listener for responsive container changes
+    const handleResize = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
     return () => {
       isSubscribed = false;
+      window.removeEventListener("resize", handleResize);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         markerInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [isMounted]);
+
+  // Secondary Invalidation Guard: run when mapReady changes or container mounts
+  useEffect(() => {
+    if (mapReady && mapInstanceRef.current) {
+      const timer = setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 250);
+      return () => clearTimeout(timer);
+    }
+  }, [mapReady]);
 
   // Update marker & map position when latitude/longitude props change externally
   useEffect(() => {
@@ -223,6 +229,10 @@ export default function GisCoordinatePicker({
     if (!isNaN(parsed) && parsed >= -90 && parsed <= 90) {
       const lng = parseFloat(inputLng) || currentLng;
       onChange({ lat: parsed, lng });
+      if (markerInstanceRef.current && mapInstanceRef.current) {
+        markerInstanceRef.current.setLatLng([parsed, lng]);
+        mapInstanceRef.current.panTo([parsed, lng], { animate: true });
+      }
     }
   };
 
@@ -232,25 +242,30 @@ export default function GisCoordinatePicker({
     if (!isNaN(parsed) && parsed >= -180 && parsed <= 180) {
       const lat = parseFloat(inputLat) || currentLat;
       onChange({ lat, lng: parsed });
+      if (markerInstanceRef.current && mapInstanceRef.current) {
+        markerInstanceRef.current.setLatLng([lat, parsed]);
+        mapInstanceRef.current.panTo([lat, parsed], { animate: true });
+      }
     }
   };
 
-  // Preset location select
+  // Preset location select: smooth flyTo and exact coordinates
   const selectPreset = (preset: { lat: number; lng: number; name: string }) => {
     onChange({ lat: preset.lat, lng: preset.lng });
     setInputLat(preset.lat.toFixed(6));
     setInputLng(preset.lng.toFixed(6));
     if (mapInstanceRef.current && markerInstanceRef.current) {
       markerInstanceRef.current.setLatLng([preset.lat, preset.lng]);
-      mapInstanceRef.current.flyTo([preset.lat, preset.lng], 15, {
+      mapInstanceRef.current.flyTo([preset.lat, preset.lng], 16, {
         duration: 1.2,
       });
+      mapInstanceRef.current.invalidateSize();
     }
   };
 
-  // Device Geolocation Detector
+  // Device Geolocation Detector (GPS ON-SITE)
   const handleDetectLocation = () => {
-    if (!navigator.geolocation) {
+    if (typeof window === "undefined" || !navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
     }
@@ -265,6 +280,7 @@ export default function GisCoordinatePicker({
         if (mapInstanceRef.current && markerInstanceRef.current) {
           markerInstanceRef.current.setLatLng([lat, lng]);
           mapInstanceRef.current.flyTo([lat, lng], 16, { duration: 1.2 });
+          mapInstanceRef.current.invalidateSize();
         }
         setIsLocating(false);
       },
@@ -286,7 +302,7 @@ export default function GisCoordinatePicker({
   };
 
   return (
-    <div className="space-y-4 rounded-none border border-white/10 bg-black/60 p-4 sm:p-5 backdrop-blur-md">
+    <div className="space-y-4 rounded-xl border border-white/10 bg-black/60 p-4 sm:p-5 backdrop-blur-md">
       {/* Header with Title and Coordinate Badge */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center space-x-2">
@@ -347,8 +363,8 @@ export default function GisCoordinatePicker({
         <div className="flex flex-wrap gap-1.5">
           {PRESET_ENCLAVES.map((preset) => {
             const isSelected =
-              Math.abs(currentLat - preset.lat) < 0.005 &&
-              Math.abs(currentLng - preset.lng) < 0.005;
+              Math.abs(currentLat - preset.lat) < 0.003 &&
+              Math.abs(currentLng - preset.lng) < 0.003;
 
             return (
               <button
@@ -357,7 +373,7 @@ export default function GisCoordinatePicker({
                 onClick={() => selectPreset(preset)}
                 className={`text-[10px] px-2.5 py-1 transition-all border ${
                   isSelected
-                    ? "bg-[#D4AF37] text-black font-semibold border-[#D4AF37]"
+                    ? "bg-[#D4AF37] text-black font-semibold border-[#D4AF37] shadow-sm shadow-[#D4AF37]/30"
                     : "bg-white/[0.03] text-zinc-300 border-white/10 hover:border-[#D4AF37]/50 hover:text-white"
                 }`}
               >
@@ -368,14 +384,23 @@ export default function GisCoordinatePicker({
         </div>
       </div>
 
-      {/* Interactive Leaflet Map Viewport */}
-      <div className="relative w-full h-[280px] sm:h-[320px] overflow-hidden border border-white/15 bg-black shadow-inner">
-        <div ref={mapContainerRef} className="w-full h-full" />
+      {/* Interactive Leaflet Map Viewport with Explicit Container Dimensions */}
+      <div 
+        className="relative z-0 overflow-hidden rounded-xl border border-neutral-800"
+        style={{ height: "350px", width: "100%" }}
+      >
+        <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
         
         {/* Floating Map HUD overlay */}
         <div className="absolute bottom-3 left-3 z-[400] bg-black/85 backdrop-blur-md border border-white/20 px-3 py-1 text-[9px] font-mono text-zinc-300 flex items-center space-x-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>WGS 84 / CartoDB Dark Matter GIS</span>
+          <span>WGS 84 • CartoDB Dark Matter GIS</span>
+        </div>
+
+        {/* Live Coordinate Watermark */}
+        <div className="absolute top-3 right-3 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/30 px-2.5 py-1 text-[9px] font-mono text-[#D4AF37] flex items-center space-x-1.5">
+          <MapPin className="w-3 h-3 text-[#D4AF37]" />
+          <span>{currentLat.toFixed(6)}, {currentLng.toFixed(6)}</span>
         </div>
       </div>
 
@@ -383,7 +408,7 @@ export default function GisCoordinatePicker({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
         <div className="space-y-1">
           <label className="text-[10px] uppercase tracking-wider text-zinc-300 font-mono flex items-center justify-between">
-            <span>Latitude (float8)</span>
+            <span>Latitude (double precision)</span>
             <span className="text-[9px] text-zinc-500">-90.0 to +90.0</span>
           </label>
           <input
@@ -393,13 +418,13 @@ export default function GisCoordinatePicker({
             value={inputLat}
             onChange={(e) => handleLatInputChange(e.target.value)}
             placeholder="24.783600"
-            className="w-full bg-black/80 border border-white/10 p-2.5 text-xs font-mono text-white focus:border-[#D4AF37] outline-none transition-colors"
+            className="w-full bg-black/80 border border-white/10 p-2.5 text-xs font-mono text-white focus:border-[#D4AF37] outline-none transition-colors rounded-none"
           />
         </div>
 
         <div className="space-y-1">
           <label className="text-[10px] uppercase tracking-wider text-zinc-300 font-mono flex items-center justify-between">
-            <span>Longitude (float8)</span>
+            <span>Longitude (double precision)</span>
             <span className="text-[9px] text-zinc-500">-180.0 to +180.0</span>
           </label>
           <input
@@ -409,7 +434,7 @@ export default function GisCoordinatePicker({
             value={inputLng}
             onChange={(e) => handleLngInputChange(e.target.value)}
             placeholder="67.062200"
-            className="w-full bg-black/80 border border-white/10 p-2.5 text-xs font-mono text-white focus:border-[#D4AF37] outline-none transition-colors"
+            className="w-full bg-black/80 border border-white/10 p-2.5 text-xs font-mono text-white focus:border-[#D4AF37] outline-none transition-colors rounded-none"
           />
         </div>
       </div>

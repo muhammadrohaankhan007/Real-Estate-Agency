@@ -28,6 +28,8 @@ interface Property {
   id: number;
   title: string;
   slug: string;
+  category?: string | null;
+  floor_number?: string | null;
   demand: string;
   location: string;
   bedrooms: number | null;
@@ -192,9 +194,19 @@ export default async function PropertyDetailPage({
         {/* Title & Headline Price Bar */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="space-y-3 max-w-3xl">
-            <div className="inline-flex items-center space-x-2 text-xs uppercase tracking-widest text-zinc-400">
-              <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>{property.location}</span>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="inline-flex items-center space-x-1.5 text-xs uppercase tracking-widest text-zinc-400">
+                <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span>{property.location}</span>
+              </div>
+              <span className="text-[10px] tracking-wider uppercase bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] px-2.5 py-0.5 font-mono font-semibold">
+                {property.category || 'Bungalow'}
+              </span>
+              {property.floor_number && (
+                <span className="text-[10px] tracking-wider uppercase bg-blue-500/20 border border-blue-500/40 text-blue-300 px-2.5 py-0.5 font-mono">
+                  {property.floor_number}
+                </span>
+              )}
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-light text-white leading-tight tracking-tight">
               {property.title}
@@ -247,8 +259,13 @@ export default async function PropertyDetailPage({
             <Building2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-2" />
             <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block">Asset Category</span>
             <span className="font-serif text-xl sm:text-2xl text-white font-light">
-              Signature Mandate
+              {property.category || 'Signature Mandate'}
             </span>
+            {property.floor_number && (
+              <span className="text-xs text-[#D4AF37] font-mono block mt-0.5">
+                {property.floor_number}
+              </span>
+            )}
           </div>
         </div>
 

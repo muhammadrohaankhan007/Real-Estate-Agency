@@ -53,7 +53,7 @@ async function uploadToCloudinary(
     resource_type: 'image',
   };
 
-  // Auto-scale Hero cover to master 1920x1080 limit while optimizing quality
+  // Transform and constrain Hero images in Cloudinary to 1920x1080 (crop: 'limit', quality: 'auto')
   if (isHero) {
     uploadOptions.transformation = [
       { width: 1920, height: 1080, crop: 'limit' },
@@ -101,7 +101,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Extract GIS Coordinates (latitude & longitude)
+    // 4. Extract Category & Conditional Floor Number
+    const category = (formData.get('category') as string) || 'Bungalow';
+    const floorNumber = (formData.get('floor_number') as string) || null;
+
+    // 5. Extract GIS Coordinates (latitude & longitude)
     const latRaw = formData.get('latitude');
     const lngRaw = formData.get('longitude');
     const parsedLat = latRaw && !isNaN(parseFloat(latRaw as string)) 
@@ -111,7 +115,7 @@ export async function POST(request: Request) {
       ? parseFloat(parseFloat(lngRaw as string).toFixed(6)) 
       : null;
 
-    // 5. Execute concurrent Cloudinary uploads for maximum throughput
+    // 6. Execute concurrent Cloudinary uploads for maximum throughput
     const uploadTasks: Promise<string>[] = [
       uploadToCloudinary(heroFile, true),
       ...validGalleryFiles.map((f) => uploadToCloudinary(f, false)),
@@ -124,7 +128,7 @@ export async function POST(request: Request) {
     const galleryUrls = uploadedUrls.slice(1);
     const consolidatedImageUrls = [heroUrl, ...galleryUrls];
 
-    // 6. Build database record matching Supabase properties schema
+    // 7. Build database record matching Supabase properties schema
     const propertyTitle = (formData.get('title') as string) || 'Untitled Luxury Property';
     const slugBase = propertyTitle
       .toLowerCase()
@@ -132,9 +136,11 @@ export async function POST(request: Request) {
       .replace(/^-+|-+$/g, '');
     const uniqueSlug = `${slugBase}-${Date.now()}`;
 
-    const basePropertyData: Record<string, any> = {
+    const propertyPayload: Record<string, any> = {
       title: propertyTitle,
       slug: uniqueSlug,
+      category,
+      floor_number: floorNumber,
       demand: formData.get('demand') || '',
       location: formData.get('location') || '',
       size: formData.get('size') || '',
@@ -144,74 +150,67 @@ export async function POST(request: Request) {
       image_urls: consolidatedImageUrls,
     };
 
+    if (parsedLat !== null && parsedLng !== null) {
+      propertyPayload.latitude = parsedLat;
+      propertyPayload.longitude = parsedLng;
+    }
+
     let insertedData: any = null;
     let schemaNotice: string | null = null;
 
-    // 7. Insert with GIS coordinates if present, with resilient graceful schema fallback
-    if (parsedLat !== null && parsedLng !== null) {
-      const fullPropertyData = {
-        ...basePropertyData,
-        latitude: parsedLat,
-        longitude: parsedLng,
-      };
+    // 8. Resilient insertion with graceful schema migration fallback
+    const { data, error: dbError } = await supabase
+      .from('properties')
+      .insert([propertyPayload])
+      .select()
+      .single();
 
-      const { data, error: dbError } = await supabase
-        .from('properties')
-        .insert([fullPropertyData])
-        .select()
-        .single();
+    if (!dbError) {
+      insertedData = data;
+    } else {
+      // Check if schema columns (category, floor_number, latitude, longitude) caused code 42703
+      if (dbError.code === '42703') {
+        console.warn('Some columns not yet migrated in Supabase. Attempting resilient fallback insert.');
+        schemaNotice = 'Property published. To enable category, floor_number, and GIS coordinates in Supabase, execute the migration SQL provided.';
 
-      if (!dbError) {
-        insertedData = data;
-      } else {
-        // If Supabase schema does not have latitude/longitude columns yet (code 42703)
-        if (dbError.code === '42703' || dbError.message.includes('latitude')) {
-          console.warn('GIS columns not yet migrated in Supabase. Falling back to base schema.');
-          schemaNotice = 'Property published. To permanently persist GIS coordinates in PostgreSQL, execute: ALTER TABLE properties ADD COLUMN IF NOT EXISTS latitude double precision, ADD COLUMN IF NOT EXISTS longitude double precision; in Supabase SQL editor.';
-          
-          const fallback = await supabase
-            .from('properties')
-            .insert([basePropertyData])
-            .select()
-            .single();
+        const fallbackPayload = { ...propertyPayload };
+        if (dbError.message.includes('floor_number')) delete fallbackPayload.floor_number;
+        if (dbError.message.includes('category')) delete fallbackPayload.category;
+        if (dbError.message.includes('latitude') || dbError.message.includes('longitude')) {
+          delete fallbackPayload.latitude;
+          delete fallbackPayload.longitude;
+        }
 
-          if (fallback.error) {
-            console.error('Supabase fallback insert error:', fallback.error);
-            return NextResponse.json(
-              { error: `Database Error: ${fallback.error.message}` },
-              { status: 500 }
-            );
-          }
-          insertedData = fallback.data;
-        } else {
-          console.error('Supabase insert error:', dbError);
+        const fallback = await supabase
+          .from('properties')
+          .insert([fallbackPayload])
+          .select()
+          .single();
+
+        if (fallback.error) {
+          console.error('Supabase fallback insert error:', fallback.error);
           return NextResponse.json(
-            { error: `Database Error: ${dbError.message}` },
+            { error: `Database Error: ${fallback.error.message}` },
             { status: 500 }
           );
         }
-      }
-    } else {
-      const { data, error: dbError } = await supabase
-        .from('properties')
-        .insert([basePropertyData])
-        .select()
-        .single();
-
-      if (dbError) {
+        insertedData = fallback.data;
+      } else {
         console.error('Supabase insert error:', dbError);
         return NextResponse.json(
           { error: `Database Error: ${dbError.message}` },
           { status: 500 }
         );
       }
-      insertedData = data;
     }
 
     // Revalidate paths for instant portfolio update
     try {
       revalidatePath('/');
       revalidatePath('/admin');
+      if (insertedData?.slug) {
+        revalidatePath(`/properties/${insertedData.slug}`);
+      }
     } catch {
       // Background revalidation notice
     }
@@ -229,6 +228,237 @@ export async function POST(request: Request) {
     console.error('Listing publication pipeline error:', error);
     return NextResponse.json(
       { error: error?.message || 'Failed to process listing' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PUT: Full Listing Update Pipeline (Edit Mode)
+ * Retains existing Cloudinary assets while merging newly uploaded gallery assets
+ */
+export async function PUT(request: Request) {
+  try {
+    const formData = await request.formData();
+
+    // 1. Validate property ID
+    const idRaw = formData.get('id');
+    if (!idRaw) {
+      return NextResponse.json(
+        { error: 'Property ID is required for update execution.' },
+        { status: 400 }
+      );
+    }
+
+    const numericId = parseInt(idRaw as string, 10);
+    if (isNaN(numericId)) {
+      return NextResponse.json(
+        { error: 'Invalid property ID format.' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Fetch existing property from Supabase
+    const { data: existingProp, error: fetchErr } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('id', numericId)
+      .maybeSingle();
+
+    if (fetchErr || !existingProp) {
+      return NextResponse.json(
+        { error: `Property #${numericId} not found.` },
+        { status: 404 }
+      );
+    }
+
+    // 3. Extract retained existing images
+    let retainedHeroUrl = (formData.get('existing_hero_url') as string) || '';
+    let retainedGalleryUrls: string[] = [];
+
+    const existingGalleryRaw = formData.get('existing_gallery_urls');
+    if (typeof existingGalleryRaw === 'string') {
+      try {
+        const parsed = JSON.parse(existingGalleryRaw);
+        if (Array.isArray(parsed)) {
+          retainedGalleryUrls = parsed.filter((u): u is string => typeof u === 'string' && u.length > 0);
+        }
+      } catch {
+        retainedGalleryUrls = [];
+      }
+    } else {
+      const allUrls = formData.getAll('existing_gallery_urls') as string[];
+      retainedGalleryUrls = allUrls.filter(Boolean);
+    }
+
+    // Fallback: if no existing_hero_url provided explicitly, inspect existing_image_urls
+    const existingImageUrlsRaw = formData.get('existing_image_urls');
+    if (existingImageUrlsRaw) {
+      try {
+        const parsed = JSON.parse(existingImageUrlsRaw as string);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (!retainedHeroUrl) retainedHeroUrl = parsed[0];
+          if (retainedGalleryUrls.length === 0) retainedGalleryUrls = parsed.slice(1);
+        }
+      } catch {}
+    }
+
+    if (!retainedHeroUrl && Array.isArray(existingProp.image_urls) && existingProp.image_urls.length > 0) {
+      retainedHeroUrl = existingProp.image_urls[0];
+    }
+
+    // 4. Check for newly uploaded Hero Cover
+    const newHeroFile = formData.get('image') as File | null;
+    let finalHeroUrl = retainedHeroUrl;
+
+    if (newHeroFile && newHeroFile.size > 0 && newHeroFile.name && newHeroFile.name !== 'undefined') {
+      finalHeroUrl = await uploadToCloudinary(newHeroFile, true);
+    }
+
+    if (!finalHeroUrl) {
+      return NextResponse.json(
+        { error: 'A primary Hero Cover image is required.' },
+        { status: 400 }
+      );
+    }
+
+    // 5. Check for newly uploaded Gallery Images
+    const newGalleryFilesRaw = formData.getAll('gallery_images') as File[];
+    const validNewGalleryFiles = newGalleryFilesRaw.filter(
+      (f) => f && f.size > 0 && f.name && f.name !== 'undefined'
+    );
+
+    let newlyUploadedGalleryUrls: string[] = [];
+    if (validNewGalleryFiles.length > 0) {
+      newlyUploadedGalleryUrls = await Promise.all(
+        validNewGalleryFiles.map((f) => uploadToCloudinary(f, false))
+      );
+    }
+
+    // 6. Merge retained gallery images with newly uploaded gallery images
+    const consolidatedGalleryUrls = [...retainedGalleryUrls, ...newlyUploadedGalleryUrls];
+
+    // Enforce 30 asset quota (1 hero + max 29 gallery)
+    if (consolidatedGalleryUrls.length > 29) {
+      return NextResponse.json(
+        { 
+          error: `Total asset capacity exceeded: Maximum 29 gallery assets allowed (30 total with Hero cover). Current total: ${1 + consolidatedGalleryUrls.length}.` 
+        },
+        { status: 400 }
+      );
+    }
+
+    const consolidatedImageUrls = [finalHeroUrl, ...consolidatedGalleryUrls];
+
+    // 7. Extract Form Data Specs
+    const propertyTitle = (formData.get('title') as string) || existingProp.title;
+    const category = (formData.get('category') as string) || existingProp.category || 'Bungalow';
+    const floorNumber = (formData.get('floor_number') as string) || null;
+
+    const latRaw = formData.get('latitude');
+    const lngRaw = formData.get('longitude');
+    const parsedLat = latRaw && !isNaN(parseFloat(latRaw as string)) 
+      ? parseFloat(parseFloat(latRaw as string).toFixed(6)) 
+      : (typeof existingProp.latitude === 'number' ? existingProp.latitude : null);
+    const parsedLng = lngRaw && !isNaN(parseFloat(lngRaw as string)) 
+      ? parseFloat(parseFloat(lngRaw as string).toFixed(6)) 
+      : (typeof existingProp.longitude === 'number' ? existingProp.longitude : null);
+
+    const updatePayload: Record<string, any> = {
+      title: propertyTitle,
+      category,
+      floor_number: floorNumber,
+      demand: formData.get('demand') || existingProp.demand || '',
+      location: formData.get('location') || existingProp.location || '',
+      size: formData.get('size') || existingProp.size || '',
+      bedrooms: parseInt(formData.get('bedrooms') as string, 10) || null,
+      bathrooms: parseInt(formData.get('bathrooms') as string, 10) || null,
+      description: formData.get('description') || '',
+      image_urls: consolidatedImageUrls,
+    };
+
+    if (parsedLat !== null && parsedLng !== null) {
+      updatePayload.latitude = parsedLat;
+      updatePayload.longitude = parsedLng;
+    }
+
+    let updatedData: any = null;
+    let schemaNotice: string | null = null;
+
+    // 8. Execute Supabase Update with Resilient Column Handling
+    const { data: updated, error: updateErr } = await supabase
+      .from('properties')
+      .update(updatePayload)
+      .eq('id', numericId)
+      .select()
+      .single();
+
+    if (!updateErr) {
+      updatedData = updated;
+    } else {
+      if (updateErr.code === '42703') {
+        console.warn('Some columns not yet migrated in Supabase on update. Attempting fallback update.');
+        schemaNotice = 'Property updated with base schema. Run the Supabase SQL migration script to enable category, floor_number, and GIS coordinates.';
+
+        const fallbackPayload = { ...updatePayload };
+        if (updateErr.message.includes('floor_number')) delete fallbackPayload.floor_number;
+        if (updateErr.message.includes('category')) delete fallbackPayload.category;
+        if (updateErr.message.includes('latitude') || updateErr.message.includes('longitude')) {
+          delete fallbackPayload.latitude;
+          delete fallbackPayload.longitude;
+        }
+
+        const fallback = await supabase
+          .from('properties')
+          .update(fallbackPayload)
+          .eq('id', numericId)
+          .select()
+          .single();
+
+        if (fallback.error) {
+          console.error('Supabase fallback update error:', fallback.error);
+          return NextResponse.json(
+            { error: `Database Update Error: ${fallback.error.message}` },
+            { status: 500 }
+          );
+        }
+        updatedData = fallback.data;
+      } else {
+        console.error('Supabase update error:', updateErr);
+        return NextResponse.json(
+          { error: `Database Update Error: ${updateErr.message}` },
+          { status: 500 }
+        );
+      }
+    }
+
+    // 9. Revalidate Next.js cache
+    try {
+      revalidatePath('/');
+      revalidatePath('/admin');
+      if (existingProp.slug) {
+        revalidatePath(`/properties/${existingProp.slug}`);
+      }
+      if (updatedData?.slug && updatedData.slug !== existingProp.slug) {
+        revalidatePath(`/properties/${updatedData.slug}`);
+      }
+    } catch {
+      // Revalidation notice
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Property mandate "${propertyTitle}" (#${numericId}) updated successfully with ${consolidatedImageUrls.length} HD visual assets!`,
+      property: updatedData,
+      total_assets: consolidatedImageUrls.length,
+      hero_url: finalHeroUrl,
+      coordinates: parsedLat && parsedLng ? { latitude: parsedLat, longitude: parsedLng } : null,
+      schema_notice: schemaNotice,
+    });
+  } catch (error: any) {
+    console.error('Listing update pipeline error:', error);
+    return NextResponse.json(
+      { error: error?.message || 'Failed to update property listing.' },
       { status: 500 }
     );
   }
