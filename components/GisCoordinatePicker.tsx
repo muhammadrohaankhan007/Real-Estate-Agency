@@ -20,11 +20,10 @@ interface GisCoordinatePickerProps {
 
 // Karachi Luxury Enclave Cadastral Presets
 const PRESET_ENCLAVES = [
+  { name: "DHA Phase 8", lat: 24.7836, lng: 67.0622 },
   { name: "Emaar Crescent Bay", lat: 24.7875, lng: 67.0758 },
-  { name: "DHA Phase 8 (Zone A / Beachfront)", lat: 24.7836, lng: 67.0622 },
-  { name: "DHA Phase 6 (Ittehad Corridor)", lat: 24.8012, lng: 67.0543 },
-  { name: "DHA Phase 5 (Creek Vistas)", lat: 24.8150, lng: 67.0700 },
-  { name: "Clifton (Block 2 / 4 Sea View)", lat: 24.8198, lng: 67.0289 },
+  { name: "DHA Phase 6", lat: 24.8012, lng: 67.0543 },
+  { name: "Clifton", lat: 24.8198, lng: 67.0289 },
 ];
 
 export default function GisCoordinatePicker({
@@ -80,21 +79,21 @@ export default function GisCoordinatePicker({
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
 
-      // Custom Gold SVG Pinpoint Marker (#D4AF37) with Radial Aura Glow
+      // Custom Gold SVG Pinpoint Marker (#D4AF37) with Radial Aura Glow (gis-pulse-marker)
       const customGoldIcon = L.divIcon({
         className: "custom-gis-pin-container",
         html: `
-          <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.55) 0%, rgba(212, 175, 55, 0.18) 55%, transparent 75%); animation: gis-pulse 2s infinite ease-in-out;"></div>
+          <div style="position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;">
+            <div class="gis-pulse-marker" style="position: absolute; width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.2) 55%, transparent 75%); pointer-events: none;"></div>
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.85)); z-index: 2;">
               <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2Z" fill="#D4AF37" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="12" cy="9" r="3.2" fill="#0a0a0a" stroke="#ffffff" stroke-width="0.8"/>
             </svg>
           </div>
         `,
-        iconSize: [44, 44],
-        iconAnchor: [22, 40],
-        popupAnchor: [0, -40],
+        iconSize: [46, 46],
+        iconAnchor: [23, 42],
+        popupAnchor: [0, -42],
       });
 
       // Create Leaflet map
@@ -105,15 +104,8 @@ export default function GisCoordinatePicker({
         attributionControl: false,
       });
 
-      // CartoDB Dark Matter Vector Tiles Layer with API Key
-      const cartoApiKey = 
-        process.env.NEXT_PUBLIC_CARTO_API_KEY || 
-        process.env.NEXT_PUBLIC_GIS_MAP_API_KEY || 
-        "cb1_4mfj_1_0978475793745b444425c8cc";
-
-      const tileUrl = cartoApiKey 
-        ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
-        : "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png";
+      // Dark Mode CartoDB Vector Tiles Layer: zero blank grey states
+      const tileUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 
       L.tileLayer(tileUrl, {
         maxZoom: 20,
@@ -121,12 +113,14 @@ export default function GisCoordinatePicker({
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       }).addTo(map);
 
-      // Force Size Invalidation immediately after initializing L.map()
-      setTimeout(() => {
-        if (map) {
-          map.invalidateSize();
-        }
-      }, 250);
+      // Multi-tier Invalidation Guards to guarantee zero blank grey states
+      map.invalidateSize();
+      const timer1 = setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 100);
+      const timer2 = setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 350);
 
       // Create draggable marker
       const marker = L.marker([currentLat, currentLng], {
@@ -257,7 +251,8 @@ export default function GisCoordinatePicker({
     if (mapInstanceRef.current && markerInstanceRef.current) {
       markerInstanceRef.current.setLatLng([preset.lat, preset.lng]);
       mapInstanceRef.current.flyTo([preset.lat, preset.lng], 16, {
-        duration: 1.2,
+        animate: true,
+        duration: 1.5,
       });
       mapInstanceRef.current.invalidateSize();
     }

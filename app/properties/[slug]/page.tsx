@@ -15,7 +15,8 @@ import {
   Share2, 
   CheckCircle2,
   Building2,
-  Compass
+  Compass,
+  Sparkles
 } from 'lucide-react';
 import GalleryViewer from './GalleryViewer';
 import PropertyGisMap from '@/components/PropertyGisMap';
@@ -172,9 +173,9 @@ export default async function PropertyDetailPage({
       </header>
 
       {/* ==================== 2. MAIN DETAIL CONTAINER ==================== */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-10 sm:py-14 space-y-12">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-8 sm:py-12 pb-32 md:pb-20 space-y-8 sm:space-y-10">
         {/* Breadcrumb & Verification strip */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-zinc-400 border-b border-white/10 pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-zinc-400 border-b border-neutral-800 pb-5">
           <div className="flex items-center space-x-2 font-mono text-[11px] tracking-wider uppercase text-zinc-400">
             <Link href="/" className="hover:text-[#D4AF37] transition-colors">
               Portfolio
@@ -185,100 +186,34 @@ export default async function PropertyDetailPage({
             <span className="text-[#D4AF37] truncate max-w-xs">{property.title}</span>
           </div>
 
-          <div className="inline-flex items-center space-x-2 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] bg-black/80 border border-[#D4AF37]/40 px-3 py-1">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>DHA Sub-Lease & Title Verified</span>
+          <div className="inline-flex items-center space-x-2 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] bg-neutral-900 border border-amber-500/40 px-3 py-1 font-mono">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span>DHA Sub-Lease & CBC Title Verified</span>
           </div>
         </div>
 
-        {/* Title & Headline Price Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div className="space-y-3 max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <div className="inline-flex items-center space-x-1.5 text-xs uppercase tracking-widest text-zinc-400">
-                <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                <span>{property.location}</span>
-              </div>
-              <span className="text-[10px] tracking-wider uppercase bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] px-2.5 py-0.5 font-mono font-semibold">
-                {property.category || 'Bungalow'}
-              </span>
-              {property.floor_number && (
-                <span className="text-[10px] tracking-wider uppercase bg-blue-500/20 border border-blue-500/40 text-blue-300 px-2.5 py-0.5 font-mono">
-                  {property.floor_number}
-                </span>
-              )}
-            </div>
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-light text-white leading-tight tracking-tight">
-              {property.title}
-            </h1>
-          </div>
-
-          <div className="bg-white/[0.02] border border-[#D4AF37]/30 p-6 sm:p-7 min-w-[280px] lg:text-right">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 block font-mono">
-              Official Mandate Demand
-            </span>
-            <span className="font-serif text-3xl sm:text-4xl text-[#D4AF37] font-normal block mt-1">
-              {formattedDemand}
-            </span>
-            <span className="text-[10px] text-zinc-500 tracking-wider uppercase mt-1 block">
-              Direct Principal Negotiation
-            </span>
-          </div>
-        </div>
-
-        {/* ==================== 3. MULTI-ASSET HERO & GALLERY ==================== */}
-        <GalleryViewer images={images} title={property.title} />
-
-        {/* ==================== 4. ARCHITECTURAL SPECS GRID ==================== */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-white/[0.02] border border-white/10 p-5 sm:p-6 text-center space-y-1.5 backdrop-blur-sm">
-            <Maximize2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-2" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block">Covered Yardage</span>
-            <span className="font-serif text-xl sm:text-2xl text-white font-light">
-              {property.size || 'Prime Size'}
-            </span>
-          </div>
-
-          <div className="bg-white/[0.02] border border-white/10 p-5 sm:p-6 text-center space-y-1.5 backdrop-blur-sm">
-            <Bed className="w-5 h-5 text-[#D4AF37] mx-auto mb-2" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block">Bedrooms</span>
-            <span className="font-serif text-xl sm:text-2xl text-white font-light">
-              {property.bedrooms ? `${property.bedrooms} Suites` : 'Custom Suites'}
-            </span>
-          </div>
-
-          <div className="bg-white/[0.02] border border-white/10 p-5 sm:p-6 text-center space-y-1.5 backdrop-blur-sm">
-            <Bath className="w-5 h-5 text-[#D4AF37] mx-auto mb-2" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block">Bathrooms</span>
-            <span className="font-serif text-xl sm:text-2xl text-white font-light">
-              {property.bathrooms ? `${property.bathrooms} Luxury Baths` : 'Designer Baths'}
-            </span>
-          </div>
-
-          <div className="bg-white/[0.02] border border-white/10 p-5 sm:p-6 text-center space-y-1.5 backdrop-blur-sm">
-            <Building2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-2" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block">Asset Category</span>
-            <span className="font-serif text-xl sm:text-2xl text-white font-light">
-              {property.category || 'Signature Mandate'}
-            </span>
-            {property.floor_number && (
-              <span className="text-xs text-[#D4AF37] font-mono block mt-0.5">
-                {property.floor_number}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* ==================== 5. DETAILS & HIGH-NET-WORTH ACTION HUB ==================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Left Column (Col 7): Architectural Narrative & Location Map */}
+        {/* ==================== 3. SPLIT-PANEL ARCHITECTURE (60% / 40%) ==================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          {/* ========================================================================= */}
+          {/* LEFT COLUMN: EDITORIAL GALLERY STREAM (60% Width on Desktop: lg:col-span-7) */}
+          {/* ========================================================================= */}
           <div className="lg:col-span-7 space-y-10">
-            {/* Description */}
-            <div className="space-y-4">
+            {/* Visual Stream & Touch Snap Carousel */}
+            <GalleryViewer images={images} title={property.title} />
+
+            {/* Architectural Narrative & Provenance */}
+            <div className="space-y-4 pt-6 border-t border-neutral-800">
+              <div className="flex items-center space-x-2 text-[10px] uppercase tracking-[0.3em] font-mono text-[#D4AF37]">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Curated Provenance & Architecture</span>
+              </div>
+
               <h2 className="font-serif text-2xl sm:text-3xl font-light text-white tracking-tight">
-                Architectural Specifications & Provenance
+                Architectural Engineering & Mandate Specifications
               </h2>
-              <div className="text-zinc-300 font-light leading-relaxed text-sm sm:text-base space-y-4 whitespace-pre-line border-l-2 border-[#D4AF37]/50 pl-5">
+
+              <div className="text-zinc-300 font-light leading-relaxed text-sm sm:text-base space-y-4 whitespace-pre-line border-l-2 border-[#D4AF37]/60 pl-5 bg-neutral-950/60 p-5 rounded-lg border border-neutral-800/80">
                 {property.description || (
                   <p>
                     Personally vetted by Nadeem Sulemani. This prestigious Karachi residential asset features clear DHA Sub-Lease documentation, pristine architectural engineering, and confidential direct-owner terms.
@@ -287,54 +222,51 @@ export default async function PropertyDetailPage({
               </div>
             </div>
 
-            {/* Live Interactive Leaflet Cadastral GIS Map */}
-            <PropertyGisMap
-              latitude={property.latitude}
-              longitude={property.longitude}
-              title={property.title}
-              location={property.location}
-              demand={formattedDemand}
-            />
-          </div>
-
-          {/* Right Column (Col 5): High-Net-Worth Advisory Hub */}
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
-            <div className="bg-white/[0.02] border border-white/10 p-7 sm:p-8 space-y-6 shadow-2xl backdrop-blur-md">
-              <div className="border-b border-white/10 pb-5">
-                <span className="text-[10px] tracking-[0.25em] uppercase text-[#D4AF37] font-semibold block">
-                  Private Client Advisory Desk
+            {/* Architectural Specs Breakdown Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+                <Maximize2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Yardage</span>
+                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                  {property.size || 'Prime Size'}
                 </span>
-                <h3 className="font-serif text-2xl text-white mt-1">
-                  Schedule Confidential Viewing
+              </div>
+
+              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+                <Bed className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Suites</span>
+                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                  {property.bedrooms ? `${property.bedrooms} Beds` : 'Custom'}
+                </span>
+              </div>
+
+              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+                <Bath className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Baths</span>
+                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                  {property.bathrooms ? `${property.bathrooms} Luxury` : 'Designer'}
+                </span>
+              </div>
+
+              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+                <Building2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Category</span>
+                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                  {property.category || 'Mandate'}
+                </span>
+              </div>
+            </div>
+
+            {/* Legal Title & Due Diligence Banner */}
+            <div className="bg-neutral-950 border border-neutral-800 p-6 rounded-xl space-y-4">
+              <div className="flex items-center space-x-2">
+                <ShieldCheck className="w-5 h-5 text-[#D4AF37]" />
+                <h3 className="font-serif text-lg text-white font-normal">
+                  Due Diligence & Cadastral Verification
                 </h3>
-                <p className="text-zinc-400 text-xs mt-1 leading-relaxed">
-                  Direct private viewings are personally accompanied by Nadeem Sulemani under strict non-disclosure protocol.
-                </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3.5">
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-4 bg-[#D4AF37] hover:bg-white text-black font-semibold text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center space-x-2 text-center shadow-lg"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Schedule Private Viewing via WhatsApp</span>
-                </a>
-
-                <a
-                  href="tel:+923008286662"
-                  className="w-full py-4 border border-white/20 hover:border-[#D4AF37] hover:text-[#D4AF37] text-zinc-200 font-medium text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center space-x-2 text-center"
-                >
-                  <Phone className="w-4 h-4 text-[#D4AF37]" />
-                  <span>Direct Call: +92 300 8286662</span>
-                </a>
-              </div>
-
-              {/* Advisory Guarantee Points */}
-              <div className="pt-4 border-t border-white/10 space-y-2.5 text-xs text-zinc-400">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-zinc-400">
                 <div className="flex items-start space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
                   <span>DHA Karachi Transfer & Cantonment Board Clifton (CBC) Verified</span>
@@ -347,11 +279,142 @@ export default async function PropertyDetailPage({
                   <CheckCircle2 className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
                   <span>Zero encumbrances, zero third-party claims, clean title guaranteed</span>
                 </div>
+                <div className="flex items-start space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                  <span>Confidential direct-principal negotiation supervised by Nadeem Sulemani</span>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* ========================================================================= */}
+          {/* RIGHT COLUMN: STICKY SPECIFICATIONS & INQUIRY DESK (40% Width: lg:col-span-5) */}
+          {/* ========================================================================= */}
+          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24 h-fit">
+            <div className="bg-[#121212] border border-neutral-800 hover:border-amber-500/30 transition-colors p-6 sm:p-7 space-y-6 rounded-xl shadow-2xl backdrop-blur-md">
+              
+              {/* Category, Floor, Title & Demand Header */}
+              <div className="space-y-3.5 border-b border-neutral-800 pb-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] tracking-wider uppercase bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] px-2.5 py-0.5 font-mono font-semibold">
+                    {property.category || 'Bungalow'}
+                  </span>
+                  
+                  {property.floor_number && (
+                    <span className="text-[10px] tracking-wider uppercase bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2.5 py-0.5 font-mono font-semibold">
+                      {property.floor_number}
+                    </span>
+                  )}
+
+                  <span className="text-[10px] tracking-wider uppercase bg-white/5 border border-white/10 text-zinc-400 px-2 py-0.5 font-mono">
+                    EST. 1998 MANDATE
+                  </span>
+                </div>
+
+                <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-white leading-tight">
+                  {property.title}
+                </h1>
+
+                <div className="flex items-center space-x-1.5 text-xs uppercase tracking-wider text-zinc-400 font-mono">
+                  <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <span>{property.location}</span>
+                </div>
+
+                <div className="pt-2 bg-neutral-950/80 p-4 rounded-lg border border-neutral-800/80">
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 block font-mono">
+                    Official Mandate Demand
+                  </span>
+                  <span className="font-serif text-3xl sm:text-4xl text-[#D4AF37] font-normal block mt-0.5">
+                    {formattedDemand}
+                  </span>
+                  <span className="text-[10px] text-zinc-500 tracking-wider uppercase block mt-1">
+                    Direct Principal Negotiation • Private Terms
+                  </span>
+                </div>
+              </div>
+
+              {/* Direct CTA Triggers (Enforcing 48px touch targets) */}
+              <div className="space-y-3">
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="touch-target-48 w-full py-4 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center space-x-2 text-center rounded-lg shadow-xl shadow-[#D4AF37]/15"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>SCHEDULE PRIVATE VIEWING</span>
+                </a>
+
+                <a
+                  href={`https://wa.me/923008286662?text=Confidential%20Advisory%20Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="touch-target-48 w-full py-3.5 border border-amber-500/40 hover:border-amber-400 bg-amber-500/5 hover:bg-amber-500/15 text-amber-300 font-semibold text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center space-x-2 text-center rounded-lg"
+                >
+                  <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+                  <span>DIRECT WHATSAPP ADVISORY</span>
+                </a>
+
+                <a
+                  href="tel:+923008286662"
+                  className="touch-target-48 w-full py-3.5 border border-neutral-700 hover:border-white text-zinc-200 hover:text-white font-medium text-xs tracking-widest uppercase transition-all duration-200 flex items-center justify-center space-x-2 text-center rounded-lg"
+                >
+                  <Phone className="w-4 h-4 text-[#D4AF37]" />
+                  <span>DIRECT CALL: +92 300 8286662</span>
+                </a>
+              </div>
+
+              {/* Embedded Cadastral GIS Leaflet Map */}
+              <div className="pt-2 border-t border-neutral-800 space-y-3">
+                <PropertyGisMap
+                  latitude={property.latitude}
+                  longitude={property.longitude}
+                  title={property.title}
+                  location={property.location}
+                  demand={formattedDemand}
+                />
+              </div>
+
+              {/* Advisory Guarantee Points */}
+              <div className="pt-3 border-t border-neutral-800 space-y-2 text-xs text-zinc-400 font-light">
+                <div className="flex items-start space-x-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                  <span>Supervised by Nadeem Sulemani • Est. 1998</span>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                  <span>Confidentiality protected under bilateral NDA</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      {/* ==================== 4. PERSISTENT MOBILE ACTION BAR (< 768px Viewports) ==================== */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-neutral-950/95 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl">
+        <a
+          href="tel:+923008286662"
+          className="touch-target-48 px-4 py-3 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 rounded-lg flex-shrink-0 transition-colors"
+          title="Direct Telephone Concierge"
+        >
+          <Phone className="w-4 h-4 text-[#D4AF37]" />
+          <span>CALL</span>
+        </a>
+
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="touch-target-48 flex-1 py-3 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 rounded-lg shadow-lg text-center transition-all"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>WHATSAPP ADVISORY</span>
+        </a>
       </div>
     </main>
   );
 }
+

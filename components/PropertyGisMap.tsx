@@ -48,40 +48,33 @@ export default function PropertyGisMap({
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
 
-      // Custom Gold SVG GIS luxury pin marker (#D4AF37) with radial aura glow
+      // Custom Gold SVG GIS luxury pin marker (#D4AF37) with pulsating radial aura glow
       const customGoldIcon = L.divIcon({
         className: "custom-gis-pin-container",
         html: `
-          <div style="position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.55) 0%, rgba(212, 175, 55, 0.18) 55%, transparent 75%); animation: gis-pulse 2s infinite ease-in-out;"></div>
+          <div style="position: relative; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;">
+            <div class="gis-pulse-marker" style="position: absolute; width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.2) 55%, transparent 75%); pointer-events: none;"></div>
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.85)); z-index: 2;">
               <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2Z" fill="#D4AF37" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <circle cx="12" cy="9" r="3.2" fill="#0a0a0a" stroke="#ffffff" stroke-width="0.8"/>
             </svg>
           </div>
         `,
-        iconSize: [44, 44],
-        iconAnchor: [22, 40],
-        popupAnchor: [0, -40],
+        iconSize: [46, 46],
+        iconAnchor: [23, 42],
+        popupAnchor: [0, -42],
       });
 
       const map = L.map(mapContainerRef.current, {
         center: [lat, lng],
-        zoom: hasExactCoords ? 15 : 13,
+        zoom: hasExactCoords ? 16 : 14,
         zoomControl: true,
         attributionControl: false,
         scrollWheelZoom: false,
       });
 
-      // CartoDB Dark Matter Vector Tiles Layer with API Key
-      const cartoApiKey = 
-        process.env.NEXT_PUBLIC_CARTO_API_KEY || 
-        process.env.NEXT_PUBLIC_GIS_MAP_API_KEY || 
-        "cb1_4mfj_1_0978475793745b444425c8cc";
-
-      const tileUrl = cartoApiKey 
-        ? `https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png?key=${cartoApiKey}`
-        : "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png";
+      // Dark Mode CartoDB Vector Tiles Layer: zero blank grey states
+      const tileUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 
       L.tileLayer(tileUrl, {
         maxZoom: 20,
@@ -89,12 +82,14 @@ export default function PropertyGisMap({
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
       }).addTo(map);
 
-      // Force Size Invalidation immediately after initializing L.map()
-      setTimeout(() => {
-        if (map) {
-          map.invalidateSize();
-        }
-      }, 250);
+      // Multi-tier Invalidation Guards to guarantee zero blank grey states
+      map.invalidateSize();
+      const timer1 = setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 100);
+      const timer2 = setTimeout(() => {
+        if (map) map.invalidateSize();
+      }, 350);
 
       // Marker
       const marker = L.marker([lat, lng], {
@@ -143,8 +138,9 @@ export default function PropertyGisMap({
 
   const resetView = () => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView([lat, lng], hasExactCoords ? 15 : 13, {
+      mapInstanceRef.current.flyTo([lat, lng], hasExactCoords ? 16 : 14, {
         animate: true,
+        duration: 1.5,
       });
       mapInstanceRef.current.invalidateSize();
     }

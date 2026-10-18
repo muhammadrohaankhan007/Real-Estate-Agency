@@ -31,3 +31,23 @@ CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_contact ON newsletter_subs
 -- 5. Comments for audit trail
 COMMENT ON TABLE advisory_leads IS 'High-net-worth client confidential valuation & advisory requests';
 COMMENT ON TABLE newsletter_subscribers IS 'Subscribers to private off-market briefings and market dispatches';
+
+-- 6. Enable Row Level Security (RLS) & Grant Public Insert Permissions
+ALTER TABLE advisory_leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
+
+-- Allow anonymous visitors to submit valuation mandates
+DROP POLICY IF EXISTS "Allow anon insert advisory_leads" ON advisory_leads;
+CREATE POLICY "Allow anon insert advisory_leads" ON advisory_leads FOR INSERT TO anon WITH CHECK (true);
+
+-- Allow anonymous visitors to subscribe to briefings
+DROP POLICY IF EXISTS "Allow anon insert newsletter_subscribers" ON newsletter_subscribers;
+CREATE POLICY "Allow anon insert newsletter_subscribers" ON newsletter_subscribers FOR INSERT TO anon WITH CHECK (true);
+
+-- Allow authenticated admins to view all records
+DROP POLICY IF EXISTS "Allow auth select advisory_leads" ON advisory_leads;
+CREATE POLICY "Allow auth select advisory_leads" ON advisory_leads FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Allow auth select newsletter_subscribers" ON newsletter_subscribers;
+CREATE POLICY "Allow auth select newsletter_subscribers" ON newsletter_subscribers FOR SELECT TO authenticated USING (true);
+

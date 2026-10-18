@@ -129,19 +129,70 @@ body {
 /* Pulsing GIS Marker Animation */
 @keyframes gis-pulse {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    transform: scale(0.92);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.75);
+    opacity: 0.95;
   }
   70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 14px rgba(212, 175, 55, 0);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 16px rgba(212, 175, 55, 0);
+    opacity: 0.25;
   }
   100% {
-    transform: scale(0.95);
+    transform: scale(0.92);
     box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    opacity: 0.95;
   }
 }
 
 .gis-pulse-marker {
-  animation: gis-pulse 2s infinite ease-in-out;
+  animation: gis-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Quiet Luxury Surfaces & Glassmorphism */
+.luxury-surface {
+  background-color: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.luxury-card {
+  background-color: #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.luxury-glass {
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile-First Touch Parity & Snapping */
+.touch-target-48 {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.touch-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.touch-snap-start {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Fixed Layout Containment */
+.contain-layout-paint {
+  contain: layout paint;
 }

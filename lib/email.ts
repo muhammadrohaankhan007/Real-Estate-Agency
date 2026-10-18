@@ -125,8 +125,13 @@ export async function sendLeadAlertEmail(lead: AdvisoryLeadPayload, leadId?: num
       html,
     });
 
-    if (res.error && res.error.message?.includes('only send testing emails')) {
-      console.warn('Resend Sandbox Restriction: Delivering to registered account owner:', FALLBACK_ACCOUNT_OWNER);
+    const isSandboxError = (msg?: string) => {
+      const lower = (msg || '').toLowerCase();
+      return lower.includes('testing') || lower.includes('domain') || lower.includes('own email address');
+    };
+
+    if (res.error && isSandboxError(res.error.message)) {
+      console.warn('Resend Sandbox Mode: Delivering test alert to registered account owner:', FALLBACK_ACCOUNT_OWNER);
       return await resend.emails.send({
         from: FROM_EMAIL,
         to: [FALLBACK_ACCOUNT_OWNER],
@@ -138,7 +143,13 @@ export async function sendLeadAlertEmail(lead: AdvisoryLeadPayload, leadId?: num
 
     return res;
   } catch (err: any) {
-    if (err?.message?.includes('only send testing emails')) {
+    const isSandboxError = (msg?: string) => {
+      const lower = (msg || '').toLowerCase();
+      return lower.includes('testing') || lower.includes('domain') || lower.includes('own email address');
+    };
+
+    if (isSandboxError(err?.message)) {
+      console.warn('Resend Sandbox Mode: Exception caught, delivering to registered account owner:', FALLBACK_ACCOUNT_OWNER);
       return await resend.emails.send({
         from: FROM_EMAIL,
         to: [FALLBACK_ACCOUNT_OWNER],
@@ -297,8 +308,13 @@ export async function sendSubscriberAlertEmail(emailOrPhone: string, subscriberI
       html,
     });
 
-    if (res.error && res.error.message?.includes('only send testing emails')) {
-      console.warn('Resend Sandbox Restriction: Delivering to registered account owner:', FALLBACK_ACCOUNT_OWNER);
+    const isSandboxError = (msg?: string) => {
+      const lower = (msg || '').toLowerCase();
+      return lower.includes('testing') || lower.includes('domain') || lower.includes('own email address');
+    };
+
+    if (res.error && isSandboxError(res.error.message)) {
+      console.warn('Resend Sandbox Mode: Delivering subscriber alert to registered account owner:', FALLBACK_ACCOUNT_OWNER);
       return await resend.emails.send({
         from: FROM_EMAIL,
         to: [FALLBACK_ACCOUNT_OWNER],
@@ -309,7 +325,13 @@ export async function sendSubscriberAlertEmail(emailOrPhone: string, subscriberI
 
     return res;
   } catch (err: any) {
-    if (err?.message?.includes('only send testing emails')) {
+    const isSandboxError = (msg?: string) => {
+      const lower = (msg || '').toLowerCase();
+      return lower.includes('testing') || lower.includes('domain') || lower.includes('own email address');
+    };
+
+    if (isSandboxError(err?.message)) {
+      console.warn('Resend Sandbox Mode: Exception caught, delivering subscriber alert to registered account owner:', FALLBACK_ACCOUNT_OWNER);
       return await resend.emails.send({
         from: FROM_EMAIL,
         to: [FALLBACK_ACCOUNT_OWNER],

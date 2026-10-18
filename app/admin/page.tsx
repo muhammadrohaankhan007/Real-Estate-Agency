@@ -1074,7 +1074,7 @@ export default function AdminDashboard() {
                         <button
                           type="button"
                           onClick={() => removeExistingGalleryUrl(idx)}
-                          className="absolute top-1 right-1 bg-rose-600 hover:bg-rose-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-transform group-hover:scale-110"
+                          className="absolute top-1.5 right-1.5 bg-rose-600/90 hover:bg-rose-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-transform group-hover:scale-110 touch-target-48"
                           title="Remove Stored Photo from Mandate"
                         >
                           ✕
@@ -1099,7 +1099,7 @@ export default function AdminDashboard() {
                         <button
                           type="button"
                           onClick={() => removeQueuedGalleryFile(idx)}
-                          className="absolute top-1 right-1 bg-rose-600 hover:bg-rose-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-transform group-hover:scale-110"
+                          className="absolute top-1.5 right-1.5 bg-rose-600/90 hover:bg-rose-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-transform group-hover:scale-110 touch-target-48"
                           title="Remove Queued Photo"
                         >
                           ✕

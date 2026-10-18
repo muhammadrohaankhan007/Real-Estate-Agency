@@ -462,14 +462,14 @@ export default function Home() {
     return activeList.filter(p => p.id !== featureProperty.id);
   }, [activeList, featureProperty.id]);
 
-  // 5-Second Continuous Cross-Fade Revolving Showcase Engine
+  // 4.5-Second Continuous Cross-Fade Revolving Showcase Engine
   useEffect(() => {
     if (!isMounted || isRevolvingPaused || showcaseMode !== 'revolving') return;
     if (!activeList || activeList.length <= 1) return;
 
     const timer = setInterval(() => {
       setRevolvingIndex((prev) => (prev + 1) % activeList.length);
-    }, 5000);
+    }, 4500);
 
     return () => clearInterval(timer);
   }, [isMounted, isRevolvingPaused, showcaseMode, activeList]);
@@ -514,7 +514,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-zinc-100 selection:bg-[#D4AF37] selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] text-zinc-100 selection:bg-[#D4AF37] selection:text-black overflow-x-hidden pb-24 md:pb-0">
       
       {/* ==================== 1. EDITORIAL NAVBAR ==================== */}
       <header 
@@ -607,21 +607,22 @@ export default function Home() {
         </div>
 
         {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-white/10 bg-black/95 backdrop-blur-2xl px-6 py-6 transition-all duration-200">
-            <div className="flex flex-col space-y-4 text-center">
-              <a href="#home" onClick={() => setMobileMenuOpen(false)} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Home</a>
-              <a href="#showcase" onClick={() => { setActiveCategory('waterfront'); setMobileMenuOpen(false); }} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Off-Plan & Waterfront</a>
-              <a href="#showcase" onClick={() => { setActiveCategory('all'); setMobileMenuOpen(false); }} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Property Listings</a>
-              <a href="#founder" onClick={() => setMobileMenuOpen(false)} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">About Us (Leadership)</a>
-              <a href="#advisory-faqs" onClick={() => setMobileMenuOpen(false)} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Advisory & Legal FAQ</a>
-              <a href="#valuation" onClick={() => setMobileMenuOpen(false)} className="text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-2">Contact Us</a>
+          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/98 backdrop-blur-2xl px-6 py-6 transition-all duration-200">
+            <div className="flex flex-col space-y-2 text-center">
+              <a href="#home" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Home</a>
+              <a href="#showcase" onClick={() => { setActiveCategory('waterfront'); setMobileMenuOpen(false); }} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Off-Plan & Waterfront</a>
+              <a href="#showcase" onClick={() => { setActiveCategory('all'); setMobileMenuOpen(false); }} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Property Listings</a>
+              <a href="#founder" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">About Us (Leadership)</a>
+              <a href="#advisory-faqs" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Advisory & Legal FAQ</a>
+              <a href="#valuation" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Contact Us</a>
               
-              <div className="pt-4 border-t border-white/10 flex flex-col space-y-3">
+              <div className="pt-4 border-t border-neutral-800 flex flex-col space-y-3">
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500 hover:text-black text-amber-400 font-semibold text-xs tracking-wider uppercase text-center rounded-none transition-colors flex items-center justify-center space-x-2"
+                  className="touch-target-48 w-full py-3.5 border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500 hover:text-black text-amber-400 font-semibold text-xs tracking-wider uppercase text-center rounded-none transition-colors flex items-center justify-center space-x-2"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   <span>ADMIN COMMAND</span>
@@ -629,13 +630,13 @@ export default function Home() {
                 <a 
                   href="#valuation"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 bg-[#D4AF37] text-black font-semibold text-xs tracking-wider uppercase text-center rounded-none"
+                  className="touch-target-48 w-full py-3.5 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase text-center rounded-none flex items-center justify-center shadow-md"
                 >
                   Schedule Private Valuation
                 </a>
                 <button 
                   onClick={() => { setMobileMenuOpen(false); setAccessErrors({}); setAccessModalOpen(true); }}
-                  className="w-full py-3 border border-[#D4AF37]/50 text-[#D4AF37] font-medium text-xs tracking-wider uppercase rounded-none"
+                  className="touch-target-48 w-full py-3.5 border border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-xs tracking-wider uppercase rounded-none flex items-center justify-center"
                 >
                   Request Private Access
                 </button>
@@ -777,6 +778,7 @@ export default function Home() {
               </p>
               
               {/* Category Filters (Sharp architectural tabs) */}
+              {/* Category Filters (Quiet luxury tabs with 48px touch targets) */}
               <div className="flex flex-wrap gap-2 pt-1">
                 {[
                   { id: 'all', label: 'All Catalog' },
@@ -787,10 +789,10 @@ export default function Home() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`px-4 py-2 text-xs tracking-wider uppercase transition-all duration-200 rounded-none ${
+                    className={`touch-target-48 px-5 py-3 text-xs tracking-wider uppercase transition-all duration-200 rounded-none flex items-center justify-center font-mono ${
                       activeCategory === cat.id
-                        ? 'bg-[#D4AF37] text-neutral-950 font-semibold shadow-md'
-                        : 'border border-white/15 text-zinc-400 hover:text-white hover:border-white/35 bg-black/40'
+                        ? 'bg-[#D4AF37] text-neutral-950 font-bold shadow-md shadow-[#D4AF37]/20 border border-[#D4AF37]'
+                        : 'border border-neutral-800 text-zinc-400 hover:text-white hover:border-amber-500/40 bg-neutral-900/60'
                     }`}
                   >
                     {cat.label}
@@ -798,32 +800,32 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Showcase Motion Mode Switcher */}
-              <div className="flex items-center gap-2 pt-3">
+              {/* Showcase Motion Mode Switcher with 48px Touch Targets */}
+              <div className="flex flex-wrap items-center gap-2 pt-3">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">Showcase Engine:</span>
-                <div className="inline-flex bg-black/80 border border-white/15 p-1">
+                <div className="inline-flex bg-neutral-950 border border-neutral-800 p-1">
                   <button
                     type="button"
                     onClick={() => setShowcaseMode('revolving')}
-                    className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                    className={`touch-target-48 px-4 py-2.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
                       showcaseMode === 'revolving'
                         ? 'bg-[#D4AF37] text-black font-bold shadow-md'
                         : 'text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <Sparkles className="w-3 h-3" />
+                    <Sparkles className="w-3.5 h-3.5" />
                     <span>Continuous Showroom Motion</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowcaseMode('grid')}
-                    className={`px-3 py-1.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                    className={`touch-target-48 px-4 py-2.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
                       showcaseMode === 'grid'
                         ? 'bg-[#D4AF37] text-black font-bold shadow-md'
                         : 'text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <LayoutGrid className="w-3 h-3" />
+                    <LayoutGrid className="w-3.5 h-3.5" />
                     <span>Full Grid View</span>
                   </button>
                 </div>
@@ -836,10 +838,12 @@ export default function Home() {
             <div className="space-y-6">
               {/* Main Revolving Showroom Stage */}
               <div
-                className="relative w-full h-[580px] sm:h-[660px] lg:h-[740px] overflow-hidden bg-black border border-white/10 group shadow-2xl"
+                className="relative w-full h-[580px] sm:h-[660px] lg:h-[740px] overflow-hidden bg-black border border-neutral-800 group shadow-2xl"
                 style={{ contain: 'layout paint' }}
                 onMouseEnter={() => setIsRevolvingPaused(true)}
                 onMouseLeave={() => setIsRevolvingPaused(false)}
+                onTouchStart={() => setIsRevolvingPaused(true)}
+                onTouchEnd={() => setIsRevolvingPaused(false)}
               >
                 {activeList.map((property, idx) => {
                   const isActive = isMounted ? idx === revolvingIndex : idx === 0;
@@ -858,6 +862,7 @@ export default function Home() {
                       style={{
                         transform: "translateZ(0)",
                         willChange: "opacity, transform",
+                        backfaceVisibility: "hidden",
                       }}
                     >
                       <Image
@@ -867,7 +872,10 @@ export default function Home() {
                         priority={idx === 0}
                         sizes="(max-width: 1280px) 100vw, 1400px"
                         className="object-cover object-center transform transition-transform duration-[8000ms] ease-out group-hover:scale-105"
-                        style={{ transform: "translateZ(0)" }}
+                        style={{ 
+                          transform: "translateZ(0)",
+                          backfaceVisibility: "hidden",
+                        }}
                       />
 
                       {/* Ambient Architectural Vignette Overlays */}
@@ -899,7 +907,7 @@ export default function Home() {
 
                       {/* Top Right Live Motion HUD */}
                       <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
-                        <div className="bg-black/90 backdrop-blur-md border border-white/20 px-3.5 py-1.5 text-[10px] tracking-wider font-mono text-zinc-300 flex items-center space-x-2">
+                        <div className="bg-black/90 backdrop-blur-md border border-neutral-700/80 px-3.5 py-2 text-[10px] tracking-wider font-mono text-zinc-300 flex items-center space-x-2">
                           <span className="text-[#D4AF37] font-bold">
                             MANDATE {isMounted ? revolvingIndex + 1 : 1} / {activeList.length}
                           </span>
@@ -907,12 +915,12 @@ export default function Home() {
                           {isRevolvingPaused ? (
                             <span className="text-amber-400 flex items-center gap-1 font-medium">
                               <Pause className="w-3 h-3 text-[#D4AF37]" />
-                              <span>PAUSED ON HOVER</span>
+                              <span>PAUSED ON HOVER/TOUCH</span>
                             </span>
                           ) : (
                             <span className="text-emerald-400 flex items-center gap-1 font-medium">
                               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                              <span>5.0s MOTION ACTIVE</span>
+                              <span>4.5s MOTION ACTIVE</span>
                             </span>
                           )}
                         </div>
@@ -924,10 +932,10 @@ export default function Home() {
                             e.stopPropagation();
                             setIsRevolvingPaused((prev) => !prev);
                           }}
-                          className="w-8 h-8 bg-black/80 hover:bg-[#D4AF37] hover:text-black border border-white/20 hover:border-[#D4AF37] flex items-center justify-center text-white transition-colors"
+                          className="touch-target-48 w-10 h-10 min-w-[48px] min-h-[48px] bg-black/85 hover:bg-[#D4AF37] hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center text-white transition-colors"
                           title={isRevolvingPaused ? "Resume auto-rotation" : "Pause auto-rotation"}
                         >
-                          {isRevolvingPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                          {isRevolvingPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
                         </button>
                       </div>
 
@@ -948,7 +956,7 @@ export default function Home() {
                         </h3>
 
                         {/* Specs Ribbon */}
-                        <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-white/10">
+                        <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-neutral-800">
                           <span className="flex items-center space-x-1.5">
                             <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
                             <span>{property.size || property.specs?.area || 'Prime Yardage'}</span>
@@ -968,7 +976,7 @@ export default function Home() {
                         <div className="pt-2 flex flex-wrap items-center gap-3">
                           <Link
                             href={`/properties/${property.slug || property.id}`}
-                            className="px-6 py-3 bg-[#D4AF37] hover:bg-white text-black text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center gap-1.5 shadow-lg"
+                            className="touch-target-48 px-6 py-3.5 bg-[#D4AF37] hover:bg-white text-black text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center gap-1.5 shadow-lg"
                           >
                             <span>Explore Property Dossier</span>
                             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -978,7 +986,7 @@ export default function Home() {
                             href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-5 py-3 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
+                            className="touch-target-48 px-5 py-3.5 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
                           >
                             <MessageSquare className="w-3.5 h-3.5" />
                             <span>WhatsApp Concierge</span>
@@ -986,9 +994,9 @@ export default function Home() {
 
                           <a
                             href="tel:+923008286662"
-                            className="px-5 py-3 border border-white/20 text-zinc-300 hover:text-white hover:border-white/40 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
+                            className="touch-target-48 px-5 py-3.5 border border-neutral-700 text-zinc-300 hover:text-white hover:border-neutral-500 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
                           >
-                            <Phone className="w-3.5 h-3.5" />
+                            <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
                             <span>Direct Advisor Call</span>
                           </a>
                         </div>
@@ -997,14 +1005,14 @@ export default function Home() {
                   );
                 })}
 
-                {/* Left & Right Chevron Navigation Controls */}
+                {/* Left & Right Chevron Navigation Controls (Enforcing 48px touch targets) */}
                 {activeList.length > 1 && (
                   <>
                     <button
                       type="button"
                       onClick={prevRevolvingSlide}
                       aria-label="Previous property"
-                      className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                      className="touch-target-48 absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
                     >
                       <ChevronLeft className="w-6 h-6" />
                     </button>
@@ -1012,7 +1020,7 @@ export default function Home() {
                       type="button"
                       onClick={nextRevolvingSlide}
                       aria-label="Next property"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-white/20 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                      className="touch-target-48 absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
                     >
                       <ChevronRight className="w-6 h-6" />
                     </button>
@@ -1031,18 +1039,20 @@ export default function Home() {
                         type="button"
                         onClick={() => goToRevolvingSlide(idx)}
                         aria-label={`Go to slide ${idx + 1}: ${prop.title}`}
-                        className={`h-2 transition-all duration-300 rounded-none ${
+                        className={`h-2.5 transition-all duration-300 rounded-none touch-target-48 flex items-center justify-center p-1 ${
                           isDotActive
-                            ? "w-8 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
-                            : "w-2.5 bg-white/20 hover:bg-white/50"
+                            ? "w-10 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
+                            : "w-4 bg-white/20 hover:bg-white/50"
                         }`}
-                      />
+                      >
+                        <span className="sr-only">Slide {idx + 1}</span>
+                      </button>
                     );
                   })}
                 </div>
 
                 <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">
-                  Auto-Cycles Every 5.0s • Hover to Pause
+                  Auto-Cycles Every 4.5s • Hover or Touch to Pause
                 </div>
               </div>
 
@@ -1587,19 +1597,44 @@ export default function Home() {
       </footer>
 
 
-      {/* ==================== FLOATING WHATSAPP ACTION (SHARP LUXURY ACCENT) ==================== */}
-      <aside aria-label="Direct Advisory Desk" className="fixed bottom-6 right-6 z-40 flex items-center space-x-3">
+      {/* ==================== FLOATING WHATSAPP ACTION (DESKTOP) ==================== */}
+      <aside aria-label="Direct Advisory Desk" className="hidden md:flex fixed bottom-6 right-6 z-40 items-center space-x-3">
         <a
           href="https://wa.me/923008286662?text=Hello%20Nadeem%20Sulemani%2C%20I%20am%20interested%20in%20Karachi%20prime%20properties"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center space-x-2.5 bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-3 shadow-2xl transition-all duration-200 rounded-none border border-emerald-500/50"
+          className="group flex items-center space-x-2.5 bg-neutral-900/90 hover:bg-[#D4AF37] hover:text-black text-[#D4AF37] px-4 py-3 shadow-2xl transition-all duration-200 rounded-none border border-[#D4AF37]/50 backdrop-blur-md"
           aria-label="Direct WhatsApp Advisory with Nadeem Sulemani"
         >
-          <MessageSquare className="w-4 h-4" />
-          <span className="text-xs font-semibold tracking-wider uppercase hidden sm:inline">
+          <MessageSquare className="w-4 h-4 text-[#D4AF37] group-hover:text-black transition-colors" />
+          <span className="text-xs font-semibold tracking-wider uppercase font-mono">
             WhatsApp Advisory Desk
           </span>
+        </a>
+      </aside>
+
+      {/* ==================== PERSISTENT MOBILE ACTION BAR (< 768px Viewports) ==================== */}
+      <aside 
+        aria-label="Direct Mobile Concierge" 
+        className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-neutral-950/90 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl"
+      >
+        <a
+          href="tel:+923008286662"
+          className="touch-target-48 px-4 py-3 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 rounded-lg flex-shrink-0 transition-colors"
+          title="Direct Telephone Concierge"
+        >
+          <Phone className="w-4 h-4 text-[#D4AF37]" />
+          <span>CALL</span>
+        </a>
+
+        <a
+          href="https://wa.me/923008286662?text=Hello%20Nadeem%20Sulemani%2C%20I%20am%20inquiring%20about%20Karachi%20prime%20luxury%20estates"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="touch-target-48 flex-1 py-3 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 rounded-lg shadow-lg text-center transition-all"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>WHATSAPP ADVISORY</span>
         </a>
       </aside>
 
@@ -1620,7 +1655,7 @@ export default function Home() {
             
             <button 
               onClick={() => setEnquireModalOpen(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-white transition-colors"
+              className="touch-target-48 absolute top-6 right-6 w-12 h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -1717,7 +1752,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none"
+                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center"
               >
                 {isSubmitting ? 'Transmitting Request...' : 'Submit Confidential Inquiry'}
               </button>
@@ -1735,7 +1770,7 @@ export default function Home() {
             
             <button 
               onClick={() => setAccessModalOpen(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-white transition-colors"
+              className="touch-target-48 absolute top-6 right-6 w-12 h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -1853,7 +1888,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none"
+                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center"
               >
                 {isSubmitting ? 'Verifying Credentials...' : 'Authorize & Request Access Keycode'}
               </button>
