@@ -38,6 +38,7 @@ import {
   LayoutGrid
 } from 'lucide-react';
 import PrivateAdvisoryDesk from '@/components/PrivateAdvisoryDesk';
+import HeroSection from '@/components/HeroSection';
 
 export interface Property {
   id: number | string;
@@ -75,8 +76,6 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -202,23 +201,6 @@ export default function Home() {
       }
     }
     loadProperties();
-  }, []);
-
-  // Header scroll detection optimized with requestAnimationFrame throttling
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 40;
-          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const triggerToast = (msg: string) => {
@@ -516,246 +498,13 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-zinc-100 selection:bg-[#D4AF37] selection:text-black overflow-x-hidden pb-24 md:pb-0">
       
-      {/* ==================== 1. EDITORIAL NAVBAR ==================== */}
-      <header 
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md ${
-          scrolled ? 'bg-black/95 border-b border-white/10 shadow-2xl py-4' : 'bg-black/75 border-b border-white/[0.08] py-5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between relative">
-          
-          {/* Clickable Brand Wordmark */}
-          <div className="flex-shrink-0 flex items-center">
-            <a 
-              href="#home" 
-              aria-label="Real Property Prime Time Homepage" 
-              className="group flex flex-col text-left focus:outline-none"
-            >
-              <span className="font-cinzel text-lg sm:text-xl md:text-[22px] font-semibold tracking-[0.24em] text-[#D4AF37] transition-all duration-300 group-hover:brightness-125">
-                REAL PROPERTY PRIME TIME
-              </span>
-              <span className="text-[9px] uppercase tracking-[0.38em] text-zinc-400 font-sans mt-0.5 opacity-90 group-hover:text-[#D4AF37] transition-colors">
-                Est. 1998 • Karachi Luxury Advisory
-              </span>
-            </a>
-          </div>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-7">
-            <a href="#home" className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              Home
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-            <a href="#showcase" onClick={() => setActiveCategory('waterfront')} className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              Off-Plan & Waterfront
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-            <a href="#showcase" onClick={() => setActiveCategory('all')} className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              Portfolio
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-            <a href="#founder" className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              About Us
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-            <a href="#advisory-faqs" className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              Advisory FAQ
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-            <a href="#valuation" className="text-[11px] font-medium tracking-[0.24em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors duration-200 relative py-1 group">
-              Contact Us
-              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-200 group-hover:w-full"></span>
-            </a>
-          </nav>
-
-          {/* Action Hub (Sharp architectural buttons, no soft bubbly corners) */}
-          <div className="hidden lg:flex items-center space-x-3">
-            <Link
-              href="/admin"
-              className="inline-flex items-center space-x-1.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-amber-400 border border-amber-500/50 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500 hover:text-black px-3.5 py-2 rounded-none transition-all duration-200 shadow-sm"
-              title="Secure Property Management Portal"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>ADMIN COMMAND</span>
-            </Link>
-            <a
-              href="#valuation"
-              className="text-[11px] font-medium tracking-[0.18em] uppercase text-zinc-300 hover:text-[#D4AF37] transition-colors px-3 py-2"
-            >
-              Schedule Valuation
-            </a>
-            <button 
-              onClick={() => { setAccessErrors({}); setAccessModalOpen(true); }}
-              className="inline-flex items-center space-x-2 text-[11px] font-semibold tracking-[0.2em] uppercase text-[#D4AF37] border border-[#D4AF37]/50 hover:border-[#D4AF37] px-4 py-2 rounded-none transition-all duration-200 hover:bg-[#D4AF37]/10"
-            >
-              <Lock className="w-3 h-3 text-[#D4AF37]" />
-              <span>Private Access</span>
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center">
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-zinc-300 hover:text-[#D4AF37] transition-colors"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-        </div>
-
-        {/* Mobile Navigation Drawer */}
-        {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-neutral-800 bg-neutral-950/98 backdrop-blur-2xl px-6 py-6 transition-all duration-200">
-            <div className="flex flex-col space-y-2 text-center">
-              <a href="#home" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Home</a>
-              <a href="#showcase" onClick={() => { setActiveCategory('waterfront'); setMobileMenuOpen(false); }} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Off-Plan & Waterfront</a>
-              <a href="#showcase" onClick={() => { setActiveCategory('all'); setMobileMenuOpen(false); }} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Property Listings</a>
-              <a href="#founder" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">About Us (Leadership)</a>
-              <a href="#advisory-faqs" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Advisory & Legal FAQ</a>
-              <a href="#valuation" onClick={() => setMobileMenuOpen(false)} className="touch-target-48 flex items-center justify-center text-[12px] font-medium tracking-[0.25em] uppercase text-zinc-200 hover:text-[#D4AF37] py-3">Contact Us</a>
-              
-              <div className="pt-4 border-t border-neutral-800 flex flex-col space-y-3">
-                <Link
-                  href="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="touch-target-48 w-full py-3.5 border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500 hover:text-black text-amber-400 font-semibold text-xs tracking-wider uppercase text-center rounded-none transition-colors flex items-center justify-center space-x-2"
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>ADMIN COMMAND</span>
-                </Link>
-                <a 
-                  href="#valuation"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="touch-target-48 w-full py-3.5 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase text-center rounded-none flex items-center justify-center shadow-md"
-                >
-                  Schedule Private Valuation
-                </a>
-                <button 
-                  onClick={() => { setMobileMenuOpen(false); setAccessErrors({}); setAccessModalOpen(true); }}
-                  className="touch-target-48 w-full py-3.5 border border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37]/10 font-medium text-xs tracking-wider uppercase rounded-none flex items-center justify-center"
-                >
-                  Request Private Access
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
-
-
-      {/* ==================== 2. THE HERO SECTION ==================== */}
-      <section id="home" className="relative min-h-screen w-full flex items-end justify-start overflow-hidden bg-black">
-        
-        {/* Hero Background Image Container (Edge-to-Edge Optimized Visual) */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ contain: 'paint' }}>
-          <Image
-            src="/images/hero-mansion.jpg"
-            alt="Signature Architectural Mansion in DHA Phase 8 Karachi"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center animate-subtle-zoom will-change-transform filter brightness-90"
-            style={{ transform: 'translateZ(0)' }}
-          />
-
-          {/* Dark Architectural Shading */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/35"></div>
-          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-black/85 via-black/40 to-transparent"></div>
-          <div className="absolute inset-y-0 left-0 w-full lg:w-4/5 bg-gradient-to-r from-black/90 via-black/55 to-transparent"></div>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pb-14 sm:pb-20 lg:pb-24 pt-32 sm:pt-40 flex flex-col justify-end">
-          
-          <div className="max-w-4xl space-y-6 sm:space-y-7">
-            
-            {/* Heritage Coordinates */}
-            <div className="inline-flex flex-wrap items-center gap-2 sm:gap-3 bg-black/80 border border-white/15 px-4 py-2 rounded-none text-xs text-zinc-300">
-              <span className="inline-block w-2 h-2 bg-[#D4AF37]"></span>
-              <span className="font-medium tracking-[0.22em] uppercase text-[10px] sm:text-[11px] text-[#D4AF37]">Est. 1998 • Karachi Luxury Advisory</span>
-              <span className="hidden sm:inline text-zinc-600">|</span>
-              <span className="text-[10px] sm:text-[11px] text-zinc-300 tracking-wider">DHA Phases 1–8 • Clifton • Emaar Crescent Bay</span>
-            </div>
-
-            {/* Substantive Headline (No 3-word slogan) */}
-            <div className="space-y-3 sm:space-y-4">
-              <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-[72px] font-light leading-[1.08] tracking-tight text-white drop-shadow-2xl">
-                The Definitive Portfolio of Architectural Estates Across <br className="hidden sm:inline" />
-                <span className="italic font-normal gold-gradient-text">DHA Phase 8 and Karachi Coastline</span>
-              </h1>
-              
-              <p className="font-sans text-base sm:text-lg md:text-xl text-zinc-300 font-light tracking-wide max-w-3xl leading-relaxed">
-                Direct principal representation for Karachi’s finest 500 & 1,000 square yard residential estates, waterfront apartments, and verified commercial positions.
-              </p>
-
-              <p className="text-zinc-400 text-xs sm:text-sm font-light leading-relaxed max-w-2xl border-l-2 border-[#D4AF37] pl-4 py-1">
-                Founded and led by Nadeem Sulemani since 1998. Providing complete discretion, verified title diligence, and private transaction execution for discerning buyers, sellers, and expatriate family offices.
-              </p>
-            </div>
-
-            {/* CTAs (Sharp architectural buttons) */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-5">
-              
-              <a
-                href="#showcase"
-                className="group relative inline-flex items-center justify-center px-8 py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs sm:text-sm tracking-[0.18em] uppercase transition-all duration-200 hover:bg-[#e0be49] rounded-none shadow-lg"
-              >
-                <span>Request Architectural Dossier</span>
-                <ChevronRight className="ml-2 w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </a>
-
-              <a
-                href="#valuation"
-                className="group inline-flex items-center justify-center px-8 py-4 border border-white/30 text-white font-medium text-xs sm:text-sm tracking-[0.18em] uppercase bg-black/40 transition-all duration-200 hover:border-[#D4AF37] hover:text-[#D4AF37] rounded-none"
-              >
-                <Calendar className="mr-2.5 w-4 h-4 text-zinc-400 group-hover:text-[#D4AF37] transition-colors" />
-                <span>Schedule Confidential Valuation</span>
-              </a>
-
-              <a
-                href="https://wa.me/923008286662?text=Hello%20Real%20Property%20Prime%20Time%2C%20I%20am%20inquiring%20about%20your%20luxury%20listings"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-4 border border-emerald-500/40 text-emerald-400 font-medium text-xs tracking-wider uppercase bg-emerald-950/20 hover:bg-emerald-900/30 hover:border-emerald-400 transition-all rounded-none"
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                <span>Direct WhatsApp Advisory Desk</span>
-              </a>
-
-            </div>
-
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="mt-12 sm:mt-16 pt-8 border-t border-white/[0.12] grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
-            <div>
-              <span className="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Market Provenance</span>
-              <span className="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">Established 1998 (27+ Years)</span>
-            </div>
-            <div>
-              <span className="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Primary Corridor</span>
-              <span className="font-serif text-xl sm:text-2xl text-[#D4AF37] font-normal mt-1 block">DHA Phase 8 (Zones A–E)</span>
-            </div>
-            <div>
-              <span className="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Waterfront Desk</span>
-              <span className="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">EMAAR Crescent Bay & HMR</span>
-            </div>
-            <div>
-              <span className="block text-[10px] tracking-[0.25em] uppercase text-zinc-400 font-medium">Confidentiality Protocol</span>
-              <span className="font-serif text-xl sm:text-2xl text-white font-normal mt-1 block">Bilateral NDA Protection</span>
-            </div>
-          </div>
-
-        </div>
-
-      </section>
+      {/* ==================== 1 & 2. LUXURY TUBELIGHT NAVBAR & HERO SECTION ==================== */}
+      <HeroSection onPrivateAccess={() => { setAccessErrors({}); setAccessModalOpen(true); }} />
 
 
       {/* ==================== 3. ASYMMETRICAL PORTFOLIO (EDITORIAL SPREAD) ==================== */}
+      <div id="portfolio" className="scroll-mt-24" />
+      <div id="off-plan" className="scroll-mt-24" />
       <section id="showcase" className="relative bg-[#0a0a0a] py-24 sm:py-32 px-5 sm:px-8 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-7xl mx-auto">
           
@@ -1273,6 +1022,7 @@ export default function Home() {
 
 
       {/* ==================== 4. THE FOUNDER & HERITAGE (EDITORIAL PROFILE) ==================== */}
+      <div id="about" className="scroll-mt-24" />
       <section id="founder" className="relative py-28 sm:py-36 px-5 sm:px-8 lg:px-12 bg-[#0c0c0d] border-t border-white/[0.08] overflow-hidden">
         
         <div className="max-w-7xl mx-auto relative z-10">
