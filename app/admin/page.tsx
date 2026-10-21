@@ -920,6 +920,7 @@ export default function AdminDashboard() {
               <GisCoordinatePicker
                 latitude={coordinates.lat}
                 longitude={coordinates.lng}
+                locationLabel={location}
                 onChange={handleCoordinateChange}
               />
             </div>

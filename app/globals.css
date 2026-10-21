@@ -75,6 +75,10 @@ body {
   filter: brightness(0.9) contrast(1.1) saturate(0.85);
 }
 
+.leaflet-dark-fallback {
+  filter: invert(100%) hue-rotate(180deg) brightness(88%) contrast(125%) saturate(25%) !important;
+}
+
 .leaflet-popup-content-wrapper {
   background: rgba(10, 10, 10, 0.95) !important;
   color: #ffffff !important;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Compass, MapPin, ExternalLink, Navigation } from "lucide-react";
 
 interface PropertyGisMapProps {
@@ -10,6 +10,8 @@ interface PropertyGisMapProps {
   location: string;
   demand: string;
 }
+
+type MapTileStyle = "dark" | "satellite" | "streets";
 
 export default function PropertyGisMap({
   latitude,
@@ -21,6 +23,9 @@ export default function PropertyGisMap({
   const [isMounted, setIsMounted] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const activeTileLayerRef = useRef<any>(null);
+  const [activeStyle, setActiveStyle] = useState<MapTileStyle>("dark");
+  const [isFallbackActive, setIsFallbackActive] = useState(false);
 
   // Strict hydration guard: prevent SSR / window mismatch
   useEffect(() => {
@@ -37,6 +42,75 @@ export default function PropertyGisMap({
   const lat = hasExactCoords ? (latitude as number) : 24.7836;
   const lng = hasExactCoords ? (longitude as number) : 67.0622;
 
+  // Switch Tile Layer Helper
+  const switchLayerStyle = useCallback(async (style: MapTileStyle) => {
+    if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+    const L = (await import("leaflet")).default;
+
+    if (activeTileLayerRef.current && map.hasLayer(activeTileLayerRef.current)) {
+      map.removeLayer(activeTileLayerRef.current);
+    }
+
+    let newLayer: any;
+    if (style === "satellite") {
+      newLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution: "&copy; Esri &copy; Maxar &copy; Earthstar Geographics",
+        }
+      );
+    } else if (style === "streets") {
+      newLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          subdomains: "abc",
+          attribution: "&copy; OpenStreetMap contributors",
+        }
+      );
+    } else {
+      const cartoLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 20,
+          subdomains: "abcd",
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        }
+      );
+
+      let hasFallenBack = false;
+      cartoLayer.on("tileerror", () => {
+        if (!hasFallenBack && mapInstanceRef.current) {
+          hasFallenBack = true;
+          setIsFallbackActive(true);
+          console.warn("Carto basemap tile issue on property map. Falling back to OpenStreetMap Dark layer.");
+          if (map.hasLayer(cartoLayer)) {
+            map.removeLayer(cartoLayer);
+          }
+          const osmDark = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+              maxZoom: 19,
+              subdomains: "abc",
+              className: "leaflet-dark-fallback",
+              attribution: "&copy; OpenStreetMap contributors",
+            }
+          );
+          osmDark.addTo(map);
+          activeTileLayerRef.current = osmDark;
+        }
+      });
+
+      newLayer = cartoLayer;
+    }
+
+    newLayer.addTo(map);
+    activeTileLayerRef.current = newLayer;
+    setActiveStyle(style);
+  }, []);
+
   useEffect(() => {
     if (!isMounted) return;
     let isSubscribed = true;
@@ -44,6 +118,11 @@ export default function PropertyGisMap({
     async function initMap() {
       if (typeof window === "undefined" || !mapContainerRef.current) return;
       if (mapInstanceRef.current) return;
+
+      // Prevent "Map container is already initialized" crash
+      if ((mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
+      }
 
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
@@ -73,14 +152,41 @@ export default function PropertyGisMap({
         scrollWheelZoom: false,
       });
 
-      // Dark Mode CartoDB Vector Tiles Layer: zero blank grey states
-      const tileUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+      // Primary CartoDB Layer with Auto-Fallback
+      const cartoLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 20,
+          subdomains: "abcd",
+          attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        }
+      );
 
-      L.tileLayer(tileUrl, {
-        maxZoom: 20,
-        subdomains: "abcd",
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      }).addTo(map);
+      let hasFallenBack = false;
+      cartoLayer.on("tileerror", () => {
+        if (!hasFallenBack && mapInstanceRef.current) {
+          hasFallenBack = true;
+          setIsFallbackActive(true);
+          console.warn("Carto basemap tile issue on detail map. Falling back to OpenStreetMap Dark layer.");
+          if (map.hasLayer(cartoLayer)) {
+            map.removeLayer(cartoLayer);
+          }
+          const osmDark = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+              maxZoom: 19,
+              subdomains: "abc",
+              className: "leaflet-dark-fallback",
+              attribution: "&copy; OpenStreetMap contributors",
+            }
+          );
+          osmDark.addTo(map);
+          activeTileLayerRef.current = osmDark;
+        }
+      });
+
+      cartoLayer.addTo(map);
+      activeTileLayerRef.current = cartoLayer;
 
       // Multi-tier Invalidation Guards to guarantee zero blank grey states
       map.invalidateSize();
@@ -130,6 +236,10 @@ export default function PropertyGisMap({
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
+        activeTileLayerRef.current = null;
+      }
+      if (mapContainerRef.current && (mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
       }
     };
   }, [isMounted, lat, lng, title, demand, location, hasExactCoords]);
@@ -197,6 +307,43 @@ export default function PropertyGisMap({
           <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
         )}
 
+        {/* Top-Left: Map Layer Style Switcher HUD */}
+        <div className="absolute top-3 left-3 z-[400] flex items-center space-x-1 bg-black/85 backdrop-blur-md border border-white/20 p-1">
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("dark")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "dark" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Dark GIS
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("satellite")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "satellite" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Satellite
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("streets")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "streets" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Streets
+          </button>
+        </div>
+
         {/* Cadastral Coordinate Watermark */}
         <div className="absolute top-4 right-4 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/40 px-3 py-1.5 text-[10px] font-mono text-[#D4AF37] flex items-center space-x-2 shadow-lg">
           <MapPin className="w-3 h-3 text-[#D4AF37]" />
@@ -206,8 +353,17 @@ export default function PropertyGisMap({
         </div>
 
         {/* Map Engine Badge */}
-        <div className="absolute bottom-3 left-3 z-[400] bg-black/80 backdrop-blur-sm border border-white/15 px-2.5 py-1 text-[9px] font-mono text-zinc-400">
-          <span>CartoDB Dark Matter • GIS WGS 84</span>
+        <div className="absolute bottom-3 left-3 z-[400] bg-black/80 backdrop-blur-sm border border-white/15 px-2.5 py-1 text-[9px] font-mono text-zinc-400 flex items-center space-x-1.5">
+          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`} />
+          <span>
+            {activeStyle === "satellite" 
+              ? "Esri World Imagery High-Res Satellite" 
+              : activeStyle === "streets" 
+              ? "OpenStreetMap Cadastral Streets" 
+              : isFallbackActive 
+              ? "OpenStreetMap Dark GIS (Failsafe Active)" 
+              : "CartoDB Dark Matter GIS"}
+          </span>
         </div>
       </div>
     </div>

@@ -7,8 +7,11 @@ import {
   Compass, 
   Check, 
   Copy, 
-  Navigation,
-  RotateCcw
+  Search,
+  Loader2,
+  Layers,
+  Sparkles,
+  AlertCircle
 } from "lucide-react";
 
 interface GisCoordinatePickerProps {
@@ -22,9 +25,13 @@ interface GisCoordinatePickerProps {
 const PRESET_ENCLAVES = [
   { name: "DHA Phase 8", lat: 24.7836, lng: 67.0622 },
   { name: "Emaar Crescent Bay", lat: 24.7875, lng: 67.0758 },
+  { name: "Khayaban-e-Ghalib", lat: 24.7795, lng: 67.0684 },
+  { name: "Khayaban-e-Faisal", lat: 24.7725, lng: 67.0712 },
   { name: "DHA Phase 6", lat: 24.8012, lng: 67.0543 },
   { name: "Clifton", lat: 24.8198, lng: 67.0289 },
 ];
+
+type MapTileStyle = "dark" | "satellite" | "streets";
 
 export default function GisCoordinatePicker({
   latitude,
@@ -35,6 +42,7 @@ export default function GisCoordinatePicker({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markerInstanceRef = useRef<any>(null);
+  const activeTileLayerRef = useRef<any>(null);
 
   // Default coordinate: DHA Phase 8 Zone A Karachi
   const currentLat = typeof latitude === "number" && !isNaN(latitude) ? latitude : 24.7836;
@@ -50,6 +58,13 @@ export default function GisCoordinatePicker({
   const [isLocating, setIsLocating] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [activeStyle, setActiveStyle] = useState<MapTileStyle>("dark");
+  const [isFallbackActive, setIsFallbackActive] = useState(false);
+
+  // Geocoding Search States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchFeedback, setSearchFeedback] = useState<string | null>(null);
 
   // Strict Hydration Guard
   useEffect(() => {
@@ -66,6 +81,77 @@ export default function GisCoordinatePicker({
     }
   }, [latitude, longitude]);
 
+  // Switch Tile Layer Helper
+  const switchLayerStyle = useCallback(async (style: MapTileStyle) => {
+    if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+    const L = (await import("leaflet")).default;
+
+    // Remove existing layer
+    if (activeTileLayerRef.current && map.hasLayer(activeTileLayerRef.current)) {
+      map.removeLayer(activeTileLayerRef.current);
+    }
+
+    let newLayer: any;
+    if (style === "satellite") {
+      newLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          attribution: "&copy; Esri &copy; Maxar &copy; Earthstar Geographics",
+        }
+      );
+    } else if (style === "streets") {
+      newLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          subdomains: "abc",
+          attribution: "&copy; OpenStreetMap contributors",
+        }
+      );
+    } else {
+      // Dark Matter with automatic OpenStreetMap fallback
+      const cartoLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 20,
+          subdomains: "abcd",
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        }
+      );
+
+      let hasFallenBack = false;
+      cartoLayer.on("tileerror", () => {
+        if (!hasFallenBack && mapInstanceRef.current) {
+          hasFallenBack = true;
+          setIsFallbackActive(true);
+          console.warn("Carto basemap tile issue detected. Seamlessly falling back to high-uptime OpenStreetMap Dark GIS layer.");
+          if (map.hasLayer(cartoLayer)) {
+            map.removeLayer(cartoLayer);
+          }
+          const osmDark = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+              maxZoom: 19,
+              subdomains: "abc",
+              className: "leaflet-dark-fallback",
+              attribution: "&copy; OpenStreetMap contributors",
+            }
+          );
+          osmDark.addTo(map);
+          activeTileLayerRef.current = osmDark;
+        }
+      });
+
+      newLayer = cartoLayer;
+    }
+
+    newLayer.addTo(map);
+    activeTileLayerRef.current = newLayer;
+    setActiveStyle(style);
+  }, []);
+
   // Initialize Leaflet map safely on client side
   useEffect(() => {
     if (!isMounted) return;
@@ -73,13 +159,18 @@ export default function GisCoordinatePicker({
 
     async function initMap() {
       if (typeof window === "undefined" || !mapContainerRef.current) return;
-      if (mapInstanceRef.current) return; // Map already initialized
+      if (mapInstanceRef.current) return;
+
+      // Crucial Fix: Clear any stale Leaflet instance ID on the DOM container to prevent "Map container is already initialized"
+      if ((mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
+      }
 
       // Dynamically load leaflet
       const L = (await import("leaflet")).default;
       if (!isSubscribed || !mapContainerRef.current) return;
 
-      // Custom Gold SVG Pinpoint Marker (#D4AF37) with Radial Aura Glow (gis-pulse-marker)
+      // Custom Gold SVG Pinpoint Marker (#D4AF37) with Radial Aura Glow
       const customGoldIcon = L.divIcon({
         className: "custom-gis-pin-container",
         html: `
@@ -96,7 +187,7 @@ export default function GisCoordinatePicker({
         popupAnchor: [0, -42],
       });
 
-      // Create Leaflet map
+      // Create Leaflet map instance
       const map = L.map(mapContainerRef.current, {
         center: [currentLat, currentLng],
         zoom: 14,
@@ -104,14 +195,41 @@ export default function GisCoordinatePicker({
         attributionControl: false,
       });
 
-      // Dark Mode CartoDB Vector Tiles Layer: zero blank grey states
-      const tileUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+      // Multi-tier Tile Layer: CartoDB Dark Matter with automatic OSM Fallback
+      const cartoLayer = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 20,
+          subdomains: "abcd",
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        }
+      );
 
-      L.tileLayer(tileUrl, {
-        maxZoom: 20,
-        subdomains: "abcd",
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      }).addTo(map);
+      let hasFallenBack = false;
+      cartoLayer.on("tileerror", () => {
+        if (!hasFallenBack && mapInstanceRef.current) {
+          hasFallenBack = true;
+          setIsFallbackActive(true);
+          console.warn("Carto basemap tile error. Falling back to OpenStreetMap Dark layer.");
+          if (map.hasLayer(cartoLayer)) {
+            map.removeLayer(cartoLayer);
+          }
+          const osmDark = L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+              maxZoom: 19,
+              subdomains: "abc",
+              className: "leaflet-dark-fallback",
+              attribution: "&copy; OpenStreetMap contributors",
+            }
+          );
+          osmDark.addTo(map);
+          activeTileLayerRef.current = osmDark;
+        }
+      });
+
+      cartoLayer.addTo(map);
+      activeTileLayerRef.current = cartoLayer;
 
       // Multi-tier Invalidation Guards to guarantee zero blank grey states
       map.invalidateSize();
@@ -186,11 +304,15 @@ export default function GisCoordinatePicker({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         markerInstanceRef.current = null;
+        activeTileLayerRef.current = null;
+      }
+      if (mapContainerRef.current && (mapContainerRef.current as any)._leaflet_id) {
+        delete (mapContainerRef.current as any)._leaflet_id;
       }
     };
   }, [isMounted]);
 
-  // Secondary Invalidation Guard: run when mapReady changes or container mounts
+  // Secondary Invalidation Guard: run when mapReady changes
   useEffect(() => {
     if (mapReady && mapInstanceRef.current) {
       const timer = setTimeout(() => {
@@ -248,6 +370,7 @@ export default function GisCoordinatePicker({
     onChange({ lat: preset.lat, lng: preset.lng });
     setInputLat(preset.lat.toFixed(6));
     setInputLng(preset.lng.toFixed(6));
+    setSearchFeedback(`Pinned: ${preset.name}`);
     if (mapInstanceRef.current && markerInstanceRef.current) {
       markerInstanceRef.current.setLatLng([preset.lat, preset.lng]);
       mapInstanceRef.current.flyTo([preset.lat, preset.lng], 16, {
@@ -255,6 +378,50 @@ export default function GisCoordinatePicker({
         duration: 1.5,
       });
       mapInstanceRef.current.invalidateSize();
+    }
+  };
+
+  // Live Cadastral Geocoding Search Engine
+  const handleGeocodeSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = searchQuery.trim() || locationLabel?.trim();
+    if (!query) {
+      setSearchFeedback("Please enter a Karachi enclave, street, or landmark");
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchFeedback("Resolving cadastral coordinates...");
+
+    try {
+      const res = await fetch(`/api/map/geocode?query=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (data?.coordinates?.lat && data?.coordinates?.lng) {
+        const lat = parseFloat(data.coordinates.lat.toFixed(6));
+        const lng = parseFloat(data.coordinates.lng.toFixed(6));
+
+        onChange({ lat, lng });
+        setInputLat(lat.toFixed(6));
+        setInputLng(lng.toFixed(6));
+        setSearchFeedback(data.name || `Located: ${lat}, ${lng}`);
+
+        if (mapInstanceRef.current && markerInstanceRef.current) {
+          markerInstanceRef.current.setLatLng([lat, lng]);
+          mapInstanceRef.current.flyTo([lat, lng], 16, {
+            animate: true,
+            duration: 1.5,
+          });
+          mapInstanceRef.current.invalidateSize();
+        }
+      } else {
+        setSearchFeedback("Enclave not resolved. Click on map or choose a preset.");
+      }
+    } catch (err) {
+      console.error("Geocoding search error:", err);
+      setSearchFeedback("Search engine notice: using manual pin placement.");
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -272,6 +439,7 @@ export default function GisCoordinatePicker({
         onChange({ lat, lng });
         setInputLat(lat.toFixed(6));
         setInputLng(lng.toFixed(6));
+        setSearchFeedback(`GPS Acquired: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
         if (mapInstanceRef.current && markerInstanceRef.current) {
           markerInstanceRef.current.setLatLng([lat, lng]);
           mapInstanceRef.current.flyTo([lat, lng], 16, { duration: 1.2 });
@@ -281,7 +449,7 @@ export default function GisCoordinatePicker({
       },
       (error) => {
         console.error("Geolocation error:", error);
-        alert(`Location acquisition failed: ${error.message}`);
+        alert(`Location acquisition notice: ${error.message}. You can click the map to place the pin.`);
         setIsLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -298,7 +466,7 @@ export default function GisCoordinatePicker({
 
   return (
     <div className="space-y-4 rounded-xl border border-white/10 bg-black/60 p-4 sm:p-5 backdrop-blur-md">
-      {/* Header with Title and Coordinate Badge */}
+      {/* Header with Title and Action Badges */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center space-x-2">
           <div className="w-7 h-7 bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
@@ -308,7 +476,7 @@ export default function GisCoordinatePicker({
             <h4 className="text-xs uppercase tracking-widest text-[#D4AF37] font-semibold flex items-center gap-1.5">
               <span>Cadastral GIS Coordinate Engine</span>
               <span className="text-[9px] px-1.5 py-0.2 bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] font-mono">
-                PRECISION 1.0m
+                MULTI-PROVIDER FAILSAFE
               </span>
             </h4>
             <p className="text-[10px] text-zinc-400">
@@ -350,6 +518,50 @@ export default function GisCoordinatePicker({
         </div>
       </div>
 
+      {/* Cadastral Geocoding Search Bar */}
+      <form onSubmit={handleGeocodeSearch} className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={locationLabel ? `Search or sync location: "${locationLabel}"` : "Search DHA enclave, road, or landmark (e.g. Emaar, Khayaban-e-Ghalib)..."}
+            className="w-full bg-black/80 border border-white/15 pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:border-[#D4AF37] outline-none transition-colors"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={isSearching}
+          className="bg-[#D4AF37] hover:bg-[#c49f2e] text-black font-semibold text-xs px-4 py-2 uppercase tracking-wider flex items-center space-x-1 transition-colors disabled:opacity-50"
+        >
+          {isSearching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          <span>{isSearching ? "PINPOINTING..." : "LOCATE"}</span>
+        </button>
+
+        {locationLabel && locationLabel.trim() !== searchQuery.trim() && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearchQuery(locationLabel);
+              const fakeEvent = { preventDefault: () => {} } as any;
+              handleGeocodeSearch(fakeEvent);
+            }}
+            className="bg-white/10 hover:bg-white/15 text-zinc-200 border border-white/20 text-xs px-3 py-2 uppercase tracking-wider transition-colors hidden sm:inline-flex items-center space-x-1"
+            title="Sync with current Location input value"
+          >
+            <span>USE FORM LOCATION</span>
+          </button>
+        )}
+      </form>
+
+      {searchFeedback && (
+        <div className="text-[10px] text-zinc-400 flex items-center space-x-1 font-mono">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+          <span>{searchFeedback}</span>
+        </div>
+      )}
+
       {/* Preset Luxury Enclave Quick-Select Ribbon */}
       <div className="space-y-1.5">
         <label className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
@@ -386,10 +598,55 @@ export default function GisCoordinatePicker({
       >
         <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
         
+        {/* Top-Left: Map Layer Style Switcher HUD */}
+        <div className="absolute top-3 left-3 z-[400] flex items-center space-x-1 bg-black/85 backdrop-blur-md border border-white/20 p-1">
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("dark")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "dark" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Dark GIS
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("satellite")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "satellite" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Satellite
+          </button>
+          <button
+            type="button"
+            onClick={() => switchLayerStyle("streets")}
+            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+              activeStyle === "streets" 
+                ? "bg-[#D4AF37] text-black font-semibold" 
+                : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            Streets
+          </button>
+        </div>
+
         {/* Floating Map HUD overlay */}
         <div className="absolute bottom-3 left-3 z-[400] bg-black/85 backdrop-blur-md border border-white/20 px-3 py-1 text-[9px] font-mono text-zinc-300 flex items-center space-x-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>WGS 84 • CartoDB Dark Matter GIS</span>
+          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`} />
+          <span>
+            {activeStyle === "satellite" 
+              ? "Esri World Imagery High-Res Satellite" 
+              : activeStyle === "streets" 
+              ? "OpenStreetMap Cadastral Streets" 
+              : isFallbackActive 
+              ? "OpenStreetMap Dark GIS (Failsafe Active)" 
+              : "CartoDB Dark Matter GIS"}
+          </span>
         </div>
 
         {/* Live Coordinate Watermark */}
