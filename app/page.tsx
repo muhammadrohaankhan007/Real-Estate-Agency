@@ -1348,17 +1348,21 @@ export default function Home() {
 
 
       {/* ==================== FLOATING WHATSAPP ACTION (DESKTOP) ==================== */}
-      <aside aria-label="Direct Advisory Desk" className="hidden md:flex fixed bottom-6 right-6 z-40 items-center space-x-3">
+      <aside aria-label="Direct Advisory Desk" className="hidden md:flex fixed bottom-6 right-6 z-40 items-center">
         <a
           href="https://wa.me/923008286662?text=Hello%20Nadeem%20Sulemani%2C%20I%20am%20interested%20in%20Karachi%20prime%20properties"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center space-x-2.5 bg-neutral-900/90 hover:bg-[#D4AF37] hover:text-black text-[#D4AF37] px-4 py-3 shadow-2xl transition-all duration-200 rounded-none border border-[#D4AF37]/50 backdrop-blur-md"
+          className="group flex items-center space-x-2.5 bg-[#0e0e12]/90 hover:bg-[#15151a] px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.85)] transition-all duration-300 rounded-full border border-[#D4AF37]/40 hover:border-[#D4AF37] backdrop-blur-xl"
           aria-label="Direct WhatsApp Advisory with Nadeem Sulemani"
         >
-          <MessageSquare className="w-4 h-4 text-[#D4AF37] group-hover:text-black transition-colors" />
-          <span className="text-xs font-semibold tracking-wider uppercase font-mono">
-            WhatsApp Advisory Desk
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37] group-hover:scale-110 transition-transform" />
+          <span className="text-[11px] font-semibold tracking-wider uppercase font-sans text-neutral-200 group-hover:text-[#D4AF37] transition-colors">
+            Advisory Desk
           </span>
         </a>
       </aside>
