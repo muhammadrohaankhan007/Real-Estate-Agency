@@ -147,10 +147,12 @@ export default function PropertyGisMap({
       const map = L.map(mapContainerRef.current, {
         center: [lat, lng],
         zoom: hasExactCoords ? 16 : 14,
-        zoomControl: true,
+        zoomControl: false,
         attributionControl: false,
         scrollWheelZoom: false,
       });
+
+      L.control.zoom({ position: "bottomright" }).addTo(map);
 
       // Primary CartoDB Layer with Auto-Fallback
       const cartoLayer = L.tileLayer(
@@ -308,7 +310,7 @@ export default function PropertyGisMap({
         )}
 
         {/* Top-Left: Map Layer Style Switcher HUD */}
-        <div className="absolute top-3 left-3 z-[400] flex items-center space-x-1 bg-black/85 backdrop-blur-md border border-white/20 p-1">
+        <div className="absolute top-2.5 xs:top-3 left-2.5 xs:left-3 z-[400] flex items-center space-x-1 bg-black/85 backdrop-blur-md border border-white/20 p-1">
           <button
             type="button"
             onClick={() => switchLayerStyle("dark")}
@@ -345,23 +347,23 @@ export default function PropertyGisMap({
         </div>
 
         {/* Cadastral Coordinate Watermark */}
-        <div className="absolute top-4 right-4 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/40 px-3 py-1.5 text-[10px] font-mono text-[#D4AF37] flex items-center space-x-2 shadow-lg">
+        <div className="hidden xs:flex absolute top-3 right-3 sm:top-4 sm:right-4 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/40 px-2.5 xs:px-3 py-1 xs:py-1.5 text-[9px] xs:text-[10px] font-mono text-[#D4AF37] items-center space-x-1.5 shadow-lg">
           <MapPin className="w-3 h-3 text-[#D4AF37]" />
           <span>
-            {lat.toFixed(6)}° N, {lng.toFixed(6)}° E
+            {lat.toFixed(6)}°, {lng.toFixed(6)}°
           </span>
         </div>
 
         {/* Map Engine Badge */}
-        <div className="absolute bottom-3 left-3 z-[400] bg-black/80 backdrop-blur-sm border border-white/15 px-2.5 py-1 text-[9px] font-mono text-zinc-400 flex items-center space-x-1.5">
-          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`} />
-          <span>
+        <div className="hidden xs:flex absolute bottom-3 left-3 z-[400] bg-black/80 backdrop-blur-sm border border-white/15 px-2.5 py-1 text-[9px] font-mono text-zinc-400 items-center space-x-1.5 max-w-[calc(100%-90px)] truncate">
+          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse flex-shrink-0`} />
+          <span className="truncate">
             {activeStyle === "satellite" 
               ? "Esri World Imagery High-Res Satellite" 
               : activeStyle === "streets" 
               ? "OpenStreetMap Cadastral Streets" 
               : isFallbackActive 
-              ? "OpenStreetMap Dark GIS (Failsafe Active)" 
+              ? "OpenStreetMap Dark GIS" 
               : "CartoDB Dark Matter GIS"}
           </span>
         </div>

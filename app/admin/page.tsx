@@ -511,10 +511,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-5 sm:p-8 lg:p-12 font-sans selection:bg-[#D4AF37] selection:text-black">
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-3.5 xs:p-5 sm:p-8 lg:p-12 font-sans selection:bg-[#D4AF37] selection:text-black">
       {/* ==================== GLASSMORPHIC TOAST BANNER ==================== */}
       {toast.show && (
-        <div className="fixed top-6 right-6 z-50 max-w-md w-full animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="fixed top-4 sm:top-6 left-4 sm:left-auto right-4 sm:right-6 z-50 max-w-md w-auto sm:w-full animate-in fade-in slide-in-from-top-4 duration-300">
           <div
             className={`p-5 backdrop-blur-xl border shadow-2xl transition-all duration-300 ${
               toast.type === 'loading'
@@ -687,32 +687,32 @@ export default function AdminDashboard() {
         </div>
 
         {/* Prominent Enterprise Navigation Bar */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-white/15 pb-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 border-b border-white/15 pb-4 mb-6 sm:mb-8">
           <button
             type="button"
             onClick={() => setActiveTab('publish')}
-            className={`px-5 py-3 text-xs uppercase tracking-widest font-semibold transition-all flex items-center space-x-2.5 border ${
+            className={`px-4 xs:px-5 py-3 text-xs uppercase tracking-wider font-semibold transition-all flex items-center justify-center sm:justify-start space-x-2.5 border ${
               activeTab === 'publish'
                 ? 'bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold'
                 : 'bg-white/[0.03] text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
             }`}
           >
-            {editingId !== null ? <Edit3 className="w-4 h-4" /> : <PlusCircle className="w-4 h-4" />}
-            <span>{editingId !== null ? `Tab 1: Edit Mandate #${editingId}` : 'Tab 1: Publish New Mandate'}</span>
+            {editingId !== null ? <Edit3 className="w-4 h-4 flex-shrink-0" /> : <PlusCircle className="w-4 h-4 flex-shrink-0" />}
+            <span className="truncate">{editingId !== null ? `Tab 1: Edit Mandate #${editingId}` : 'Tab 1: Publish New Mandate'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('inventory')}
-            className={`px-5 py-3 text-xs uppercase tracking-widest font-semibold transition-all flex items-center space-x-2.5 border ${
+            className={`px-4 xs:px-5 py-3 text-xs uppercase tracking-wider font-semibold transition-all flex items-center justify-center sm:justify-start space-x-2.5 border ${
               activeTab === 'inventory'
                 ? 'bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold'
                 : 'bg-white/[0.03] text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
             }`}
           >
-            <FolderOpen className="w-4 h-4" />
-            <span>Tab 2: Portfolio Inventory & Edit Desk</span>
-            <span className={`text-[10px] px-2 py-0.5 font-mono ${activeTab === 'inventory' ? 'bg-black text-[#D4AF37]' : 'bg-[#D4AF37]/20 text-[#D4AF37]'}`}>
+            <FolderOpen className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">Tab 2: Inventory & Edit Desk</span>
+            <span className={`text-[10px] px-2 py-0.5 font-mono ml-auto sm:ml-0 ${activeTab === 'inventory' ? 'bg-black text-[#D4AF37]' : 'bg-[#D4AF37]/20 text-[#D4AF37]'}`}>
               {inventory.length}
             </span>
           </button>
@@ -722,7 +722,7 @@ export default function AdminDashboard() {
         {activeTab === 'publish' && (
           <form 
             onSubmit={handleSubmit} 
-            className="space-y-8 bg-white/[0.02] border border-white/10 p-6 sm:p-10 rounded-xl backdrop-blur-md shadow-2xl"
+            className="space-y-6 sm:space-y-8 bg-white/[0.02] border border-white/10 p-4 xs:p-6 sm:p-10 rounded-xl backdrop-blur-md shadow-2xl"
           >
             {/* Active Edit Mode Mandate Banner */}
             {editingId !== null && (
@@ -1265,7 +1265,7 @@ export default function AdminDashboard() {
                       </div>
 
                       {/* Right: Actions (EDIT, INSPECT, REMOVE) */}
-                      <div className="flex items-center space-x-2 self-end md:self-center flex-wrap gap-y-2">
+                      <div className="flex items-center space-x-2 self-start sm:self-end md:self-center flex-wrap gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-white/10 w-full md:w-auto">
                         {/* STEP 4: Full Listing Edit Button */}
                         <button
                           type="button"

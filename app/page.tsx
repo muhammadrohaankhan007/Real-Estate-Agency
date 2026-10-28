@@ -505,30 +505,29 @@ export default function Home() {
       {/* ==================== 3. ASYMMETRICAL PORTFOLIO (EDITORIAL SPREAD) ==================== */}
       <div id="portfolio" className="scroll-mt-24" />
       <div id="off-plan" className="scroll-mt-24" />
-      <section id="showcase" className="relative bg-[#0a0a0a] py-24 sm:py-32 px-5 sm:px-8 lg:px-12 border-t border-white/[0.08]">
+      <section id="showcase" className="relative bg-[#0a0a0a] py-16 xs:py-20 sm:py-32 px-4 xs:px-5 sm:px-8 lg:px-12 border-t border-white/[0.08]">
         <div className="max-w-7xl mx-auto">
           
           {/* Section Header with Category Switchers */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 xs:mb-12 sm:mb-16 gap-6">
             <div>
-              <div className="inline-flex items-center space-x-2 text-[11px] font-semibold tracking-[0.3em] uppercase text-[#D4AF37] mb-3">
+              <div className="inline-flex items-center space-x-2 text-[10px] xs:text-[11px] font-semibold tracking-[0.25em] xs:tracking-[0.3em] uppercase text-[#D4AF37] mb-2.5">
                 <Building2 className="w-3.5 h-3.5" />
                 <span>Prime Time Curated Mandates</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-tight">
+              <h2 className="font-serif text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-tight">
                 Signature Residential Portfolio: <br />
                 <span className="italic text-zinc-400">DHA Phase 8 Bungalows & Crescent Bay Flagships</span>
               </h2>
             </div>
             
-            <div className="max-w-md">
-              <p className="text-zinc-400 text-sm font-light leading-relaxed mb-4">
+            <div className="max-w-md w-full">
+              <p className="text-zinc-400 text-xs sm:text-sm font-light leading-relaxed mb-4">
                 Personally inspected and vetted by Nadeem Sulemani. Every estate features verified DHA sub-lease documentation, clear demarcation, and direct owner terms.
               </p>
               
-              {/* Category Filters (Sharp architectural tabs) */}
-              {/* Category Filters (Quiet luxury tabs with 48px touch targets) */}
-              <div className="flex flex-wrap gap-2 pt-1">
+              {/* Category Filters (Quiet luxury tabs with touch-friendly spacing) */}
+              <div className="flex flex-wrap gap-1.5 xs:gap-2 pt-1">
                 {[
                   { id: 'all', label: 'All Catalog' },
                   { id: 'dha8', label: 'DHA Phase 8' },
@@ -538,7 +537,7 @@ export default function Home() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`touch-target-48 px-5 py-3 text-xs tracking-wider uppercase transition-all duration-200 rounded-none flex items-center justify-center font-mono ${
+                    className={`touch-target-48 px-3.5 xs:px-5 py-2.5 xs:py-3 text-[11px] xs:text-xs tracking-wider uppercase transition-all duration-200 rounded-none flex items-center justify-center font-mono ${
                       activeCategory === cat.id
                         ? 'bg-[#D4AF37] text-neutral-950 font-bold shadow-md shadow-[#D4AF37]/20 border border-[#D4AF37]'
                         : 'border border-neutral-800 text-zinc-400 hover:text-white hover:border-amber-500/40 bg-neutral-900/60'
@@ -549,32 +548,32 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Showcase Motion Mode Switcher with 48px Touch Targets */}
-              <div className="flex flex-wrap items-center gap-2 pt-3">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">Showcase Engine:</span>
-                <div className="inline-flex bg-neutral-950 border border-neutral-800 p-1">
+              {/* Showcase Motion Mode Switcher with Full Mobile Fit */}
+              <div className="flex flex-col xs:flex-row xs:items-center gap-2 pt-3 w-full">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400 flex-shrink-0">Showcase Engine:</span>
+                <div className="flex w-full xs:w-auto bg-neutral-950 border border-neutral-800 p-1 gap-1">
                   <button
                     type="button"
                     onClick={() => setShowcaseMode('revolving')}
-                    className={`touch-target-48 px-4 py-2.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                    className={`touch-target-48 flex-1 xs:flex-initial px-3 xs:px-4 py-2.5 text-[10px] xs:text-[11px] uppercase tracking-wider font-medium flex items-center justify-center space-x-1.5 transition-all ${
                       showcaseMode === 'revolving'
                         ? 'bg-[#D4AF37] text-black font-bold shadow-md'
                         : 'text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Continuous Showroom Motion</span>
+                    <Sparkles className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span><span className="hidden sm:inline">Continuous </span>Showroom Motion</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowcaseMode('grid')}
-                    className={`touch-target-48 px-4 py-2.5 text-[11px] uppercase tracking-wider font-medium flex items-center space-x-1.5 transition-all ${
+                    className={`touch-target-48 flex-1 xs:flex-initial px-3 xs:px-4 py-2.5 text-[10px] xs:text-[11px] uppercase tracking-wider font-medium flex items-center justify-center space-x-1.5 transition-all ${
                       showcaseMode === 'grid'
                         ? 'bg-[#D4AF37] text-black font-bold shadow-md'
                         : 'text-zinc-400 hover:text-white'
                     }`}
                   >
-                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <LayoutGrid className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>Full Grid View</span>
                   </button>
                 </div>
@@ -587,7 +586,7 @@ export default function Home() {
             <div className="space-y-6">
               {/* Main Revolving Showroom Stage */}
               <div
-                className="relative w-full h-[580px] sm:h-[660px] lg:h-[740px] overflow-hidden bg-black border border-neutral-800 group shadow-2xl"
+                className="relative w-full h-[560px] xs:h-[620px] sm:h-[660px] lg:h-[740px] overflow-hidden bg-black border border-neutral-800 group shadow-2xl"
                 style={{ contain: 'layout paint' }}
                 onMouseEnter={() => setIsRevolvingPaused(true)}
                 onMouseLeave={() => setIsRevolvingPaused(false)}
@@ -628,50 +627,52 @@ export default function Home() {
                       />
 
                       {/* Ambient Architectural Vignette Overlays */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent pointer-events-none" />
                       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/85 opacity-90 pointer-events-none" />
 
                       {/* Top Verification Badges */}
-                      <div className="absolute top-6 left-6 z-20 flex flex-wrap items-center gap-2">
-                        <span className="px-3.5 py-1.5 bg-black/85 border border-[#D4AF37]/50 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
+                      <div className="absolute top-3.5 xs:top-4 sm:top-6 left-3.5 xs:left-4 sm:left-6 z-20 flex flex-wrap items-center gap-1.5 xs:gap-2 max-w-[calc(100%-80px)] sm:max-w-none">
+                        <span className="px-2.5 xs:px-3.5 py-1 xs:py-1.5 bg-black/85 border border-[#D4AF37]/50 text-[9px] xs:text-[10px] tracking-[0.16em] xs:tracking-[0.2em] uppercase text-[#D4AF37] font-semibold rounded-none">
                           {property.badge || property.tag || 'Verified Mandate'}
                         </span>
                         {property.image_urls && property.image_urls.length > 1 && (
-                          <span className="px-3 py-1.5 bg-black/90 border border-amber-500/40 text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1.5 shadow-md">
-                            <Camera className="w-3.5 h-3.5 text-amber-400" />
+                          <span className="px-2.5 xs:px-3 py-1 xs:py-1.5 bg-black/90 border border-amber-500/40 text-[9px] xs:text-[10px] tracking-wider uppercase text-amber-300 font-medium rounded-none flex items-center gap-1 shadow-md">
+                            <Camera className="w-3 h-3 text-amber-400" />
                             <span>{property.image_urls.length} PHOTOS</span>
                           </span>
                         )}
                         {typeof property.latitude === 'number' && typeof property.longitude === 'number' ? (
-                          <span className="px-3 py-1.5 bg-black/90 border border-emerald-500/40 text-[10px] tracking-wider uppercase text-emerald-400 font-medium rounded-none flex items-center gap-1.5 shadow-md">
-                            <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="hidden xs:inline-flex px-2.5 xs:px-3 py-1 xs:py-1.5 bg-black/90 border border-emerald-500/40 text-[9px] xs:text-[10px] tracking-wider uppercase text-emerald-400 font-medium rounded-none items-center gap-1 shadow-md">
+                            <Compass className="w-3 h-3 text-emerald-400" />
                             <span>GIS: {property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
                           </span>
                         ) : (
-                          <span className="px-3 py-1.5 bg-white/10 border border-white/20 text-[10px] tracking-wider uppercase text-zinc-300 rounded-none">
+                          <span className="hidden xs:inline-flex px-2.5 xs:px-3 py-1 xs:py-1.5 bg-white/10 border border-white/20 text-[9px] xs:text-[10px] tracking-wider uppercase text-zinc-300 rounded-none">
                             Est. 1998 Verified
                           </span>
                         )}
                       </div>
 
                       {/* Top Right Live Motion HUD */}
-                      <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
-                        <div className="bg-black/90 backdrop-blur-md border border-neutral-700/80 px-3.5 py-2 text-[10px] tracking-wider font-mono text-zinc-300 flex items-center space-x-2">
+                      <div className="absolute top-3.5 xs:top-4 sm:top-6 right-3.5 xs:right-4 sm:right-6 z-20 flex items-center gap-1.5 xs:gap-2">
+                        <div className="bg-black/90 backdrop-blur-md border border-neutral-700/80 px-2.5 xs:px-3.5 py-1.5 xs:py-2 text-[9px] xs:text-[10px] tracking-wider font-mono text-zinc-300 flex items-center space-x-1.5 xs:space-x-2">
                           <span className="text-[#D4AF37] font-bold">
-                            MANDATE {isMounted ? revolvingIndex + 1 : 1} / {activeList.length}
+                            {isMounted ? revolvingIndex + 1 : 1} / {activeList.length}
                           </span>
-                          <span className="text-zinc-600">|</span>
-                          {isRevolvingPaused ? (
-                            <span className="text-amber-400 flex items-center gap-1 font-medium">
-                              <Pause className="w-3 h-3 text-[#D4AF37]" />
-                              <span>PAUSED ON HOVER/TOUCH</span>
-                            </span>
-                          ) : (
-                            <span className="text-emerald-400 flex items-center gap-1 font-medium">
-                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                              <span>4.5s MOTION ACTIVE</span>
-                            </span>
-                          )}
+                          <span className="hidden sm:inline text-zinc-600">|</span>
+                          <span className="hidden sm:inline">
+                            {isRevolvingPaused ? (
+                              <span className="text-amber-400 inline-flex items-center gap-1 font-medium">
+                                <Pause className="w-3 h-3 text-[#D4AF37]" />
+                                <span>PAUSED ON HOVER/TOUCH</span>
+                              </span>
+                            ) : (
+                              <span className="text-emerald-400 inline-flex items-center gap-1 font-medium">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <span>4.5s MOTION ACTIVE</span>
+                              </span>
+                            )}
+                          </span>
                         </div>
 
                         <button
@@ -681,105 +682,107 @@ export default function Home() {
                             e.stopPropagation();
                             setIsRevolvingPaused((prev) => !prev);
                           }}
-                          className="touch-target-48 w-10 h-10 min-w-[48px] min-h-[48px] bg-black/85 hover:bg-[#D4AF37] hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center text-white transition-colors"
+                          className="touch-target-48 w-8 h-8 xs:w-10 xs:h-10 min-w-[36px] xs:min-w-[48px] min-h-[36px] xs:min-h-[48px] bg-black/85 hover:bg-[#D4AF37] hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center text-white transition-colors"
                           title={isRevolvingPaused ? "Resume auto-rotation" : "Pause auto-rotation"}
                         >
-                          {isRevolvingPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                          {isRevolvingPaused ? <Play className="w-3.5 h-3.5 xs:w-4 xs:h-4" /> : <Pause className="w-3.5 h-3.5 xs:w-4 xs:h-4" />}
                         </button>
                       </div>
 
                       {/* Bottom Overlay Information */}
-                      <div className="absolute bottom-0 inset-x-0 p-6 sm:p-10 z-20 space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <span className="text-zinc-300 flex items-center text-xs tracking-wider uppercase font-mono">
-                            <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#D4AF37]" />
-                            {property.location}
+                      <div className="absolute bottom-0 inset-x-0 p-4 xs:p-6 sm:p-10 z-20 space-y-2.5 xs:space-y-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-zinc-300 flex items-center text-[10px] xs:text-xs tracking-wider uppercase font-mono truncate max-w-[220px] xs:max-w-none">
+                            <MapPin className="w-3.5 h-3.5 mr-1.5 text-[#D4AF37] flex-shrink-0" />
+                            <span className="truncate">{property.location}</span>
                           </span>
-                          <span className="font-serif text-2xl sm:text-4xl text-[#D4AF37] font-normal">
+                          <span className="font-serif text-lg xs:text-2xl sm:text-4xl text-[#D4AF37] font-normal">
                             {displayDemand}
                           </span>
                         </div>
 
-                        <h3 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-light text-white leading-tight">
+                        <h3 className="font-serif text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-light text-white leading-tight line-clamp-2">
                           {property.title}
                         </h3>
 
                         {/* Specs Ribbon */}
-                        <div className="pt-2 flex flex-wrap items-center gap-5 text-xs text-zinc-300 border-t border-neutral-800">
+                        <div className="pt-2 flex flex-wrap items-center gap-3 xs:gap-5 text-[11px] xs:text-xs text-zinc-300 border-t border-neutral-800">
                           <span className="flex items-center space-x-1.5">
-                            <Maximize2 className="w-4 h-4 text-[#D4AF37]" />
+                            <Maximize2 className="w-3.5 h-3.5 text-[#D4AF37]" />
                             <span>{property.size || property.specs?.area || 'Prime Yardage'}</span>
                           </span>
                           <span className="flex items-center space-x-1.5">
-                            <Bed className="w-4 h-4 text-[#D4AF37]" />
-                            <span>{property.bedrooms ?? property.specs?.beds ?? 0} Bedrooms</span>
+                            <Bed className="w-3.5 h-3.5 text-[#D4AF37]" />
+                            <span>{property.bedrooms ?? property.specs?.beds ?? 0} Beds</span>
                           </span>
                           <span className="flex items-center space-x-1.5">
-                            <Bath className="w-4 h-4 text-[#D4AF37]" />
-                            <span>{property.bathrooms ?? property.specs?.baths ?? 0} Bathrooms</span>
+                            <Bath className="w-3.5 h-3.5 text-[#D4AF37]" />
+                            <span>{property.bathrooms ?? property.specs?.baths ?? 0} Baths</span>
                           </span>
-                          <span className="text-zinc-400">• {property.specs?.views || 'Prime Coastal & Urban Views'}</span>
+                          <span className="hidden sm:inline text-zinc-400">• {property.specs?.views || 'Prime Coastal & Urban Views'}</span>
                         </div>
 
                         {/* CTA Buttons */}
-                        <div className="pt-2 flex flex-wrap items-center gap-3">
+                        <div className="pt-2 flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 xs:gap-3">
                           <Link
                             href={`/properties/${property.slug || property.id}`}
-                            className="touch-target-48 px-6 py-3.5 bg-[#D4AF37] hover:bg-white text-black text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center gap-1.5 shadow-lg"
+                            className="touch-target-48 px-5 xs:px-6 py-3 xs:py-3.5 bg-[#D4AF37] hover:bg-white text-black text-[11px] xs:text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center justify-center gap-1.5 shadow-lg text-center"
                           >
                             <span>Explore Property Dossier</span>
                             <ArrowUpRight className="w-3.5 h-3.5" />
                           </Link>
 
-                          <a
-                            href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="touch-target-48 px-5 py-3.5 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
-                          >
-                            <MessageSquare className="w-3.5 h-3.5" />
-                            <span>WhatsApp Concierge</span>
-                          </a>
+                          <div className="grid grid-cols-2 xs:flex gap-2">
+                            <a
+                              href={`https://wa.me/923008286662?text=Inquiry%20regarding%20${encodeURIComponent(property.title)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="touch-target-48 flex-1 xs:flex-initial px-3.5 xs:px-5 py-2.5 xs:py-3.5 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 text-[10px] xs:text-xs font-medium tracking-wider uppercase transition-colors flex items-center justify-center space-x-1.5 rounded-none text-center"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>WhatsApp</span>
+                            </a>
 
-                          <a
-                            href="tel:+923008286662"
-                            className="touch-target-48 px-5 py-3.5 border border-neutral-700 text-zinc-300 hover:text-white hover:border-neutral-500 text-xs font-medium tracking-wider uppercase transition-colors flex items-center space-x-1.5 rounded-none"
-                          >
-                            <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
-                            <span>Direct Advisor Call</span>
-                          </a>
+                            <a
+                              href="tel:+923008286662"
+                              className="touch-target-48 flex-1 xs:flex-initial px-3.5 xs:px-5 py-2.5 xs:py-3.5 border border-neutral-700 text-zinc-300 hover:text-white hover:border-neutral-500 text-[10px] xs:text-xs font-medium tracking-wider uppercase transition-colors flex items-center justify-center space-x-1.5 rounded-none text-center"
+                            >
+                              <Phone className="w-3.5 h-3.5 text-[#D4AF37] flex-shrink-0" />
+                              <span>Direct Call</span>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
                   );
                 })}
 
-                {/* Left & Right Chevron Navigation Controls (Enforcing 48px touch targets) */}
+                {/* Left & Right Chevron Navigation Controls (Touch friendly) */}
                 {activeList.length > 1 && (
                   <>
                     <button
                       type="button"
                       onClick={prevRevolvingSlide}
                       aria-label="Previous property"
-                      className="touch-target-48 absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                      className="touch-target-48 absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 min-w-[36px] sm:min-w-[48px] min-h-[36px] sm:min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
                     >
-                      <ChevronLeft className="w-6 h-6" />
+                      <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                     <button
                       type="button"
                       onClick={nextRevolvingSlide}
                       aria-label="Next property"
-                      className="touch-target-48 absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                      className="touch-target-48 absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 min-w-[36px] sm:min-w-[48px] min-h-[36px] sm:min-h-[48px] bg-black/80 hover:bg-[#D4AF37] hover:text-black text-white border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
                     >
-                      <ChevronRight className="w-6 h-6" />
+                      <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                   </>
                 )}
               </div>
 
               {/* Active Slide Indicators / Progress Track */}
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center space-x-2">
+              <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 pt-2">
+                <div className="flex items-center space-x-1.5 xs:space-x-2 overflow-x-auto max-w-full pb-1 no-scrollbar">
                   {activeList.map((prop, idx) => {
                     const isDotActive = isMounted ? idx === revolvingIndex : idx === 0;
                     return (
@@ -788,10 +791,10 @@ export default function Home() {
                         type="button"
                         onClick={() => goToRevolvingSlide(idx)}
                         aria-label={`Go to slide ${idx + 1}: ${prop.title}`}
-                        className={`h-2.5 transition-all duration-300 rounded-none touch-target-48 flex items-center justify-center p-1 ${
+                        className={`h-2 transition-all duration-300 rounded-none touch-target-48 flex items-center justify-center p-0.5 ${
                           isDotActive
-                            ? "w-10 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
-                            : "w-4 bg-white/20 hover:bg-white/50"
+                            ? "w-8 xs:w-10 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
+                            : "w-3.5 xs:w-4 bg-white/20 hover:bg-white/50"
                         }`}
                       >
                         <span className="sr-only">Slide {idx + 1}</span>
@@ -800,10 +803,11 @@ export default function Home() {
                   })}
                 </div>
 
-                <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest">
-                  Auto-Cycles Every 4.5s • Hover or Touch to Pause
+                <div className="text-[10px] xs:text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
+                  Auto-Cycles Every 4.5s • Touch to Pause
                 </div>
               </div>
+
 
               {/* Filmstrip Quick Selector Ribbon */}
               <div className="pt-2">
@@ -999,19 +1003,19 @@ export default function Home() {
           )}
 
           {/* Discreet Verification Strip */}
-          <div className="mt-16 p-7 sm:p-8 rounded-none bg-black border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-black border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] flex-shrink-0">
-                <ShieldCheck className="w-6 h-6" />
+          <div className="mt-12 sm:mt-16 p-5 xs:p-7 sm:p-8 rounded-none bg-black border border-white/10 flex flex-col md:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+            <div className="flex items-center space-x-3.5 xs:space-x-4">
+              <div className="w-10 h-10 xs:w-12 xs:h-12 bg-black border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] flex-shrink-0">
+                <ShieldCheck className="w-5 h-5 xs:w-6 xs:h-6" />
               </div>
               <div>
-                <h4 className="font-serif text-lg sm:text-xl text-white">Confidential Off-Market Brokerage Mandates</h4>
+                <h4 className="font-serif text-base xs:text-lg sm:text-xl text-white">Confidential Off-Market Brokerage Mandates</h4>
                 <p className="text-zinc-400 text-xs mt-0.5">High-profile properties transacted with strict non-disclosure protocols across DHA Phases 1–8, Clifton, and Emaar.</p>
               </div>
             </div>
             <button
               onClick={() => { setAccessErrors({}); setAccessModalOpen(true); }}
-              className="px-6 py-3 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all text-xs uppercase tracking-widest font-semibold flex-shrink-0 rounded-none"
+              className="w-full md:w-auto text-center justify-center px-6 py-3 border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-all text-xs uppercase tracking-widest font-semibold flex-shrink-0 rounded-none"
             >
               Request Private Access
             </button>
@@ -1023,16 +1027,16 @@ export default function Home() {
 
       {/* ==================== 4. THE FOUNDER & HERITAGE (EDITORIAL PROFILE) ==================== */}
       <div id="about" className="scroll-mt-24" />
-      <section id="founder" className="relative py-28 sm:py-36 px-5 sm:px-8 lg:px-12 bg-[#0c0c0d] border-t border-white/[0.08] overflow-hidden">
+      <section id="founder" className="relative py-20 xs:py-24 sm:py-36 px-4 xs:px-5 sm:px-8 lg:px-12 bg-[#0c0c0d] border-t border-white/[0.08] overflow-hidden">
         
         <div className="max-w-7xl mx-auto relative z-10">
           
           {/* Eyebrow */}
-          <div className="text-center max-w-2xl mx-auto mb-16 sm:mb-20 space-y-3">
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.35em] uppercase text-[#D4AF37] inline-block">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-20 space-y-3">
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] xs:tracking-[0.35em] uppercase text-[#D4AF37] inline-block">
               Executive Leadership • Established 1998
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight">
+            <h2 className="font-serif text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-light text-white tracking-tight leading-tight">
               Twenty-Seven Years of Direct Principal Advisory in <br />
               <span className="italic font-normal gold-gradient-text">Karachi’s Elite Property Corridors</span>
             </h2>
@@ -1042,7 +1046,7 @@ export default function Home() {
           </div>
 
           {/* Magazine-Spread Editorial Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
             
             {/* Left Column: Portrait & Founder Badge (Col 5) */}
             <div className="lg:col-span-5 relative flex flex-col items-center">
@@ -1068,11 +1072,11 @@ export default function Home() {
 
                 {/* Overlay Name Tag */}
                 <div className="absolute bottom-6 inset-x-6 z-20 text-center">
-                  <span className="font-serif text-2xl text-white block">Nadeem Sulemani</span>
-                  <span className="text-[11px] tracking-[0.25em] uppercase text-[#D4AF37] font-medium block mt-1">
+                  <span className="font-serif text-xl xs:text-2xl text-white block">Nadeem Sulemani</span>
+                  <span className="text-[10px] xs:text-[11px] tracking-[0.2em] xs:tracking-[0.25em] uppercase text-[#D4AF37] font-medium block mt-1">
                     Founder & Principal Advisor
                   </span>
-                  <span className="text-[10px] text-zinc-400 block tracking-wider mt-0.5">
+                  <span className="text-[9px] xs:text-[10px] text-zinc-400 block tracking-wider mt-0.5">
                     Real Property Prime Time • Est. 1998
                   </span>
                 </div>
@@ -1080,8 +1084,8 @@ export default function Home() {
               </div>
 
               {/* Direct Founder Access Line */}
-              <div className="mt-6 flex items-center space-x-3 bg-black border border-white/10 px-5 py-2.5 rounded-none text-xs text-zinc-300">
-                <span className="w-2 h-2 bg-emerald-400"></span>
+              <div className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center gap-2 xs:space-x-3 bg-black border border-white/10 px-4 xs:px-5 py-2.5 rounded-none text-xs text-zinc-300 w-full max-w-md">
+                <span className="w-2 h-2 bg-emerald-400 flex-shrink-0"></span>
                 <span>Personal Advisory Line:</span>
                 <a href="tel:+923008286662" className="text-[#D4AF37] font-mono font-medium hover:underline">
                   +92 300 8286662
@@ -1090,20 +1094,20 @@ export default function Home() {
             </div>
 
             {/* Right Column: Editorial Narrative (Col 7) */}
-            <div className="lg:col-span-7 space-y-8">
+            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
               
               {/* Editorial Quote Callout */}
-              <blockquote className="border-l-2 border-[#D4AF37] pl-6 sm:pl-8 py-2">
-                <p className="font-serif text-xl sm:text-2xl md:text-3xl text-zinc-100 font-light italic leading-snug">
+              <blockquote className="border-l-2 border-[#D4AF37] pl-4 xs:pl-6 sm:pl-8 py-2">
+                <p className="font-serif text-lg xs:text-xl sm:text-2xl md:text-3xl text-zinc-100 font-light italic leading-snug">
                   "Since founding Real Property Prime Time in 1998, we have built every client relationship upon verifiable facts, absolute discretion, and uncompromising protection of our principals' capital."
                 </p>
-                <footer className="mt-3 text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold">
+                <footer className="mt-3 text-xs uppercase tracking-[0.2em] xs:tracking-[0.25em] text-[#D4AF37] font-semibold">
                   — Nadeem Sulemani
                 </footer>
               </blockquote>
 
               {/* Authentic Paragraphs */}
-              <div className="space-y-5 text-zinc-300 font-light text-sm sm:text-base leading-relaxed">
+              <div className="space-y-4 xs:space-y-5 text-zinc-300 font-light text-xs xs:text-sm sm:text-base leading-relaxed">
                 <p>
                   With more than two and a half decades in the Karachi property landscape, <strong className="text-white font-medium">Nadeem Sulemani</strong> represents private family offices, Pakistani expatriates in London, Dubai, and North America, and industrial business leaders seeking blue-chip real estate in DHA and Clifton.
                 </p>
@@ -1116,26 +1120,26 @@ export default function Home() {
               </div>
 
               {/* Provenance Pillars */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-4 border-t border-white/10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 pt-4 border-t border-white/10">
                 <div className="space-y-1">
-                  <span className="font-serif text-2xl sm:text-3xl text-[#D4AF37]">1998</span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-medium">Established in Karachi</span>
+                  <span className="font-serif text-xl xs:text-2xl sm:text-3xl text-[#D4AF37]">1998</span>
+                  <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.16em] xs:tracking-[0.2em] text-zinc-400 block font-medium">Established in Karachi</span>
                 </div>
                 <div className="space-y-1">
-                  <span className="font-serif text-2xl sm:text-3xl text-white">27+ Years</span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-medium">Unbroken Advisory Track Record</span>
+                  <span className="font-serif text-xl xs:text-2xl sm:text-3xl text-white">27+ Years</span>
+                  <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.16em] xs:tracking-[0.2em] text-zinc-400 block font-medium">Unbroken Advisory Track Record</span>
                 </div>
                 <div className="space-y-1">
-                  <span className="font-serif text-2xl sm:text-3xl text-[#D4AF37]">DHA 1–8</span>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-medium">& Waterfront Specialist</span>
+                  <span className="font-serif text-xl xs:text-2xl sm:text-3xl text-[#D4AF37]">DHA 1–8</span>
+                  <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.16em] xs:tracking-[0.2em] text-zinc-400 block font-medium">& Waterfront Specialist</span>
                 </div>
               </div>
 
               {/* Consultation Actions */}
-              <div className="pt-4 flex flex-wrap items-center gap-4">
+              <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <a
                   href="#valuation"
-                  className="px-7 py-3.5 bg-[#D4AF37] text-neutral-950 text-xs font-semibold tracking-wider uppercase hover:bg-[#e0be49] transition-all rounded-none shadow-lg"
+                  className="px-6 sm:px-7 py-3.5 bg-[#D4AF37] text-neutral-950 text-xs font-semibold tracking-wider uppercase hover:bg-[#e0be49] transition-all rounded-none shadow-lg text-center justify-center flex items-center"
                 >
                   Schedule Private Valuation
                 </a>
@@ -1143,9 +1147,9 @@ export default function Home() {
                   href="https://wa.me/923008286662?text=Hello%20Nadeem%20Sulemani%2C%20I%20would%20like%20to%20schedule%20a%20private%20property%20advisory%20session"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-6 py-3.5 border border-white/20 text-white text-xs font-medium tracking-wider uppercase hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center space-x-2 rounded-none bg-black/40"
+                  className="px-6 py-3.5 border border-white/20 text-white text-xs font-medium tracking-wider uppercase hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center justify-center space-x-2 rounded-none bg-black/40 text-center"
                 >
-                  <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  <MessageSquare className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                   <span>Message Nadeem Directly</span>
                 </a>
               </div>
@@ -1160,14 +1164,14 @@ export default function Home() {
 
 
       {/* ==================== 5. SUBSTANTIVE ADVISORY FAQ SECTION ==================== */}
-      <section id="advisory-faqs" className="py-24 sm:py-32 px-5 sm:px-8 lg:px-12 bg-[#0a0a0a] border-t border-white/[0.08]">
-        <div className="max-w-4xl mx-auto space-y-12">
+      <section id="advisory-faqs" className="py-16 xs:py-20 sm:py-32 px-4 xs:px-5 sm:px-8 lg:px-12 bg-[#0a0a0a] border-t border-white/[0.08]">
+        <div className="max-w-4xl mx-auto space-y-8 sm:space-y-12">
           
           <div className="text-center space-y-3">
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.35em] uppercase text-[#D4AF37]">
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] xs:tracking-[0.35em] uppercase text-[#D4AF37]">
               Legal, Title & Tax Intelligence
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-light text-white tracking-tight">
+            <h2 className="font-serif text-2xl xs:text-3xl sm:text-5xl font-light text-white tracking-tight leading-tight">
               Essential Advisory Protocols for High-Net-Worth Principals
             </h2>
             <p className="text-zinc-400 text-xs sm:text-sm max-w-lg mx-auto">
@@ -1176,7 +1180,7 @@ export default function Home() {
           </div>
 
           {/* Accordion Container */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {faqs.map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
@@ -1186,18 +1190,18 @@ export default function Home() {
                 >
                   <button
                     onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                    className="w-full p-6 text-left flex items-start justify-between gap-4 focus:outline-none"
+                    className="w-full p-4 xs:p-6 text-left flex items-start justify-between gap-3 sm:gap-4 focus:outline-none"
                     aria-expanded={isOpen}
                   >
-                    <span className="font-serif text-lg sm:text-xl text-white font-normal leading-snug">
+                    <span className="font-serif text-base xs:text-lg sm:text-xl text-white font-normal leading-snug">
                       {faq.q}
                     </span>
-                    <span className={`p-1.5 border border-white/20 text-zinc-400 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180 text-[#D4AF37] border-[#D4AF37]' : ''}`}>
-                      <ChevronDown className="w-4 h-4" />
+                    <span className={`p-1 xs:p-1.5 border border-white/20 text-zinc-400 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180 text-[#D4AF37] border-[#D4AF37]' : ''}`}>
+                      <ChevronDown className="w-3.5 h-3.5 xs:w-4 xs:h-4" />
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="px-6 pb-6 pt-2 text-zinc-300 text-sm leading-relaxed border-t border-white/[0.08] font-light">
+                    <div className="px-4 xs:px-6 pb-5 pt-1 text-zinc-300 text-xs xs:text-sm leading-relaxed border-t border-white/[0.08] font-light">
                       {faq.a}
                     </div>
                   )}
@@ -1215,10 +1219,10 @@ export default function Home() {
 
 
       {/* ==================== 7. ARCHITECTURAL LUXURY FOOTER ==================== */}
-      <footer className="bg-black py-16 sm:py-20 px-5 sm:px-8 lg:px-12 border-t border-white/10 text-zinc-400 text-xs">
-        <div className="max-w-7xl mx-auto space-y-14">
+      <footer className="bg-black py-16 sm:py-20 px-4 xs:px-5 sm:px-8 lg:px-12 border-t border-white/10 text-zinc-400 text-xs pb-28 sm:pb-20">
+        <div className="max-w-7xl mx-auto space-y-12 sm:space-y-14">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-8">
             
             {/* Col 1 & 2: Clickable Brand Logo & Provenance */}
             <div className="lg:col-span-2 space-y-4">
@@ -1227,10 +1231,10 @@ export default function Home() {
                 aria-label="Real Property Prime Time Homepage"
                 className="group inline-block focus:outline-none"
               >
-                <span className="font-cinzel text-xl sm:text-2xl tracking-[0.22em] text-[#D4AF37] block group-hover:brightness-125 transition-all">
+                <span className="font-cinzel text-lg xs:text-xl sm:text-2xl tracking-[0.18em] xs:tracking-[0.22em] text-[#D4AF37] block group-hover:brightness-125 transition-all">
                   REAL PROPERTY PRIME TIME
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.38em] text-zinc-500 font-sans block mt-1">
+                <span className="text-[8.5px] xs:text-[9px] uppercase tracking-[0.25em] xs:tracking-[0.38em] text-zinc-500 font-sans block mt-1">
                   Karachi Luxury Real Estate Advisory • Est. 1998
                 </span>
               </a>
@@ -1306,7 +1310,7 @@ export default function Home() {
                   </a>
                 </p>
                 <p>
-                  <a href="mailto:realpropertyprimetime@gmail.com" className="hover:text-[#D4AF37] transition-colors">
+                  <a href="mailto:realpropertyprimetime@gmail.com" className="hover:text-[#D4AF37] transition-colors break-all">
                     realpropertyprimetime@gmail.com
                   </a>
                 </p>
@@ -1336,9 +1340,9 @@ export default function Home() {
           </div>
 
           {/* Dynamic Copyright Year */}
-          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500 text-center md:text-left">
             <p>© {new Date().getFullYear()} Real Property Prime Time. All Rights Reserved.</p>
-            <p className="tracking-widest uppercase">
+            <p className="tracking-widest uppercase text-[10px] xs:text-[11px]">
               Karachi Luxury Real Estate Advisory • Discretion • Verifiable Provenance • Results
             </p>
           </div>
@@ -1370,7 +1374,7 @@ export default function Home() {
       {/* ==================== PERSISTENT MOBILE ACTION BAR (< 768px Viewports) ==================== */}
       <aside 
         aria-label="Direct Mobile Concierge" 
-        className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-neutral-950/90 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-neutral-950/95 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl"
       >
         <a
           href="tel:+923008286662"
@@ -1395,7 +1399,7 @@ export default function Home() {
 
       {/* ==================== TOAST NOTIFICATION ==================== */}
       {toastMessage && (
-        <aside aria-label="Notifications" className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-[#161618] border border-[#D4AF37] text-white px-6 py-3.5 shadow-2xl flex items-center space-x-3 rounded-none">
+        <aside aria-label="Notifications" className="fixed bottom-20 sm:bottom-8 left-4 right-4 sm:left-1/2 sm:right-auto sm:transform sm:-translate-x-1/2 z-50 max-w-md mx-auto bg-[#161618] border border-[#D4AF37] text-white px-5 sm:px-6 py-3.5 shadow-2xl flex items-center space-x-3 rounded-none">
           <CheckCircle2 className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
           <span className="text-xs sm:text-sm font-medium tracking-wide">{toastMessage}</span>
         </aside>
@@ -1404,22 +1408,22 @@ export default function Home() {
 
       {/* ==================== MODAL: ENQUIRE ==================== */}
       {enquireModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="relative w-full max-w-lg bg-[#111] border border-white/20 p-8 sm:p-10 shadow-2xl space-y-6 rounded-none">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 xs:p-4 bg-black/85 backdrop-blur-md">
+          <div className="relative w-full max-w-lg bg-[#111] border border-white/20 p-5 xs:p-7 sm:p-10 shadow-2xl space-y-4 sm:space-y-6 rounded-none max-h-[90vh] overflow-y-auto">
             
             <button 
               onClick={() => setEnquireModalOpen(false)}
-              className="touch-target-48 absolute top-6 right-6 w-12 h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
+              className="touch-target-48 absolute top-3.5 right-3.5 sm:top-6 sm:right-6 w-9 h-9 sm:w-12 sm:h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             <div>
               <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-[#D4AF37] block mb-1">
                 Confidential Inquiry
               </span>
-              <h3 className="font-serif text-2xl sm:text-3xl font-light text-white">
+              <h3 className="font-serif text-xl xs:text-2xl sm:text-3xl font-light text-white">
                 {selectedProperty}
               </h3>
               <p className="text-xs text-zinc-400 mt-1">
@@ -1427,7 +1431,7 @@ export default function Home() {
               </p>
             </div>
 
-            <form onSubmit={handleEnquireSubmit} className="space-y-4">
+            <form onSubmit={handleEnquireSubmit} className="space-y-3.5 sm:space-y-4">
               <div>
                 <label className="text-[11px] uppercase tracking-wider text-zinc-400 block mb-1.5">Full Legal Name *</label>
                 <input 
@@ -1449,7 +1453,7 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div>
                   <label className="text-[11px] uppercase tracking-wider text-zinc-400 block mb-1.5">Email *</label>
                   <input 
@@ -1506,7 +1510,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center"
+                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center text-center"
               >
                 {isSubmitting ? 'Transmitting Request...' : 'Submit Confidential Inquiry'}
               </button>
@@ -1519,22 +1523,22 @@ export default function Home() {
 
       {/* ==================== MODAL: VIP ACCESS ==================== */}
       {accessModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="relative w-full max-w-lg bg-[#111] border border-[#D4AF37]/50 p-8 sm:p-10 shadow-2xl space-y-6 rounded-none">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 xs:p-4 bg-black/85 backdrop-blur-md">
+          <div className="relative w-full max-w-lg bg-[#111] border border-[#D4AF37]/50 p-5 xs:p-7 sm:p-10 shadow-2xl space-y-4 sm:space-y-6 rounded-none max-h-[90vh] overflow-y-auto">
             
             <button 
               onClick={() => setAccessModalOpen(false)}
-              className="touch-target-48 absolute top-6 right-6 w-12 h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
+              className="touch-target-48 absolute top-3.5 right-3.5 sm:top-6 sm:right-6 w-9 h-9 sm:w-12 sm:h-12 flex items-center justify-center p-2 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-full"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
             <div>
               <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-[#D4AF37] block mb-1">
                 Verified Principal Registry
               </span>
-              <h3 className="font-serif text-2xl sm:text-3xl font-light text-white">
+              <h3 className="font-serif text-xl xs:text-2xl sm:text-3xl font-light text-white">
                 Request Private Access Credentials
               </h3>
               <p className="text-xs text-zinc-400 mt-1">
@@ -1542,7 +1546,7 @@ export default function Home() {
               </p>
             </div>
 
-            <form onSubmit={handleAccessSubmit} className="space-y-4">
+            <form onSubmit={handleAccessSubmit} className="space-y-3.5 sm:space-y-4">
               <div>
                 <label className="text-[11px] uppercase tracking-wider text-zinc-400 block mb-1.5">Principal / Representative Name *</label>
                 <input 
@@ -1575,7 +1579,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div>
                   <label className="text-[11px] uppercase tracking-wider text-zinc-400 block mb-1.5">Private Email *</label>
                   <input 
@@ -1642,7 +1646,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center"
+                className="touch-target-48 w-full py-4 bg-[#D4AF37] text-neutral-950 font-semibold text-xs tracking-wider uppercase hover:bg-[#e0be49] transition-all disabled:opacity-50 rounded-none shadow-lg shadow-[#D4AF37]/15 flex items-center justify-center text-center"
               >
                 {isSubmitting ? 'Verifying Credentials...' : 'Authorize & Request Access Keycode'}
               </button>

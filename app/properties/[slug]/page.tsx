@@ -141,18 +141,18 @@ export default async function PropertyDetailPage({
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-zinc-100 selection:bg-[#D4AF37] selection:text-black">
       {/* ==================== 1. EDITORIAL HEADER ==================== */}
-      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 px-5 sm:px-8 lg:px-12 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="group flex flex-col text-left">
-            <span className="font-cinzel text-lg sm:text-xl font-semibold tracking-[0.24em] text-[#D4AF37] transition-all duration-300 group-hover:brightness-125">
+      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 px-3.5 xs:px-5 sm:px-8 lg:px-12 py-3 sm:py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <Link href="/" className="group flex flex-col text-left min-w-0">
+            <span className="font-cinzel text-sm xs:text-base sm:text-xl font-semibold tracking-[0.16em] sm:tracking-[0.24em] text-[#D4AF37] transition-all duration-300 group-hover:brightness-125 truncate">
               REAL PROPERTY PRIME TIME
             </span>
-            <span className="text-[9px] uppercase tracking-[0.38em] text-zinc-400 font-sans mt-0.5">
+            <span className="text-[8px] xs:text-[9px] uppercase tracking-[0.25em] sm:tracking-[0.38em] text-zinc-400 font-sans mt-0.5 truncate">
               Est. 1998 • Karachi Luxury Advisory
             </span>
           </Link>
 
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             <Link
               href="/admin"
               className="hidden sm:inline-flex items-center space-x-1.5 text-[11px] font-semibold tracking-[0.2em] uppercase text-amber-400 border border-amber-500/40 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500 hover:text-black px-3.5 py-2 transition-all duration-200"
@@ -163,30 +163,31 @@ export default async function PropertyDetailPage({
 
             <Link
               href="/"
-              className="inline-flex items-center space-x-2 text-[11px] font-medium tracking-[0.2em] uppercase text-zinc-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/50 px-4 py-2 transition-all duration-200 bg-black/40"
+              className="inline-flex items-center space-x-1.5 xs:space-x-2 text-[10px] xs:text-[11px] font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase text-zinc-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/50 px-2.5 xs:px-4 py-1.5 xs:py-2 transition-all duration-200 bg-black/40 flex-shrink-0"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Portfolio</span>
+              <ArrowLeft className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="hidden xs:inline">Back to Portfolio</span>
+              <span className="xs:hidden">Back</span>
             </Link>
           </div>
         </div>
       </header>
 
       {/* ==================== 2. MAIN DETAIL CONTAINER ==================== */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-8 sm:py-12 pb-32 md:pb-20 space-y-8 sm:space-y-10">
+      <div className="max-w-7xl mx-auto px-3.5 xs:px-5 sm:px-8 lg:px-12 py-6 sm:py-12 pb-32 md:pb-20 space-y-8 sm:space-y-10">
         {/* Breadcrumb & Verification strip */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-zinc-400 border-b border-neutral-800 pb-5">
-          <div className="flex items-center space-x-2 font-mono text-[11px] tracking-wider uppercase text-zinc-400">
-            <Link href="/" className="hover:text-[#D4AF37] transition-colors">
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 text-xs text-zinc-400 border-b border-neutral-800 pb-4 sm:pb-5">
+          <div className="flex items-center space-x-1.5 xs:space-x-2 font-mono text-[10px] xs:text-[11px] tracking-wider uppercase text-zinc-400 min-w-0">
+            <Link href="/" className="hover:text-[#D4AF37] transition-colors flex-shrink-0">
               Portfolio
             </Link>
-            <span>/</span>
-            <span className="text-zinc-500">{property.location.split(',')[0]}</span>
-            <span>/</span>
-            <span className="text-[#D4AF37] truncate max-w-xs">{property.title}</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-zinc-500 truncate max-w-[80px] xs:max-w-none">{property.location.split(',')[0]}</span>
+            <span className="text-zinc-600">/</span>
+            <span className="text-[#D4AF37] truncate max-w-[120px] xs:max-w-xs">{property.title}</span>
           </div>
 
-          <div className="inline-flex items-center space-x-2 text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] bg-neutral-900 border border-amber-500/40 px-3 py-1 font-mono">
+          <div className="self-start xs:self-auto inline-flex items-center space-x-2 text-[9px] xs:text-[10px] tracking-[0.16em] sm:tracking-[0.2em] uppercase text-[#D4AF37] bg-neutral-900/90 border border-amber-500/40 px-2.5 xs:px-3 py-1 font-mono flex-shrink-0">
             <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>DHA Sub-Lease & CBC Title Verified</span>
           </div>
@@ -223,35 +224,35 @@ export default async function PropertyDetailPage({
             </div>
 
             {/* Architectural Specs Breakdown Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 xs:gap-3 sm:gap-4">
+              <div className="bg-[#121212] border border-neutral-800 p-3 xs:p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
                 <Maximize2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Yardage</span>
-                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.18em] text-zinc-400 block font-mono">Yardage</span>
+                <span className="font-serif text-base xs:text-lg sm:text-xl text-white font-light truncate block">
                   {property.size || 'Prime Size'}
                 </span>
               </div>
 
-              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+              <div className="bg-[#121212] border border-neutral-800 p-3 xs:p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
                 <Bed className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Suites</span>
-                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.18em] text-zinc-400 block font-mono">Suites</span>
+                <span className="font-serif text-base xs:text-lg sm:text-xl text-white font-light truncate block">
                   {property.bedrooms ? `${property.bedrooms} Beds` : 'Custom'}
                 </span>
               </div>
 
-              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+              <div className="bg-[#121212] border border-neutral-800 p-3 xs:p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
                 <Bath className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Baths</span>
-                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.18em] text-zinc-400 block font-mono">Baths</span>
+                <span className="font-serif text-base xs:text-lg sm:text-xl text-white font-light truncate block">
                   {property.bathrooms ? `${property.bathrooms} Luxury` : 'Designer'}
                 </span>
               </div>
 
-              <div className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
+              <div className="bg-[#121212] border border-neutral-800 p-3 xs:p-4 sm:p-5 text-center space-y-1 rounded-lg backdrop-blur-sm">
                 <Building2 className="w-5 h-5 text-[#D4AF37] mx-auto mb-1.5" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 block font-mono">Category</span>
-                <span className="font-serif text-lg sm:text-xl text-white font-light">
+                <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.18em] text-zinc-400 block font-mono">Category</span>
+                <span className="font-serif text-base xs:text-lg sm:text-xl text-white font-light truncate block">
                   {property.category || 'Mandate'}
                 </span>
               </div>
@@ -291,7 +292,7 @@ export default async function PropertyDetailPage({
           {/* RIGHT COLUMN: STICKY SPECIFICATIONS & INQUIRY DESK (40% Width: lg:col-span-5) */}
           {/* ========================================================================= */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24 h-fit">
-            <div className="bg-[#121212] border border-neutral-800 hover:border-amber-500/30 transition-colors p-6 sm:p-7 space-y-6 rounded-xl shadow-2xl backdrop-blur-md">
+            <div className="bg-[#121212] border border-neutral-800 hover:border-amber-500/30 transition-colors p-4 xs:p-6 sm:p-7 space-y-6 rounded-xl shadow-2xl backdrop-blur-md">
               
               {/* Category, Floor, Title & Demand Header */}
               <div className="space-y-3.5 border-b border-neutral-800 pb-5">
@@ -311,23 +312,23 @@ export default async function PropertyDetailPage({
                   </span>
                 </div>
 
-                <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-white leading-tight">
+                <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-white leading-tight break-words">
                   {property.title}
                 </h1>
 
                 <div className="flex items-center space-x-1.5 text-xs uppercase tracking-wider text-zinc-400 font-mono">
-                  <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>{property.location}</span>
+                  <MapPin className="w-3.5 h-3.5 text-[#D4AF37] flex-shrink-0" />
+                  <span className="truncate">{property.location}</span>
                 </div>
 
-                <div className="pt-2 bg-neutral-950/80 p-4 rounded-lg border border-neutral-800/80">
+                <div className="pt-2 bg-neutral-950/80 p-3.5 xs:p-4 rounded-lg border border-neutral-800/80">
                   <span className="text-[10px] uppercase tracking-[0.25em] text-zinc-400 block font-mono">
                     Official Mandate Demand
                   </span>
-                  <span className="font-serif text-3xl sm:text-4xl text-[#D4AF37] font-normal block mt-0.5">
+                  <span className="font-serif text-2xl xs:text-3xl sm:text-4xl text-[#D4AF37] font-normal block mt-0.5 break-words">
                     {formattedDemand}
                   </span>
-                  <span className="text-[10px] text-zinc-500 tracking-wider uppercase block mt-1">
+                  <span className="text-[9px] xs:text-[10px] text-zinc-500 tracking-wider uppercase block mt-1">
                     Direct Principal Negotiation • Private Terms
                   </span>
                 </div>
@@ -394,7 +395,7 @@ export default async function PropertyDetailPage({
       </div>
 
       {/* ==================== 4. PERSISTENT MOBILE ACTION BAR (< 768px Viewports) ==================== */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-neutral-950/95 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-neutral-950/95 backdrop-blur-lg border-t border-amber-500/30 md:hidden flex items-center gap-2.5 shadow-2xl">
         <a
           href="tel:+923008286662"
           className="touch-target-48 px-4 py-3 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 rounded-lg flex-shrink-0 transition-colors"

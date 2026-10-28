@@ -89,12 +89,12 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
           </div>
 
           {/* Typography */}
-          <div className="flex flex-col">
-            <span className="font-cinzel text-base sm:text-lg font-bold tracking-[0.22em] text-white group-hover:text-[#D4AF37] transition-colors uppercase leading-none">
+          <div className="flex flex-col min-w-0">
+            <span className="font-cinzel text-sm xs:text-base sm:text-lg font-bold tracking-[0.16em] xs:tracking-[0.22em] text-white group-hover:text-[#D4AF37] transition-colors uppercase leading-none truncate">
               PRIME TIME
             </span>
-            <span className="text-[8.5px] sm:text-[9px] font-sans font-semibold tracking-[0.26em] text-[#D4AF37]/90 uppercase mt-1 leading-none">
-              REAL ESTATE ADVISORY • EST. 1998
+            <span className="text-[7.5px] xs:text-[8.5px] sm:text-[9px] font-sans font-semibold tracking-[0.18em] xs:tracking-[0.26em] text-[#D4AF37]/90 uppercase mt-1 leading-none">
+              <span className="hidden xs:inline">REAL ESTATE </span>ADVISORY • EST. 1998
             </span>
           </div>
         </Link>
@@ -161,14 +161,14 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
             <button
               type="button"
               onClick={onPrivateAccess}
-              className="px-4 sm:px-5 py-2 text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all cursor-pointer uppercase"
+              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all cursor-pointer uppercase flex-shrink-0"
             >
               Private Access
             </button>
           ) : (
             <Link
               href="#valuation"
-              className="px-4 sm:px-5 py-2 text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all uppercase"
+              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all uppercase flex-shrink-0"
             >
               Private Access
             </Link>
@@ -179,7 +179,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
-            className="lg:hidden p-2 text-neutral-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/40 rounded-sm bg-black/40 backdrop-blur-md transition-colors"
+            className="lg:hidden p-2 text-neutral-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/40 rounded-sm bg-black/40 backdrop-blur-md transition-colors flex-shrink-0"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -195,7 +195,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden w-full bg-[#0d0d10]/95 backdrop-blur-2xl border-b border-[#D4AF37]/30 px-6 py-6 mt-3 shadow-2xl"
+            className="lg:hidden w-full bg-[#0d0d10]/98 backdrop-blur-2xl border-b border-[#D4AF37]/30 px-5 sm:px-6 py-5 sm:py-6 mt-3 shadow-2xl max-h-[calc(100vh-75px)] overflow-y-auto"
           >
             <div className="flex flex-col space-y-3">
               {items.map((item) => {

@@ -234,9 +234,9 @@ export default function PrivateAdvisoryDesk() {
 
       {/* ==================== GLASSMORPHIC TOAST BANNER ==================== */}
       {toast.show && (
-        <div className="fixed top-6 right-6 z-50 max-w-md w-full animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="fixed top-4 sm:top-6 left-4 sm:left-auto right-4 sm:right-6 z-50 max-w-md w-auto sm:w-full animate-in fade-in slide-in-from-top-4 duration-300">
           <div
-            className={`p-5 backdrop-blur-xl border shadow-2xl transition-all duration-300 ${
+            className={`p-4 xs:p-5 backdrop-blur-xl border shadow-2xl transition-all duration-300 ${
               toast.type === "success"
                 ? "bg-black/95 border-emerald-500/60 text-white shadow-emerald-500/10"
                 : "bg-black/95 border-rose-500/60 text-white shadow-rose-500/10"
@@ -279,15 +279,15 @@ export default function PrivateAdvisoryDesk() {
         </div>
       )}
 
-      <div className="relative max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
+      <div className="relative max-w-6xl mx-auto px-4 xs:px-5 sm:px-8 lg:px-12">
         {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-2 text-[10px] tracking-[0.3em] uppercase text-[#D4AF37] font-mono bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1">
+        <div className="text-center space-y-3 max-w-2xl mx-auto mb-8 sm:mb-12">
+          <div className="inline-flex items-center space-x-2 text-[10px] tracking-[0.25em] xs:tracking-[0.3em] uppercase text-[#D4AF37] font-mono bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-3 py-1">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Private Advisory Mandate Desk</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight">
+          <h2 className="font-serif text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight">
             Confidential Client <span className="text-[#D4AF37]">Assessment & Briefings</span>
           </h2>
 
@@ -296,12 +296,12 @@ export default function PrivateAdvisoryDesk() {
           </p>
         </div>
 
-        {/* Dual Tab Navigation */}
-        <div className="flex items-center justify-center gap-2 sm:gap-4 mb-10">
+        {/* Dual Tab Navigation with Mobile Full Fit */}
+        <div className="flex flex-col xs:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-4 mb-8 sm:mb-10 w-full max-w-md sm:max-w-none mx-auto">
           <button
             type="button"
             onClick={() => setActiveTab("valuation")}
-            className={`px-5 py-3 text-xs uppercase tracking-widest font-semibold transition-all border ${
+            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-all border text-center ${
               activeTab === "valuation"
                 ? "bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold"
                 : "bg-white/[0.03] text-zinc-400 border-white/10 hover:border-white/30 hover:text-white"
@@ -313,7 +313,7 @@ export default function PrivateAdvisoryDesk() {
           <button
             type="button"
             onClick={() => setActiveTab("briefing")}
-            className={`px-5 py-3 text-xs uppercase tracking-widest font-semibold transition-all border ${
+            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-all border text-center ${
               activeTab === "briefing"
                 ? "bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold"
                 : "bg-white/[0.03] text-zinc-400 border-white/10 hover:border-white/30 hover:text-white"
@@ -327,7 +327,7 @@ export default function PrivateAdvisoryDesk() {
         {activeTab === "valuation" && (
           <form
             onSubmit={handleValuationSubmit}
-            className="bg-white/[0.02] border border-white/15 p-6 sm:p-10 lg:p-12 rounded-xl backdrop-blur-md shadow-2xl space-y-8 animate-in fade-in duration-300"
+            className="bg-white/[0.02] border border-white/15 p-5 xs:p-7 sm:p-10 lg:p-12 rounded-xl backdrop-blur-md shadow-2xl space-y-6 sm:space-y-8 animate-in fade-in duration-300"
           >
             <div className="border-b border-white/10 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>

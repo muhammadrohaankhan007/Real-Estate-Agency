@@ -191,9 +191,12 @@ export default function GisCoordinatePicker({
       const map = L.map(mapContainerRef.current, {
         center: [currentLat, currentLng],
         zoom: 14,
-        zoomControl: true,
+        zoomControl: false,
         attributionControl: false,
       });
+
+      // Add Zoom control at bottomright so it never collides with top layer HUD
+      L.control.zoom({ position: "bottomright" }).addTo(map);
 
       // Multi-tier Tile Layer: CartoDB Dark Matter with automatic OSM Fallback
       const cartoLayer = L.tileLayer(
@@ -465,7 +468,7 @@ export default function GisCoordinatePicker({
   };
 
   return (
-    <div className="space-y-4 rounded-xl border border-white/10 bg-black/60 p-4 sm:p-5 backdrop-blur-md">
+    <div className="space-y-4 rounded-xl border border-white/10 bg-black/60 p-3.5 xs:p-4 sm:p-5 backdrop-blur-md">
       {/* Header with Title and Action Badges */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-white/10 pb-3">
         <div className="flex items-center space-x-2">
@@ -603,7 +606,7 @@ export default function GisCoordinatePicker({
           <button
             type="button"
             onClick={() => switchLayerStyle("dark")}
-            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+            className={`px-1.5 xs:px-2 py-0.5 text-[8px] xs:text-[9px] uppercase tracking-wider font-mono transition-colors ${
               activeStyle === "dark" 
                 ? "bg-[#D4AF37] text-black font-semibold" 
                 : "text-zinc-300 hover:text-white"
@@ -614,7 +617,7 @@ export default function GisCoordinatePicker({
           <button
             type="button"
             onClick={() => switchLayerStyle("satellite")}
-            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+            className={`px-1.5 xs:px-2 py-0.5 text-[8px] xs:text-[9px] uppercase tracking-wider font-mono transition-colors ${
               activeStyle === "satellite" 
                 ? "bg-[#D4AF37] text-black font-semibold" 
                 : "text-zinc-300 hover:text-white"
@@ -625,7 +628,7 @@ export default function GisCoordinatePicker({
           <button
             type="button"
             onClick={() => switchLayerStyle("streets")}
-            className={`px-2 py-0.5 text-[9px] uppercase tracking-wider font-mono transition-colors ${
+            className={`px-1.5 xs:px-2 py-0.5 text-[8px] xs:text-[9px] uppercase tracking-wider font-mono transition-colors ${
               activeStyle === "streets" 
                 ? "bg-[#D4AF37] text-black font-semibold" 
                 : "text-zinc-300 hover:text-white"
@@ -636,9 +639,9 @@ export default function GisCoordinatePicker({
         </div>
 
         {/* Floating Map HUD overlay */}
-        <div className="absolute bottom-3 left-3 z-[400] bg-black/85 backdrop-blur-md border border-white/20 px-3 py-1 text-[9px] font-mono text-zinc-300 flex items-center space-x-2">
-          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse`} />
-          <span>
+        <div className="absolute bottom-3 left-3 z-[400] bg-black/85 backdrop-blur-md border border-white/20 px-2.5 xs:px-3 py-1 text-[8px] xs:text-[9px] font-mono text-zinc-300 flex items-center space-x-1.5 xs:space-x-2 max-w-[calc(100%-80px)] truncate">
+          <span className={`w-1.5 h-1.5 rounded-full ${isFallbackActive ? "bg-amber-400" : "bg-emerald-400"} animate-pulse flex-shrink-0`} />
+          <span className="truncate">
             {activeStyle === "satellite" 
               ? "Esri World Imagery High-Res Satellite" 
               : activeStyle === "streets" 
@@ -650,7 +653,7 @@ export default function GisCoordinatePicker({
         </div>
 
         {/* Live Coordinate Watermark */}
-        <div className="absolute top-3 right-3 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/30 px-2.5 py-1 text-[9px] font-mono text-[#D4AF37] flex items-center space-x-1.5">
+        <div className="absolute top-3 right-3 z-[400] bg-black/85 backdrop-blur-md border border-[#D4AF37]/30 px-2 xs:px-2.5 py-1 text-[8px] xs:text-[9px] font-mono text-[#D4AF37] hidden xs:flex items-center space-x-1.5">
           <MapPin className="w-3 h-3 text-[#D4AF37]" />
           <span>{currentLat.toFixed(6)}, {currentLng.toFixed(6)}</span>
         </div>

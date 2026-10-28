@@ -240,20 +240,20 @@ export default function EditorialGalleryStream({
           className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-2xl animate-in fade-in duration-200 select-none"
         >
           {/* Lightbox Header Bar */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-md z-30">
-            <div className="flex items-center space-x-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-pulse" />
-              <div>
-                <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#D4AF37] block">
+          <div className="flex items-center justify-between px-3.5 xs:px-6 py-3 sm:py-4 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur-md z-30 gap-2 xs:gap-3">
+            <div className="flex items-center space-x-2 xs:space-x-3 min-w-0 flex-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-pulse flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <span className="text-[9px] xs:text-[10px] font-mono uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#D4AF37] block truncate">
                   High-Resolution Lightbox Examination
                 </span>
-                <h4 className="font-serif text-sm sm:text-base text-white truncate max-w-md sm:max-w-xl">
+                <h4 className="font-serif text-xs xs:text-sm sm:text-base text-white truncate max-w-md sm:max-w-xl">
                   {title}
                 </h4>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4 flex-shrink-0">
               <span className="text-xs font-mono text-zinc-400 tracking-widest hidden sm:inline-block">
                 ASSET {lightboxIndex + 1} OF {totalAssets}
               </span>
@@ -262,7 +262,7 @@ export default function EditorialGalleryStream({
                 type="button"
                 onClick={closeLightbox}
                 aria-label="Close Lightbox"
-                className="touch-target-48 p-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-zinc-300 hover:text-white border border-neutral-700 transition-colors flex items-center justify-center"
+                className="touch-target-48 p-2 xs:p-2.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-zinc-300 hover:text-white border border-neutral-700 transition-colors flex items-center justify-center flex-shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -270,7 +270,7 @@ export default function EditorialGalleryStream({
           </div>
 
           {/* Main Lightbox Stage */}
-          <div className="relative flex-1 flex items-center justify-center p-4 sm:p-8 overflow-hidden">
+          <div className="relative flex-1 flex items-center justify-center p-2 xs:p-4 sm:p-8 overflow-hidden">
             <div
               className="relative w-full h-full max-w-6xl max-h-[82vh]"
               style={{ contain: "layout paint" }}
@@ -295,9 +295,9 @@ export default function EditorialGalleryStream({
                 type="button"
                 onClick={prevLightboxImage}
                 aria-label="Previous Image"
-                className="touch-target-48 absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-neutral-900/80 hover:bg-[#D4AF37] text-white hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all backdrop-blur-md shadow-2xl"
+                className="touch-target-48 absolute left-2 xs:left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-neutral-900/80 hover:bg-[#D4AF37] text-white hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all backdrop-blur-md shadow-2xl"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             )}
 
@@ -307,16 +307,16 @@ export default function EditorialGalleryStream({
                 type="button"
                 onClick={nextLightboxImage}
                 aria-label="Next Image"
-                className="touch-target-48 absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-neutral-900/80 hover:bg-[#D4AF37] text-white hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all backdrop-blur-md shadow-2xl"
+                className="touch-target-48 absolute right-2 xs:right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-neutral-900/80 hover:bg-[#D4AF37] text-white hover:text-black border border-neutral-700 hover:border-[#D4AF37] flex items-center justify-center transition-all backdrop-blur-md shadow-2xl"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             )}
           </div>
 
           {/* Bottom Filmstrip Ribbon in Lightbox */}
           {totalAssets > 1 && (
-            <div className="border-t border-neutral-800 bg-neutral-950/90 backdrop-blur-md p-3 px-6 z-30">
+            <div className="border-t border-neutral-800 bg-neutral-950/90 backdrop-blur-md p-2 xs:p-3 px-3 sm:px-6 z-30 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <div className="flex items-center justify-center space-x-2 overflow-x-auto no-scrollbar max-w-4xl mx-auto py-1">
                 {assetList.map((thumb, tIdx) => (
                   <button
@@ -324,7 +324,7 @@ export default function EditorialGalleryStream({
                     type="button"
                     onClick={() => setLightboxIndex(tIdx)}
                     aria-label={`Jump to asset ${tIdx + 1}`}
-                    className={`relative w-14 h-10 sm:w-16 sm:h-12 flex-shrink-0 rounded overflow-hidden border transition-all ${
+                    className={`relative w-12 h-9 xs:w-14 xs:h-10 sm:w-16 sm:h-12 flex-shrink-0 rounded overflow-hidden border transition-all ${
                       tIdx === lightboxIndex
                         ? "border-[#D4AF37] ring-2 ring-[#D4AF37] scale-105"
                         : "border-neutral-800 opacity-50 hover:opacity-100"
