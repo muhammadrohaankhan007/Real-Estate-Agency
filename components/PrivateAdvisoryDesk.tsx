@@ -301,7 +301,7 @@ export default function PrivateAdvisoryDesk() {
           <button
             type="button"
             onClick={() => setActiveTab("valuation")}
-            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-all border text-center ${
+            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-colors duration-200 border text-center ${
               activeTab === "valuation"
                 ? "bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold"
                 : "bg-white/[0.03] text-zinc-400 border-white/10 hover:border-white/30 hover:text-white"
@@ -313,7 +313,7 @@ export default function PrivateAdvisoryDesk() {
           <button
             type="button"
             onClick={() => setActiveTab("briefing")}
-            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-all border text-center ${
+            className={`px-4 xs:px-5 py-3 text-[11px] xs:text-xs uppercase tracking-wider xs:tracking-widest font-semibold transition-colors duration-200 border text-center ${
               activeTab === "briefing"
                 ? "bg-[#D4AF37] text-neutral-950 border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 font-bold"
                 : "bg-white/[0.03] text-zinc-400 border-white/10 hover:border-white/30 hover:text-white"
@@ -457,7 +457,7 @@ export default function PrivateAdvisoryDesk() {
               <button
                 type="submit"
                 disabled={isValuationLoading}
-                className="w-full sm:w-auto px-8 py-4 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-widest uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 rounded-lg shadow-xl shadow-[#D4AF37]/10"
+                className="w-full sm:w-auto px-8 py-4 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-widest uppercase transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 rounded-lg shadow-xl shadow-[#D4AF37]/10"
               >
                 {isValuationLoading ? (
                   <>
@@ -504,7 +504,7 @@ export default function PrivateAdvisoryDesk() {
                 <button
                   type="submit"
                   disabled={isSubscribeLoading}
-                  className="px-6 py-3.5 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase transition-all duration-200 disabled:opacity-50 flex items-center justify-center space-x-1.5 rounded-lg flex-shrink-0 shadow-lg shadow-[#D4AF37]/10"
+                  className="px-6 py-3.5 bg-[#D4AF37] hover:bg-amber-400 text-black font-semibold text-xs tracking-wider uppercase transition-colors duration-200 disabled:opacity-50 flex items-center justify-center space-x-1.5 rounded-lg flex-shrink-0 shadow-lg shadow-[#D4AF37]/10"
                 >
                   {isSubscribeLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

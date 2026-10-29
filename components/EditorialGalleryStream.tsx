@@ -176,7 +176,7 @@ export default function EditorialGalleryStream({
             <div
               key={`desktop-stream-${idx}-${img}`}
               onClick={() => openLightbox(idx)}
-              className="group relative w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-xl bg-neutral-950 border border-neutral-800 hover:border-amber-500/50 transition-all duration-300 shadow-2xl cursor-pointer"
+              className="group relative w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-xl bg-neutral-950 border border-neutral-800 hover:border-amber-500/50 transition-colors duration-200 shadow-2xl cursor-pointer"
               style={{
                 contain: "layout paint",
                 transform: "translateZ(0)",
@@ -190,7 +190,7 @@ export default function EditorialGalleryStream({
                 priority={idx < 2}
                 loading={idx < 2 ? "eager" : "lazy"}
                 sizes="(max-width: 1024px) 95vw, 60vw"
-                className="object-cover object-center transform group-hover:scale-[1.025] transition-transform duration-700 ease-out"
+                className="object-cover object-center transform group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                 style={{
                   transform: "translateZ(0)",
                   willChange: "transform",
@@ -219,7 +219,7 @@ export default function EditorialGalleryStream({
               </div>
 
               {/* Bottom Hover Action Prompt */}
-              <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+              <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className="bg-black/90 backdrop-blur-md border border-amber-500/60 text-amber-300 px-4 py-2 text-xs font-mono tracking-wider uppercase flex items-center space-x-2 shadow-2xl">
                   <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
                   <span>INSPECT FULL RESOLUTION</span>

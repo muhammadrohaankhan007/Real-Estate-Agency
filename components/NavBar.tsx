@@ -40,7 +40,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full select-none",
+        "fixed top-0 left-0 right-0 z-50 transition-colors duration-200 w-full select-none",
         isScrolled
           ? "bg-[#0a0a0a]/92 backdrop-blur-xl border-b border-[#D4AF37]/25 shadow-[0_10px_30px_rgba(0,0,0,0.85)] py-3 sm:py-3.5"
           : "bg-gradient-to-b from-black/85 via-black/40 to-transparent border-b border-white/[0.06] backdrop-blur-sm py-4 sm:py-5",
@@ -57,7 +57,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
           aria-label="Prime Time Real Estate Advisory Homepage"
         >
           {/* Bespoke Geometric Gold Monogram Crest */}
-          <div className="w-9 h-9 sm:w-10 sm:h-10 relative flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 relative flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
             <svg
               viewBox="0 0 64 64"
               className="w-full h-full drop-shadow-[0_2px_10px_rgba(212,175,55,0.35)]"
@@ -114,7 +114,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
                 href={item.url}
                 onClick={() => handleNavClick(item.name)}
                 className={cn(
-                  "relative cursor-pointer text-xs font-sans tracking-wider uppercase px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 select-none",
+                  "relative cursor-pointer text-xs font-sans tracking-wider uppercase px-4 py-2 rounded-full transition-colors duration-200 flex items-center gap-2 select-none",
                   isActive
                     ? "text-[#D4AF37] font-semibold"
                     : "text-neutral-300 hover:text-white hover:bg-white/5 font-normal"
@@ -130,8 +130,9 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
                     initial={false}
                     transition={{
                       type: "spring",
-                      stiffness: 380,
-                      damping: 32,
+                      stiffness: 420,
+                      damping: 34,
+                      mass: 0.8,
                     }}
                   >
                     {/* Top Tubelight Glow Lamp */}
@@ -150,7 +151,7 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
           {/* Admin Command Link */}
           <Link
             href="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-[11px] font-sans font-medium tracking-wider text-neutral-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/50 rounded-sm bg-black/40 backdrop-blur-md transition-all uppercase"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-[11px] font-sans font-medium tracking-wider text-neutral-300 hover:text-[#D4AF37] border border-white/10 hover:border-[#D4AF37]/50 rounded-sm bg-black/40 backdrop-blur-md transition-colors duration-200 uppercase"
           >
             <Lock size={12} className="text-[#D4AF37]" />
             <span>Admin</span>
@@ -161,14 +162,14 @@ export function NavBar({ items, className, onPrivateAccess }: NavBarProps) {
             <button
               type="button"
               onClick={onPrivateAccess}
-              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all cursor-pointer uppercase flex-shrink-0"
+              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-colors duration-200 cursor-pointer uppercase flex-shrink-0"
             >
               Private Access
             </button>
           ) : (
             <Link
               href="#valuation"
-              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-all uppercase flex-shrink-0"
+              className="px-2.5 xs:px-4 sm:px-5 py-1.5 sm:py-2 text-[10px] xs:text-xs font-sans font-semibold tracking-wider text-neutral-950 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 rounded-sm shadow-[0_2px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_2px_22px_rgba(212,175,55,0.45)] transition-colors duration-200 uppercase flex-shrink-0"
             >
               Private Access
             </Link>

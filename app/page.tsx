@@ -444,14 +444,14 @@ export default function Home() {
     return activeList.filter(p => p.id !== featureProperty.id);
   }, [activeList, featureProperty.id]);
 
-  // 4.5-Second Continuous Cross-Fade Revolving Showcase Engine
+  // 6-Second Continuous Stable Cross-Fade Showcase Engine
   useEffect(() => {
     if (!isMounted || isRevolvingPaused || showcaseMode !== 'revolving') return;
     if (!activeList || activeList.length <= 1) return;
 
     const timer = setInterval(() => {
       setRevolvingIndex((prev) => (prev + 1) % activeList.length);
-    }, 4500);
+    }, 6000);
 
     return () => clearInterval(timer);
   }, [isMounted, isRevolvingPaused, showcaseMode, activeList]);
@@ -602,14 +602,14 @@ export default function Home() {
                   return (
                     <div
                       key={`revolving-slide-${property.id}-${idx}`}
-                      className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                      className={`absolute inset-0 transition-opacity duration-500 ease-out ${
                         isActive
-                          ? "opacity-100 z-10 scale-100 pointer-events-auto"
-                          : "opacity-0 z-0 scale-[1.03] pointer-events-none"
+                          ? "opacity-100 z-10 pointer-events-auto"
+                          : "opacity-0 z-0 pointer-events-none"
                       }`}
                       style={{
                         transform: "translateZ(0)",
-                        willChange: "opacity, transform",
+                        willChange: "opacity",
                         backfaceVisibility: "hidden",
                       }}
                     >
@@ -619,7 +619,7 @@ export default function Home() {
                         fill
                         priority={idx === 0}
                         sizes="(max-width: 1280px) 100vw, 1400px"
-                        className="object-cover object-center transform transition-transform duration-[8000ms] ease-out group-hover:scale-105"
+                        className="object-cover object-center transform transition-transform duration-500 ease-out group-hover:scale-[1.015]"
                         style={{ 
                           transform: "translateZ(0)",
                           backfaceVisibility: "hidden",
@@ -669,7 +669,7 @@ export default function Home() {
                             ) : (
                               <span className="text-emerald-400 inline-flex items-center gap-1 font-medium">
                                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                <span>4.5s MOTION ACTIVE</span>
+                                <span>6s FLUID MOTION</span>
                               </span>
                             )}
                           </span>
@@ -726,7 +726,7 @@ export default function Home() {
                         <div className="pt-2 flex flex-col xs:flex-row flex-wrap items-stretch xs:items-center gap-2 xs:gap-3">
                           <Link
                             href={`/properties/${property.slug || property.id}`}
-                            className="touch-target-48 px-5 xs:px-6 py-3 xs:py-3.5 bg-[#D4AF37] hover:bg-white text-black text-[11px] xs:text-xs font-semibold tracking-wider uppercase transition-all rounded-none inline-flex items-center justify-center gap-1.5 shadow-lg text-center"
+                            className="touch-target-48 px-5 xs:px-6 py-3 xs:py-3.5 bg-[#D4AF37] hover:bg-white text-black text-[11px] xs:text-xs font-semibold tracking-wider uppercase transition-colors duration-200 rounded-none inline-flex items-center justify-center gap-1.5 shadow-lg text-center"
                           >
                             <span>Explore Property Dossier</span>
                             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -791,7 +791,7 @@ export default function Home() {
                         type="button"
                         onClick={() => goToRevolvingSlide(idx)}
                         aria-label={`Go to slide ${idx + 1}: ${prop.title}`}
-                        className={`h-2 transition-all duration-300 rounded-none touch-target-48 flex items-center justify-center p-0.5 ${
+                        className={`h-2 transition-[width,background-color] duration-300 ease-out rounded-none touch-target-48 flex items-center justify-center p-0.5 ${
                           isDotActive
                             ? "w-8 xs:w-10 bg-[#D4AF37] shadow-sm shadow-[#D4AF37]/50"
                             : "w-3.5 xs:w-4 bg-white/20 hover:bg-white/50"
@@ -804,7 +804,7 @@ export default function Home() {
                 </div>
 
                 <div className="text-[10px] xs:text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
-                  Auto-Cycles Every 4.5s • Touch to Pause
+                  Auto-Cycles Every 6s • Touch to Pause
                 </div>
               </div>
 
@@ -822,7 +822,7 @@ export default function Home() {
                         key={`filmstrip-${prop.id}-${idx}`}
                         type="button"
                         onClick={() => goToRevolvingSlide(idx)}
-                        className={`text-left p-2 border transition-all duration-200 group overflow-hidden bg-black/60 ${
+                        className={`text-left p-2 border transition-[border-color,box-shadow,opacity] duration-200 group overflow-hidden bg-black/60 ${
                           isCardActive
                             ? "border-[#D4AF37] ring-1 ring-[#D4AF37] shadow-lg shadow-[#D4AF37]/15"
                             : "border-white/10 hover:border-white/30 opacity-70 hover:opacity-100"
@@ -834,7 +834,7 @@ export default function Home() {
                             alt={prop.title}
                             fill
                             sizes="180px"
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out"
                           />
                           {isCardActive && (
                             <div className="absolute inset-0 bg-[#D4AF37]/20 border border-[#D4AF37] pointer-events-none" />
@@ -860,7 +860,7 @@ export default function Home() {
                 <div className={`${secondaryProperties.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col`}>
                   <Link 
                     href={`/properties/${featureProperty.slug || featureProperty.id}`}
-                    className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-2xl rounded-none"
+                    className="group relative w-full h-[620px] sm:h-[700px] lg:h-[780px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-colors duration-200 shadow-2xl rounded-none"
                     style={{ transform: 'translateZ(0)' }}
                   >
                     <Image
@@ -869,7 +869,7 @@ export default function Home() {
                       fill
                       priority
                       sizes="(max-width: 1024px) 100vw, 58vw"
-                      className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                      className="object-cover object-center transform transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                       style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent"></div>
@@ -931,7 +931,7 @@ export default function Home() {
                       <Link 
                         key={property.id}
                         href={`/properties/${property.slug || property.id}`}
-                        className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-all duration-300 shadow-xl rounded-none"
+                        className="group relative h-[300px] sm:h-[335px] lg:h-[374px] overflow-hidden block border border-white/10 hover:border-[#D4AF37]/60 transition-colors duration-200 shadow-xl rounded-none"
                         style={{ transform: 'translateZ(0)' }}
                       >
                         <Image
@@ -939,7 +939,7 @@ export default function Home() {
                           alt={property.title}
                           fill
                           sizes="(max-width: 1024px) 100vw, 42vw"
-                          className="object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                          className="object-cover object-center transform transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                           style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
@@ -973,7 +973,7 @@ export default function Home() {
                     <Link
                       key={prop.id}
                       href={`/properties/${prop.slug || prop.id}`}
-                      className="group overflow-hidden block border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-all duration-200 shadow-lg rounded-none"
+                      className="group overflow-hidden block border border-white/10 bg-zinc-950 hover:border-[#D4AF37]/50 transition-colors duration-200 shadow-lg rounded-none"
                     >
                       <div className="relative h-60 w-full overflow-hidden" style={{ transform: 'translateZ(0)' }}>
                         <Image
@@ -981,7 +981,7 @@ export default function Home() {
                           alt={prop.title}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                           style={{ transform: 'translateZ(0)', willChange: 'transform' }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -1062,7 +1062,7 @@ export default function Home() {
                     alt="Nadeem Sulemani — Founder & Principal Advisor of Real Property Prime Time"
                     fill
                     sizes="(max-width: 1024px) 100vw, 450px"
-                    className="object-cover object-top filter brightness-100 contrast-105 transform group-hover:scale-[1.02] transition-transform duration-500"
+                    className="object-cover object-top filter brightness-100 contrast-105 transform group-hover:scale-[1.015] transition-transform duration-500 ease-out"
                     style={{ transform: 'translateZ(0)' }}
                   />
                 </div>
@@ -1357,14 +1357,14 @@ export default function Home() {
           href="https://wa.me/923008286662?text=Hello%20Nadeem%20Sulemani%2C%20I%20am%20interested%20in%20Karachi%20prime%20properties"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center space-x-2.5 bg-[#0e0e12]/90 hover:bg-[#15151a] px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.85)] transition-all duration-300 rounded-full border border-[#D4AF37]/40 hover:border-[#D4AF37] backdrop-blur-xl"
+          className="group flex items-center space-x-2.5 bg-[#0e0e12]/90 hover:bg-[#15151a] px-4 py-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.85)] transition-colors duration-200 rounded-full border border-[#D4AF37]/40 hover:border-[#D4AF37] backdrop-blur-xl"
           aria-label="Direct WhatsApp Advisory with Nadeem Sulemani"
         >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37] group-hover:scale-110 transition-transform" />
+          <MessageSquare className="w-3.5 h-3.5 text-[#D4AF37] group-hover:scale-105 transition-transform duration-200" />
           <span className="text-[11px] font-semibold tracking-wider uppercase font-sans text-neutral-200 group-hover:text-[#D4AF37] transition-colors">
             Advisory Desk
           </span>

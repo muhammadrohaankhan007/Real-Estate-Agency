@@ -40,7 +40,7 @@ export default function HeroSection({ onPrivateAccess }: HeroSectionProps) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center sm:object-[center_35%] opacity-85 scale-100 transition-transform duration-1000 ease-out"
+          className="object-cover object-center sm:object-[center_35%] opacity-85 scale-100"
         />
 
         {/* Directional Scrim: Strong contrast for text on left, open villa view on right */}
@@ -86,7 +86,7 @@ export default function HeroSection({ onPrivateAccess }: HeroSectionProps) {
             {/* Primary Action */}
             <Link
               href="#portfolio"
-              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 text-neutral-950 font-sans font-semibold text-xs tracking-[0.16em] uppercase rounded-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-[0_4px_25px_rgba(212,175,55,0.25)] hover:shadow-[0_4px_35px_rgba(212,175,55,0.45)] group cursor-pointer"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#E2C056] to-[#D4AF37] hover:brightness-110 text-neutral-950 font-sans font-semibold text-xs tracking-[0.16em] uppercase rounded-sm transition-colors duration-200 flex items-center justify-center gap-2.5 shadow-[0_4px_25px_rgba(212,175,55,0.25)] hover:shadow-[0_4px_35px_rgba(212,175,55,0.45)] group cursor-pointer"
             >
               <span>Explore Portfolio</span>
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform text-neutral-950" />
@@ -95,7 +95,7 @@ export default function HeroSection({ onPrivateAccess }: HeroSectionProps) {
             {/* Secondary Action */}
             <Link
               href="#valuation"
-              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-black/50 hover:bg-white/[0.08] text-white border border-white/20 hover:border-[#D4AF37]/60 font-sans font-medium text-xs tracking-[0.16em] uppercase rounded-sm transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-black/50 hover:bg-white/[0.08] text-white border border-white/20 hover:border-[#D4AF37]/60 font-sans font-medium text-xs tracking-[0.16em] uppercase rounded-sm transition-colors duration-200 flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
             >
               <span>Schedule Valuation</span>
             </Link>
